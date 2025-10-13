@@ -12,6 +12,17 @@ export const chatService = {
 
   // Get specific chat with all messages
   getChat: async (chatId, chatType = 'normal') => {
+    // Validate chatId before making request
+    if (!chatId || chatId === 'undefined' || chatId === 'null' || chatId === 'new') {
+      throw new Error('Invalid chat ID provided')
+    }
+
+    // Validate UUID format
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+    if (!uuidRegex.test(chatId)) {
+      throw new Error('Invalid chat ID format')
+    }
+
     const endpoint = chatType === 'normal' 
       ? `/chats/normal/${chatId}` 
       : `/chats/interview/${chatId}`

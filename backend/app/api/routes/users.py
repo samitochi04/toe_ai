@@ -345,19 +345,19 @@ async def get_user_usage(current_user: User = Depends(get_current_user)):
             usage = {
                 "normal_chats_used": 0,
                 "interview_chats_used": 0,
-                "normal_chat_limit": 100,  # From your .env
-                "interview_chat_limit": 50,  # From your .env
+                "normal_chat_limit": 10, 
+                "interview_chat_limit": 5,  
                 "reset_date": datetime.utcnow().isoformat()
             }
         
         # Add limits from subscription or use defaults
         if subscription and subscription.get("subscription_tiers"):
             tier = subscription["subscription_tiers"]
-            usage["normal_chat_limit"] = tier.get("normal_chat_limit", 100)
-            usage["interview_chat_limit"] = tier.get("interview_chat_limit", 50)
+            usage["normal_chat_limit"] = tier.get("normal_chat_limit", 10)  # Changed back to 10
+            usage["interview_chat_limit"] = tier.get("interview_chat_limit", 5)  # Changed back to 5
         else:
-            usage["normal_chat_limit"] = 100
-            usage["interview_chat_limit"] = 50
+            usage["normal_chat_limit"] = 10  # Changed back to 10
+            usage["interview_chat_limit"] = 5  # Changed back to 5
         
         return usage
         

@@ -45,10 +45,30 @@ const ChatInterface = () => {
   const [attachedFiles, setAttachedFiles] = useState([])
 
   useEffect(() => {
+    console.log('ChatInterface: chatId from params:', chatId) // Debug log
+    
     if (chatId && chatId !== 'new') {
+      // Validate chatId before attempting to load
+      if (chatId === 'undefined' || chatId === 'null') {
+        console.error('Invalid chatId detected, redirecting to new chat')
+        navigate('/workspace/chat/new', { replace: true })
+        return
+      }
+      
+      // Validate UUID format
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+      if (!uuidRegex.test(chatId)) {
+        console.error('Invalid chatId format, redirecting to new chat')
+        navigate('/workspace/chat/new', { replace: true })
+        return
+      }
+      
       loadChat(chatId)
     } else if (chatId === 'new') {
       clearCurrentChat()
+    } else {
+      // No chatId or invalid chatId, redirect to new chat
+      navigate('/workspace/chat/new', { replace: true })
     }
 
     return () => {
@@ -57,7 +77,7 @@ const ChatInterface = () => {
         clearCurrentChat()
       }
     }
-  }, [chatId, loadChat, clearCurrentChat])
+  }, [chatId, loadChat, clearCurrentChat, navigate])
 
   useEffect(() => {
     scrollToBottom()
@@ -70,6 +90,15 @@ const ChatInterface = () => {
       clearError()
     }
   }, [error, clearError])
+
+  // Handle chat loading errors
+  useEffect(() => {
+    if (error && error.includes('Invalid chat ID')) {
+      // Redirect to new chat if current chat is invalid
+      navigate('/workspace/chat/new', { replace: true })
+      clearError()
+    }
+  }, [error, navigate, clearError])
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -143,7 +172,27 @@ const ChatInterface = () => {
 
       {/* Messages Area */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {messages.length === 0 && !isLoading && (
+        {/* Show error message if chat failed to load */}
+        {error && error !== 'USAGE_LIMIT_REACHED' && (
+          <div className="flex flex-col items-center justify-center h-full text-center">
+            <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mb-4">
+              <svg className="w-8 h-8 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.268 16.5c-.77.833.192 2.5 1.732 2.5z" />
+              </svg>
+            </div>
+            <h3 className="text-xl font-semibold text-white-primary mb-2">
+              Chat Not Found
+            </h3>
+            <p className="text-gray-400 max-w-md mb-4">
+              {error || 'The chat you are looking for could not be found.'}
+            </p>
+            <Button onClick={() => navigate('/workspace/chat/new')} className="mx-auto">
+              Start New Chat
+            </Button>
+          </div>
+        )}
+        
+        {messages.length === 0 && !isLoading && !error && (
           <div className="flex flex-col items-center justify-center h-full text-center">
             <div className="w-16 h-16 bg-blue-500/20 rounded-full flex items-center justify-center mb-4">
               <svg className="w-8 h-8 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -168,7 +217,7 @@ const ChatInterface = () => {
           </div>
         )}
 
-        {messages.map((message, index) => (
+        {!error && messages.map((message, index) => (
           <MessageBubble
             key={message.id || `message-${index}`}
             message={message}
@@ -177,7 +226,7 @@ const ChatInterface = () => {
         ))}
 
         {/* Typing indicator */}
-        {isTyping && (
+        {!error && isTyping && (
           <MessageBubble
             key="typing-indicator"
             message={{

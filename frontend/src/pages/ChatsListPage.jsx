@@ -53,8 +53,23 @@ const ChatsListPage = () => {
     navigate('/workspace/chat/new')
   }
 
-  const handleChatClick = (chat) => {
-    navigate(`/workspace/chat/${chat.id}`)
+  const handleChatClick = (chatId) => {
+    // Validate chatId before navigating
+    if (!chatId || chatId === 'undefined' || chatId === 'null') {
+      console.error('Invalid chatId, cannot navigate')
+      toast.error('Invalid chat selected')
+      return
+    }
+    
+    // Validate UUID format
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+    if (!uuidRegex.test(chatId)) {
+      console.error('Invalid chatId format, cannot navigate')
+      toast.error('Invalid chat format')
+      return
+    }
+    
+    navigate(`/workspace/chat/${chatId}`)
   }
 
   const handleDeleteChat = async () => {
@@ -134,6 +149,8 @@ const ChatsListPage = () => {
           {formatDateTime(chat.updated_at || chat.created_at)}
         </span>
       </div>
+      
+      {/* Remove debug info - was showing chat ID to users */}
     </div>
   )
 

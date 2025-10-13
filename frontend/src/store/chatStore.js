@@ -74,6 +74,11 @@ const useChatStore = create(
         try {
           set({ isLoading: true, error: null })
           
+          // Validate chatId before attempting to load
+          if (!chatId || chatId === 'undefined' || chatId === 'null' || chatId === 'new') {
+            throw new Error('Invalid chat ID')
+          }
+          
           // Get chat details with messages
           const chat = await chatService.getChat(chatId, 'normal')
           
@@ -101,6 +106,15 @@ const useChatStore = create(
             error: error.message || 'Failed to load chat',
             isLoading: false 
           })
+          
+          // If chat not found or invalid, redirect to new chat
+          if (error.message?.includes('Invalid chat ID')) {
+            // Clear current chat state
+            set({
+              currentChat: null,
+              messages: []
+            })
+          }
         }
       },
 
