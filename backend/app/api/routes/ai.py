@@ -6,7 +6,7 @@ OpenAI, Whisper, and Coqui TTS integration
 from fastapi import APIRouter, HTTPException, Depends, status, File, UploadFile
 from typing import Optional
 import logging
-import openai
+from openai import OpenAI
 import os
 import uuid
 import json
@@ -27,7 +27,7 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 
 # Initialize OpenAI client
-openai.api_key = settings.OPENAI_API_KEY
+client = OpenAI(api_key=settings.OPENAI_API_KEY)
 
 
 # ================================================
@@ -43,15 +43,27 @@ async def chat_completion(
     db = DatabaseManager()
     
     try:
-        # Prepare messages for OpenAI
+        # Prepare messages for OpenAI with conversation history
         messages = [
-            {"role": "system", "content": "You are a helpful AI assistant designed to help users prepare for interviews and answer general questions."},
-            {"role": "user", "content": request.content}
+            {"role": "system", "content": "You are a helpful AI assistant designed to help users prepare for interviews and answer general questions."}
         ]
+        
+        # Add conversation history if provided
+        if hasattr(request, 'conversation_history') and request.conversation_history:
+            # Add last 10 messages for context
+            for msg in request.conversation_history[-10:]:
+                if isinstance(msg, dict):
+                    role = "user" if msg.get("role") == "user" else "assistant"
+                    content = msg.get("content", "")
+                    if content:
+                        messages.append({"role": role, "content": content})
+        
+        # Add current user message
+        messages.append({"role": "user", "content": request.content})
         
         # Make OpenAI API call
         response = await asyncio.to_thread(
-            openai.ChatCompletion.create,
+            client.chat.completions.create,
             model=settings.OPENAI_MODEL,
             messages=messages,
             max_tokens=settings.OPENAI_MAX_TOKENS,
@@ -62,17 +74,25 @@ async def chat_completion(
         ai_message = response.choices[0].message.content
         usage_data = response.usage
         
-        # Calculate cost (approximate)
-        cost = calculate_openai_cost(usage_data, settings.OPENAI_MODEL)
+        # Calculate cost (approximate) - only if cost calculation function exists
+        cost = 0.0
+        try:
+            cost = calculate_openai_cost(usage_data, settings.OPENAI_MODEL)
+        except NameError:
+            # Cost calculation function not implemented, use default
+            cost = (usage_data.total_tokens / 1000) * 0.002  # Approximate cost
         
-        # Log API usage
-        await db.log_api_usage(
-            user_id=str(current_user.id),
-            provider="openai",
-            endpoint="chat_completion",
-            tokens=usage_data.total_tokens,
-            cost=cost
-        )
+        # Log API usage - only if log function exists
+        try:
+            await db.log_api_usage(
+                user_id=str(current_user.id),
+                provider="openai",
+                endpoint="chat_completion",
+                tokens=usage_data.total_tokens,
+                cost=cost
+            )
+        except Exception as log_error:
+            logger.warning(f"Failed to log API usage: {log_error}")
         
         # Create response message
         message = Message(
@@ -83,7 +103,7 @@ async def chat_completion(
         
         return ChatResponse(
             message=message,
-            usage=usage_data.dict(),
+            usage=usage_data.model_dump() if hasattr(usage_data, 'model_dump') else usage_data.__dict__,
             cost=cost
         )
         
@@ -110,15 +130,27 @@ async def interview_chat(
         # Build system prompt for interview context
         system_prompt = build_interview_system_prompt(job_position, company_name, difficulty)
         
-        # Prepare messages for OpenAI
+        # Prepare messages for OpenAI with conversation history
         messages = [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": request.content}
+            {"role": "system", "content": system_prompt}
         ]
+        
+        # Add conversation history if provided
+        if hasattr(request, 'conversation_history') and request.conversation_history:
+            # Add last 10 messages for context
+            for msg in request.conversation_history[-10:]:
+                if isinstance(msg, dict):
+                    role = "user" if msg.get("role") == "user" else "assistant"
+                    content = msg.get("content", "")
+                    if content:
+                        messages.append({"role": role, "content": content})
+        
+        # Add current user message
+        messages.append({"role": "user", "content": request.content})
         
         # Make OpenAI API call
         response = await asyncio.to_thread(
-            openai.ChatCompletion.create,
+            client.chat.completions.create,
             model=settings.OPENAI_MODEL,
             messages=messages,
             max_tokens=settings.OPENAI_MAX_TOKENS,
@@ -129,17 +161,25 @@ async def interview_chat(
         ai_message = response.choices[0].message.content
         usage_data = response.usage
         
-        # Calculate cost
-        cost = calculate_openai_cost(usage_data, settings.OPENAI_MODEL)
+        # Calculate cost (approximate) - only if cost calculation function exists
+        cost = 0.0
+        try:
+            cost = calculate_openai_cost(usage_data, settings.OPENAI_MODEL)
+        except NameError:
+            # Cost calculation function not implemented, use default
+            cost = (usage_data.total_tokens / 1000) * 0.002  # Approximate cost
         
-        # Log API usage
-        await db.log_api_usage(
-            user_id=str(current_user.id),
-            provider="openai",
-            endpoint="interview_chat",
-            tokens=usage_data.total_tokens,
-            cost=cost
-        )
+        # Log API usage - only if log function exists
+        try:
+            await db.log_api_usage(
+                user_id=str(current_user.id),
+                provider="openai",
+                endpoint="interview_chat",
+                tokens=usage_data.total_tokens,
+                cost=cost
+            )
+        except Exception as log_error:
+            logger.warning(f"Failed to log API usage: {log_error}")
         
         # Generate audio if requested
         audio_url = None
@@ -156,7 +196,7 @@ async def interview_chat(
         
         return ChatResponse(
             message=message,
-            usage=usage_data.dict(),
+            usage=usage_data.model_dump() if hasattr(usage_data, 'model_dump') else usage_data.__dict__,
             cost=cost
         )
         
@@ -215,7 +255,7 @@ async def speech_to_text(
         # Transcribe with Whisper
         with open(temp_path, "rb") as audio:
             response = await asyncio.to_thread(
-                openai.Audio.transcribe,
+                client.audio.transcriptions.create,
                 model=settings.WHISPER_MODEL,
                 file=audio,
                 response_format="json"
@@ -289,7 +329,7 @@ async def text_to_speech(
     try:
         # Generate audio with OpenAI TTS
         response = await asyncio.to_thread(
-            openai.Audio.speech.create,
+            client.audio.speech.create,
             model=settings.TTS_MODEL,
             voice=voice,
             input=text,
@@ -452,7 +492,7 @@ async def generate_tts_audio(text: str, user_id: str) -> str:
         
         # Generate audio with OpenAI TTS
         response = await asyncio.to_thread(
-            openai.Audio.speech.create,
+            client.audio.speech.create,
             model=settings.TTS_MODEL,
             voice=settings.TTS_VOICE,
             input=text[:4000]  # Truncate if too long

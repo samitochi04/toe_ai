@@ -7,6 +7,7 @@ from typing import Optional
 import os
 import uuid
 import logging
+from datetime import datetime, timedelta
 
 from app.core.auth import get_current_user
 from app.core.database import DatabaseManager
@@ -67,7 +68,6 @@ async def update_user_profile(
             return current_user
         
         # Add updated_at timestamp
-        from datetime import datetime
         update_data["updated_at"] = datetime.utcnow().isoformat()
         
         # Update user profile
@@ -209,7 +209,6 @@ async def get_user_stats(current_user: User = Depends(get_current_user)):
         subscription = await db.get_user_subscription(str(current_user.id))
         
         # Get API usage summary (last 30 days)
-        from datetime import datetime, timedelta
         thirty_days_ago = (datetime.utcnow() - timedelta(days=30)).isoformat()
         
         api_usage_response = (
@@ -326,4 +325,45 @@ async def get_user_by_alias(alias: str):
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to get user information"
+        )
+
+
+@router.get("/usage")
+async def get_user_usage(current_user: User = Depends(get_current_user)):
+    """Get user's current usage statistics"""
+    db = DatabaseManager()
+    
+    try:
+        # Get usage tracking
+        usage = await db.get_user_usage(str(current_user.id))
+        
+        # Get subscription info
+        subscription = await db.get_user_subscription(str(current_user.id))
+        
+        # Set default values if no usage record exists
+        if not usage:
+            usage = {
+                "normal_chats_used": 0,
+                "interview_chats_used": 0,
+                "normal_chat_limit": 100,  # From your .env
+                "interview_chat_limit": 50,  # From your .env
+                "reset_date": datetime.utcnow().isoformat()
+            }
+        
+        # Add limits from subscription or use defaults
+        if subscription and subscription.get("subscription_tiers"):
+            tier = subscription["subscription_tiers"]
+            usage["normal_chat_limit"] = tier.get("normal_chat_limit", 100)
+            usage["interview_chat_limit"] = tier.get("interview_chat_limit", 50)
+        else:
+            usage["normal_chat_limit"] = 100
+            usage["interview_chat_limit"] = 50
+        
+        return usage
+        
+    except Exception as e:
+        logger.error(f"Error getting user usage: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to get usage information"
         )

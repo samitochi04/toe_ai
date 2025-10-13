@@ -1,0 +1,241 @@
+{
+  "common": {
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "success": "Succès",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "close": "Fermer",
+    "back": "Retour",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "submit": "Soumettre",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "sort": "Trier",
+    "export": "Exporter",
+    "share": "Partager",
+    "copy": "Copier",
+    "copied": "Copié!",
+    "addMore": "Ajouter Plus",
+    "language": "Langue",
+    "english": "Anglais",
+    "french": "Français"
+  },
+  "landing": {
+    "hero": {
+      "title": "Ne Misez Pas Sur Votre Entretien,",
+      "subtitle": "Entraînez-Vous Avec Nous",
+      "description": "Pratiquez avec une simulation d'entretien alimentée par l'IA et l'interaction vocale. Obtenez des commentaires personnalisés et renforcez votre confiance.",
+      "cta": {
+        "signUp": "S'inscrire avec Google",
+        "createAccount": "Créer un compte",
+        "signIn": "Se connecter",
+        "or": "OU"
+      },
+      "alreadyHaveAccount": "Vous avez déjà un compte ?",
+      "termsText": "En vous inscrivant, vous acceptez les",
+      "termsLink": "Conditions d'utilisation",
+      "and": "et",
+      "privacyLink": "Politique de confidentialité",
+      "including": "y compris",
+      "cookieLink": "Utilisation des cookies"
+    },
+    "footer": {
+      "aboutUs": "À propos",
+      "helpCenter": "Centre d'aide",
+      "termOfService": "Conditions d'utilisation",
+      "privacyPolicy": "Politique de confidentialité",
+      "cookieUse": "Utilisation des cookies",
+      "english": "Français"
+    }
+  },
+  "auth": {
+    "signIn": {
+      "title": "Se connecter",
+      "email": "Email",
+      "password": "Mot de passe",
+      "signIn": "Se connecter",
+      "googleSignIn": "Se connecter avec Google",
+      "forgotPassword": "Mot de passe oublié ?",
+      "noAccount": "Vous n'avez pas de compte ?",
+      "createOne": "Créer un compte"
+    },
+    "signUp": {
+      "title": "Créer votre compte",
+      "name": "Nom",
+      "email": "Email",
+      "password": "Mot de passe",
+      "confirmPassword": "Confirmer le mot de passe",
+      "signUp": "S'inscrire",
+      "googleSignUp": "S'inscrire avec Google",
+      "haveAccount": "Vous avez déjà un compte ?",
+      "signInLink": "Se connecter"
+    },
+    "validation": {
+      "required": "Ce champ est requis",
+      "email": "Veuillez entrer une adresse email valide",
+      "passwordLength": "Le mot de passe doit contenir au moins 8 caractères",
+      "passwordMatch": "Les mots de passe ne correspondent pas",
+      "nameLength": "Le nom doit contenir au moins 2 caractères"
+    },
+    "messages": {
+      "signUpSuccess": "Compte créé avec succès !",
+      "signInSuccess": "Bon retour !",
+      "signOutSuccess": "Déconnecté avec succès",
+      "signUpError": "Échec de la création du compte",
+      "signInError": "Email ou mot de passe invalide",
+      "googleAuthError": "Échec de l'authentification Google"
+    }
+  },
+  "workspace": {
+    "mainWorkspace": "Espace de travail principal",
+    "chatting": "Discussion",
+    "newChat": "Nouvelle discussion",
+    "chats": "Discussions",
+    "interviewChat": "Entretien",
+    "newInterview": "Nouvel entretien",
+    "interviews": "Entretiens",
+    "shares": "Partages",
+    "premium": "Premium",
+    "settings": "Paramètres"
+  },
+  "dashboard": {
+    "title": "Tableau de bord",
+    "welcome": "Bon retour, {{name}} !",
+    "getStarted": {
+      "title": "Commencer",
+      "newChat": "Nouvelle discussion",
+      "newInterview": "Nouvel entretien",
+      "shareChat": "Partager discussion"
+    },
+    "recentChats": {
+      "title": "Discussions récentes",
+      "viewAll": "Voir tout",
+      "noChats": "Aucune discussion"
+    },
+    "recentInterviews": {
+      "title": "Entretiens récents",
+      "viewAll": "Voir tout",
+      "noInterviews": "Aucun entretien"
+    },
+    "recentShares": {
+      "title": "Partages récents",
+      "viewAll": "Voir tout",
+      "noShares": "Aucun partage"
+    },
+    "stats": {
+      "totalChats": "Total des discussions",
+      "totalInterviews": "Total des entretiens",
+      "totalMinutes": "Total des minutes",
+      "thisMonth": "Ce mois-ci"
+    },
+    "quickActions": {
+      "title": "Actions rapides",
+      "newChat": "Nouveau chat",
+      "newInterview": "Nouvel entretien",
+      "viewHistory": "Voir l'historique",
+      "settings": "Paramètres"
+    },
+    "recentActivity": {
+      "title": "Activité récente",
+      "noActivity": "Aucune activité récente"
+    }
+  },
+  "chat": {
+    "title": "Discussion",
+    "newChat": "Nouvelle discussion",
+    "myChats": "Mes Discussions",
+    "manageConversations": "Gérez vos conversations",
+    "searchChats": "Rechercher des discussions...",
+    "noChats": "Aucune discussion encore",
+    "noSearchResults": "Aucune discussion trouvée",
+    "tryDifferentSearch": "Essayez un autre terme de recherche",
+    "startFirstChat": "Commencez par créer votre première discussion",
+    "createFirstChat": "Créer la Première Discussion",
+    "startConversation": "Commencer une conversation",
+    "typeMessage": "Tapez votre message...",
+    "inputPlaceholder": "Message à TOE AI...",
+    "inputDisabled": "La discussion est désactivée",
+    "messages": "messages",
+    "send": "Envoyer",
+    "attachFile": "Joindre un fichier",
+    "uploadFile": "Télécharger le Fichier",
+    "exportToPDF": "Exporter en PDF",
+    "shareChat": "Partager la Discussion",
+    "deleteChat": "Supprimer la Discussion",
+    "chatHistory": "Historique des Discussions",
+    "createChat": "Créez votre première discussion",
+    "rename": "Renommer",
+    "renameChat": "Renommer la Discussion",
+    "enterNewTitle": "Entrez le nouveau titre",
+    "share": "Partager",
+    "export": "Exporter",
+    "delete": "Supprimer la Discussion",
+    "deleteConfirmTitle": "Supprimer la Discussion",
+    "deleteConfirmMessage": "Êtes-vous sûr de vouloir supprimer cette discussion ? Cette action ne peut pas être annulée.",
+    "welcomeTitle": "Bienvenue dans TOE AI",
+    "welcomeMessage": "Commencez une conversation en tapant un message ci-dessous. Je suis là pour vous aider !",
+    "premiumRequired": "Abonnement Premium requis",
+    "upgradeForFiles": "Passez à Premium pour télécharger des fichiers",
+    "invalidFileType": "Seules les images et les PDF sont autorisés",
+    "fileTooLarge": "La taille du fichier doit être inférieure à 10 Mo",
+    "dropFiles": "Déposez vos fichiers ici",
+    "placeholder": "Tapez votre message...",
+    "thinking": "L'IA réfléchit...",
+    "history": "Historique des discussions"
+  },
+  "interview": {
+    "title": "Entretien",
+    "newInterview": "Nouvel entretien",
+    "startInterview": "Commencer l'entretien",
+    "endInterview": "Terminer l'entretien",
+    "settings": {
+      "title": "Paramètres de l'entretien",
+      "difficulty": "Difficulté",
+      "jobRole": "Poste",
+      "duration": "Durée",
+      "voiceSpeed": "Vitesse de la voix",
+      "language": "Langue"
+    },
+    "recording": {
+      "start": "Commencer l'enregistrement",
+      "stop": "Arrêter l'enregistrement",
+      "listening": "Écoute...",
+      "processing": "Traitement..."
+    }
+  },
+  "profile": {
+    "title": "Profil",
+    "personalInfo": "Informations personnelles",
+    "subscription": "Abonnement",
+    "billing": "Facturation",
+    "settings": "Paramètres",
+    "account": "Compte"
+  },
+  "premium": {
+    "upgrade": "Améliorer"
+  },
+  "subscription": {
+    "free": "Plan gratuit",
+    "premium": "Plan premium",
+    "upgrade": "Passer au premium",
+    "cancel": "Annuler l'abonnement",
+    "benefits": {
+      "unlimited": "Discussions et entretiens illimités",
+      "advanced": "Fonctionnalités avancées",
+      "priority": "Support prioritaire",
+      "export": "Export PDF",
+      "sharing": "Partage illimité"
+    }
+  },
+  "errors": {
+    "generic": "Quelque chose s'est mal passé. Veuillez réessayer.",
+    "network": "Erreur réseau. Veuillez vérifier votre connexion.",
+    "notFound": "Page non trouvée",
+    "unauthorized": "Vous n'êtes pas autorisé à accéder à cette page",
+    "serverError": "Erreur serveur. Veuillez réessayer plus tard."
+  }
+}

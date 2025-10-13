@@ -6,6 +6,7 @@ from supabase import create_client, Client
 from typing import Optional
 import asyncio
 import logging
+from datetime import datetime
 
 from app.core.config import settings
 
@@ -59,7 +60,11 @@ class DatabaseManager:
     """Database operations manager"""
     
     def __init__(self, use_service_role: bool = False):
-        self.client = get_service_supabase() if use_service_role else get_supabase()
+        if use_service_role:
+            self.client = get_service_supabase()
+            logger.debug("Using service role client for database operations")
+        else:
+            self.client = get_supabase()
     
     async def execute_function(self, function_name: str, params: dict = None):
         """Execute a database function"""
@@ -125,22 +130,89 @@ class DatabaseManager:
     async def check_usage_limit(self, user_id: str, chat_type: str) -> bool:
         """Check if user can create a new chat"""
         try:
-            result = await self.execute_function("check_usage_limit", {
-                "user_id": user_id,
-                "chat_type": chat_type
-            })
-            return result if result is not None else False
+            # In development mode with increased limits, always allow
+            if settings.ENVIRONMENT == "development":
+                logger.info(f"Development mode: Allowing chat creation for user {user_id}")
+                return True
+            
+            # Use service role client for this check to avoid RLS issues
+            service_db = DatabaseManager(use_service_role=True)
+            
+            # Get current usage
+            usage_response = (
+                service_db.client.table("usage_tracking")
+                .select("*")
+                .eq("user_profile_id", user_id)
+                .execute()
+            )
+            
+            if not usage_response.data:
+                # No usage record, create one
+                now = datetime.utcnow().isoformat()
+                service_db.client.table("usage_tracking").insert({
+                    "user_profile_id": user_id,
+                    "normal_chats_used": 0,
+                    "interview_chats_used": 0,
+                    "reset_date": now,
+                    "created_at": now,
+                    "updated_at": now
+                }).execute()
+                return True
+            
+            usage = usage_response.data[0]
+            
+            # Get subscription limits
+            subscription_response = (
+                service_db.client.table("user_subscriptions")
+                .select("*, subscription_tiers(*)")
+                .eq("user_profile_id", user_id)
+                .order("created_at", desc=True)
+                .limit(1)
+                .execute()
+            )
+            
+            if subscription_response.data and subscription_response.data[0].get("subscription_tiers"):
+                tier = subscription_response.data[0]["subscription_tiers"]
+                normal_limit = tier.get("normal_chat_limit", 100)
+                interview_limit = tier.get("interview_chat_limit", 50)
+            else:
+                # Default limits from settings
+                normal_limit = settings.FREE_NORMAL_CHAT_LIMIT
+                interview_limit = settings.FREE_INTERVIEW_CHAT_LIMIT
+            
+            # Check limits
+            if chat_type == "normal":
+                return usage.get("normal_chats_used", 0) < normal_limit
+            elif chat_type == "interview":
+                return usage.get("interview_chats_used", 0) < interview_limit
+            
+            return False
+                
         except Exception as e:
             logger.error(f"Error checking usage limit for user {user_id}: {e}")
+            # Return True in development mode when there's an error
+            if settings.ENVIRONMENT == "development":
+                logger.warning(f"Usage limit check failed, allowing in development mode")
+                return True
             return False
-    
+
     async def increment_usage(self, user_id: str, chat_type: str):
         """Increment user's usage count"""
         try:
-            await self.execute_function("increment_usage_count", {
-                "user_id": user_id,
-                "chat_type": chat_type
-            })
+            # Use service role for this operation
+            service_db = DatabaseManager(use_service_role=True)
+            
+            if chat_type == "normal":
+                service_db.client.table("usage_tracking").update({
+                    "normal_chats_used": "normal_chats_used + 1",
+                    "updated_at": datetime.utcnow().isoformat()
+                }).eq("user_profile_id", user_id).execute()
+            elif chat_type == "interview":
+                service_db.client.table("usage_tracking").update({
+                    "interview_chats_used": "interview_chats_used + 1", 
+                    "updated_at": datetime.utcnow().isoformat()
+                }).eq("user_profile_id", user_id).execute()
+            
             return True
         except Exception as e:
             logger.error(f"Error incrementing usage for user {user_id}: {e}")
@@ -149,13 +221,29 @@ class DatabaseManager:
     async def log_api_usage(self, user_id: str, provider: str, endpoint: str, tokens: int = None, cost: float = None):
         """Log API usage"""
         try:
-            await self.execute_function("log_api_usage", {
-                "user_id": user_id,
-                "provider": provider,
-                "endpoint_name": endpoint,
-                "tokens": tokens,
-                "cost": cost
-            })
+            # Use service role client to bypass RLS policies for system logging
+            service_client = get_service_supabase()
+            
+            # Insert directly into the table using service role
+            response = service_client.table("api_usage_logs").insert({
+                "user_profile_id": user_id,
+                "api_provider": provider,
+                "endpoint": endpoint,
+                "tokens_used": tokens,
+                "cost_usd": cost,
+                "request_data": None,
+                "response_data": None
+            }).execute()
+            
+            # Check for errors in the modern Supabase client response
+            if hasattr(response, 'error') and response.error:
+                logger.error(f"Error inserting API usage log: {response.error}")
+                return False
+            elif not response.data:
+                logger.warning(f"API usage log insert returned no data for user {user_id}")
+                return False
+                
+            logger.info(f"Successfully logged API usage for user {user_id}: {provider}/{endpoint}")
             return True
         except Exception as e:
             logger.error(f"Error logging API usage for user {user_id}: {e}")

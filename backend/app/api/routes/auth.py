@@ -38,28 +38,27 @@ async def register(user_data: UserCreate):
                 detail="Registration failed. Email might already be in use."
             )
         
-        # The user profile will be automatically created by the trigger
-        # Wait a moment and then get the profile
-        import asyncio
-        await asyncio.sleep(1)  # Allow trigger to complete
-        
-        user_profile = await auth_manager.db.get_user_by_auth_id(result["auth_user"].id)
+        # The user profile is now created manually and returned in the result
+        user_profile = result.get("profile")
         if not user_profile:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="User profile creation failed"
+                detail="Database error saving new user"
             )
         
-        # Create access token
+        # Create tokens
         access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
         access_token = auth_manager.create_access_token(
             data={"sub": result["auth_user"].id},
             expires_delta=access_token_expires
         )
+        refresh_token = auth_manager.create_refresh_token(
+            data={"sub": result["auth_user"].id}
+        )
         
         return LoginResponse(
             access_token=access_token,
-            refresh_token=result["session"].refresh_token if result["session"] else "",
+            refresh_token=refresh_token,
             token_type="bearer",
             expires_in=settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
             user=User(**user_profile)
@@ -94,16 +93,19 @@ async def login(login_data: LoginRequest):
                 headers={"WWW-Authenticate": "Bearer"},
             )
         
-        # Create access token
+        # Create tokens
         access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
         access_token = auth_manager.create_access_token(
             data={"sub": result["auth_user"].id},
             expires_delta=access_token_expires
         )
+        refresh_token = auth_manager.create_refresh_token(
+            data={"sub": result["auth_user"].id}
+        )
         
         return LoginResponse(
             access_token=access_token,
-            refresh_token=result["session"].refresh_token if result["session"] else "",
+            refresh_token=refresh_token,
             token_type="bearer",
             expires_in=settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
             user=User(**result["profile"])
@@ -158,25 +160,21 @@ async def google_auth(google_data: GoogleAuthRequest):
         )
 
 
-@router.post("/refresh", response_model=dict)
+@router.post("/refresh")
 async def refresh_token(refresh_data: RefreshTokenRequest):
     """Refresh access token"""
     auth_manager = AuthManager()
     
     try:
-        new_token = await auth_manager.refresh_token(refresh_data.refresh_token)
+        tokens = await auth_manager.refresh_token(refresh_data.refresh_token)
         
-        if not new_token:
+        if not tokens:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid refresh token"
             )
         
-        return {
-            "access_token": new_token,
-            "token_type": "bearer",
-            "expires_in": settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60
-        }
+        return tokens
         
     except HTTPException:
         raise

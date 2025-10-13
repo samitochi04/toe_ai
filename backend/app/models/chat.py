@@ -112,6 +112,7 @@ class ChatMessageRequest(BaseModel):
     """Chat message request model"""
     content: str = Field(..., min_length=1, max_length=4000)
     include_audio: bool = False
+    conversation_history: Optional[List[Dict[str, Any]]] = Field(default_factory=list)
 
 
 class AudioChatRequest(BaseModel):

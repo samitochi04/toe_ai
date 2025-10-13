@@ -1,0 +1,309 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "submit": "Submit",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "export": "Export",
+    "share": "Share",
+    "copy": "Copy",
+    "copied": "Copied!",
+    "addMore": "Add More",
+    "language": "Language",
+    "english": "English",
+    "french": "French"
+  },
+  "landing": {
+    "hero": {
+      "title": "Don't Bet Your Interview,",
+      "subtitle": "Train With Us",
+      "description": "Practice with AI-powered interview simulation and voice interaction. Get personalized feedback and boost your confidence.",
+      "cta": {
+        "signUp": "Sign up with Google",
+        "createAccount": "Create an account",
+        "signIn": "Sign in",
+        "or": "OR"
+      },
+      "alreadyHaveAccount": "Already have an account ?",
+      "termsText": "By signing up, you agree to the",
+      "termsLink": "Terms of Service",
+      "and": "and",
+      "privacyLink": "Privacy Policy",
+      "including": "including",
+      "cookieLink": "Cookie Use"
+    },
+    "footer": {
+      "aboutUs": "About Us",
+      "helpCenter": "Help Center",
+      "termOfService": "Term of Service",
+      "privacyPolicy": "Privacy Policy",
+      "cookieUse": "Cookie Use",
+      "english": "English"
+    }
+  },
+  "auth": {
+    "signIn": {
+      "title": "Sign in",
+      "email": "Email",
+      "password": "Password",
+      "signIn": "Sign In",
+      "googleSignIn": "Sign in with Google",
+      "forgotPassword": "Forgot your password?",
+      "noAccount": "Don't have an account?",
+      "createOne": "Create one"
+    },
+    "signUp": {
+      "title": "Create your account",
+      "name": "Name",
+      "email": "Email", 
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "signUp": "Sign Up",
+      "googleSignUp": "Sign up with Google",
+      "haveAccount": "Already have an account?",
+      "signInLink": "Sign in"
+    },
+    "validation": {
+      "required": "This field is required",
+      "email": "Please enter a valid email address",
+      "passwordLength": "Password must be at least 8 characters",
+      "passwordMatch": "Passwords do not match",
+      "nameLength": "Name must be at least 2 characters"
+    },
+    "messages": {
+      "signUpSuccess": "Account created successfully!",
+      "signInSuccess": "Welcome back!",
+      "signOutSuccess": "Signed out successfully",
+      "signUpError": "Failed to create account",
+      "signInError": "Invalid email or password",
+      "googleAuthError": "Google authentication failed"
+    }
+  },
+  "workspace": {
+    "mainWorkspace": "Main Workspace",
+    "chatting": "Chatting",
+    "newChat": "New Chat",
+    "chats": "Chats",
+    "interviewChat": "Interview Chat",
+    "newInterview": "New Interview",
+    "interviews": "Interviews",
+    "shares": "Shares",
+    "premium": "Premium",
+    "settings": "Settings"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome back, {{name}}!",
+    "getStarted": {
+      "title": "Get Started",
+      "newChat": "Start New Chat",
+      "newInterview": "Start New Interview",
+      "shareChat": "Share Chat"
+    },
+    "recentChats": {
+      "title": "Recent Chats",
+      "viewAll": "View All",
+      "noChats": "No chats yet"
+    },
+    "recentInterviews": {
+      "title": "Recent Interview Chats",
+      "viewAll": "View All",
+      "noInterviews": "No interviews yet"
+    },
+    "recentShares": {
+      "title": "Recent Shares",
+      "viewAll": "View All",
+      "noShares": "No shares yet"
+    },
+    "stats": {
+      "totalChats": "Total Chats",
+      "totalInterviews": "Total Interviews",
+      "totalMinutes": "Total Minutes",
+      "thisMonth": "This Month"
+    },
+    "quickActions": {
+      "title": "Quick Actions",
+      "newChat": "New Chat",
+      "newInterview": "New Interview",
+      "viewHistory": "View History",
+      "settings": "Settings"
+    },
+    "recentActivity": {
+      "title": "Recent Activity",
+      "noActivity": "No recent activity"
+    }
+  },
+  "chat": {
+    "title": "Chat",
+    "newChat": "New Chat",
+    "myChats": "My Chats",
+    "manageConversations": "Manage your conversations",
+    "searchChats": "Search chats...",
+    "noChats": "No chats yet",
+    "noSearchResults": "No chats found",
+    "tryDifferentSearch": "Try a different search term",
+    "startFirstChat": "Get started by creating your first chat",
+    "createFirstChat": "Create First Chat",
+    "startConversation": "Start a conversation",
+    "typeMessage": "Type your message...",
+    "inputPlaceholder": "Message TOE AI...",
+    "inputDisabled": "Chat is disabled",
+    "messages": "messages",
+    "send": "Send",
+    "attachFile": "Attach file",
+    "uploadFile": "Upload File",
+    "exportToPDF": "Export to PDF",
+    "shareChat": "Share Chat",
+    "deleteChat": "Delete Chat",
+    "chatHistory": "Chat History",
+    "createChat": "Create your first chat",
+    "rename": "Rename",
+    "renameChat": "Rename Chat",
+    "enterNewTitle": "Enter new title",
+    "share": "Share",
+    "export": "Export",
+    "delete": "Delete Chat",
+    "deleteConfirmTitle": "Delete Chat",
+    "deleteConfirmMessage": "Are you sure you want to delete this chat? This action cannot be undone.",
+    "welcomeTitle": "Welcome to TOE AI",
+    "welcomeMessage": "Start a conversation by typing a message below. I'm here to help!",
+    "premiumRequired": "Premium subscription required",
+    "upgradeForFiles": "Upgrade to Premium to upload files",
+    "invalidFileType": "Only images and PDFs are allowed",
+    "fileTooLarge": "File size must be less than 10MB",
+    "dropFiles": "Drop your files here",
+    "placeholder": "Type your message...",
+    "thinking": "AI is thinking...",
+    "history": "Chat History"
+  },
+  "interview": {
+    "title": "Interview",
+    "newInterview": "New Interview",
+    "startInterview": "Start Interview",
+    "endInterview": "End Interview",
+    "settings": {
+      "title": "Interview Settings",
+      "difficulty": "Difficulty",
+      "jobRole": "Job Role",
+      "duration": "Duration",
+      "voiceSpeed": "Voice Speed",
+      "language": "Language"
+    },
+    "recording": {
+      "start": "Start Recording",
+      "stop": "Stop Recording",
+      "listening": "Listening...",
+      "processing": "Processing..."
+    }
+  },
+  "profile": {
+    "title": "Profile",
+    "personalInfo": "Personal Information",
+    "subscription": "Subscription",
+    "billing": "Billing",
+    "settings": "Settings",
+    "account": "Account"
+  },
+  "premium": {
+    "upgrade": "Upgrade",
+    "title": "Choose Your Plan",
+    "subtitle": "Unlock unlimited interview practice with our premium features",
+    "currentUsage": "Current Usage",
+    "monthly": "Monthly",
+    "yearly": "Yearly",
+    "save": "Save",
+    "mostPopular": "Most Popular",
+    "free": {
+      "title": "Free",
+      "price": "€0",
+      "description": "Perfect for getting started"
+    },
+    "premium": {
+      "title": "Premium", 
+      "monthlyPrice": "€5",
+      "yearlyPrice": "€50",
+      "description": "Perfect for regular interview practice",
+      "yearlyDescription": "Best value - 2 months free!"
+    },
+    "features": {
+      "normalChats": "Normal chats per month",
+      "interviewChats": "Interview sessions per month", 
+      "unlimited": "Unlimited",
+      "basicAI": "Basic AI responses",
+      "advancedAI": "Advanced AI responses",
+      "textOnly": "Text-only conversations",
+      "voiceInteraction": "Voice-to-voice interaction",
+      "limitedFiles": "Limited file uploads",
+      "fileUploads": "File uploads & sharing",
+      "pdfExport": "PDF export of conversations",
+      "prioritySupport": "Priority customer support",
+      "advancedSettings": "Advanced interview settings",
+      "customScenarios": "Custom interview scenarios"
+    },
+    "upgradeButton": "Upgrade to Premium",
+    "currentPlan": "Current Plan",
+    "manageSubscription": "Manage Subscription",
+    "paymentModal": {
+      "title": "Upgrade to Premium",
+      "description": "Secure payment powered by Stripe",
+      "proceedToPayment": "Proceed to Payment",
+      "cancel": "Cancel"
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "cancelAnytime": {
+        "question": "Can I cancel anytime?",
+        "answer": "Yes! You can cancel your subscription at any time. Your premium features will remain active until the end of your billing period."
+      },
+      "paymentMethods": {
+        "question": "What payment methods do you accept?",
+        "answer": "We accept all major credit cards including Visa, Mastercard, and American Express through our secure Stripe payment processor."
+      },
+      "freeTrial": {
+        "question": "Is there a free trial?",
+        "answer": "Your free account already gives you access to try our platform. Premium users get unlimited access to all features immediately upon upgrade."
+      }
+    }
+  },
+  "subscription": {
+    "free": "Free Plan",
+    "premium": "Premium Plan",
+    "upgrade": "Upgrade to Premium",
+    "cancel": "Cancel Subscription",
+    "benefits": {
+      "unlimited": "Unlimited chats and interviews",
+      "advanced": "Advanced features",
+      "priority": "Priority support",
+      "export": "PDF export",
+      "sharing": "Unlimited sharing"
+    }
+  },
+  "errors": {
+    "generic": "Something went wrong. Please try again.",
+    "network": "Network error. Please check your connection.",
+    "notFound": "Page not found",
+    "unauthorized": "You are not authorized to access this page",
+    "serverError": "Server error. Please try again later."
+  },
+  "usageLimit": {
+    "normalChatLimitReached": "Normal Chat Limit Reached",
+    "interviewChatLimitReached": "Interview Chat Limit Reached",
+    "normalChatLimitDescription": "You've used all {{limit}} of your monthly normal chats. Upgrade to Premium for unlimited conversations.",
+    "interviewChatLimitDescription": "You've used all {{limit}} of your monthly interview sessions. Upgrade to Premium for unlimited interview practice.",
+    "limitReached": "Limit reached! Upgrade to Premium for unlimited access.",
+    "premiumBenefits": "Premium Benefits",
+    "maybeLater": "Maybe Later",
+    "securePayment": "Cancel anytime • Secure payment • Instant access"
+  }
+}

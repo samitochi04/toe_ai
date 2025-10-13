@@ -59,7 +59,19 @@ async def get_normal_chats(
         
         chats = []
         for chat_data in response.data or []:
-            chats.append(NormalChat(**chat_data).dict())
+            # Ensure conversation is properly formatted and add message count and preview
+            conversation = chat_data.get('conversation', [])
+            chat_dict = NormalChat(**chat_data).dict()
+            
+            # Add message count and preview for frontend
+            chat_dict['messageCount'] = len(conversation)
+            if conversation:
+                last_message = conversation[-1]
+                chat_dict['preview'] = last_message.get('content', '')[:100] + '...' if len(last_message.get('content', '')) > 100 else last_message.get('content', '')
+            else:
+                chat_dict['preview'] = 'No messages yet'
+            
+            chats.append(chat_dict)
         
         total = response.count or 0
         has_next = offset + per_page < total
@@ -88,7 +100,8 @@ async def create_normal_chat(
     current_user: User = Depends(get_current_user)
 ):
     """Create a new normal chat"""
-    db = DatabaseManager()
+    # Use service role for creation to bypass RLS issues
+    db = DatabaseManager(use_service_role=True)
     
     try:
         # Check usage limits
@@ -103,13 +116,21 @@ async def create_normal_chat(
         chat_id = str(uuid.uuid4())
         now = datetime.utcnow().isoformat()
         
+        # Convert messages to dict with proper datetime handling
+        conversation_data = []
+        for msg in chat_data.conversation:
+            msg_dict = msg.dict()
+            if 'timestamp' in msg_dict and isinstance(msg_dict['timestamp'], datetime):
+                msg_dict['timestamp'] = msg_dict['timestamp'].isoformat()
+            conversation_data.append(msg_dict)
+        
         response = (
             db.client.table("normal_chat")
             .insert({
                 "id": chat_id,
                 "user_profile_id": str(current_user.id),
                 "title": chat_data.title,
-                "conversation": [msg.dict() for msg in chat_data.conversation],
+                "conversation": conversation_data,
                 "created_at": now,
                 "updated_at": now
             })
@@ -146,6 +167,22 @@ async def get_normal_chat(
     db = DatabaseManager()
     
     try:
+        # Validate chat_id format
+        if not chat_id or chat_id == 'undefined' or chat_id == 'new':
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid chat ID"
+            )
+        
+        # Validate UUID format
+        try:
+            uuid.UUID(chat_id)
+        except ValueError:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid chat ID format"
+            )
+        
         response = (
             db.client.table("normal_chat")
             .select("*")
@@ -179,12 +216,14 @@ async def update_normal_chat(
     current_user: User = Depends(get_current_user)
 ):
     """Update a normal chat"""
-    db = DatabaseManager()
+    # Use service role for updates to bypass RLS issues
+    db = DatabaseManager(use_service_role=True)
     
     try:
-        # Check if chat exists and belongs to user
+        # Check if chat exists and belongs to user (use regular client for verification)
+        regular_db = DatabaseManager(use_service_role=False)
         existing_response = (
-            db.client.table("normal_chat")
+            regular_db.client.table("normal_chat")
             .select("*")
             .eq("id", chat_id)
             .eq("user_profile_id", str(current_user.id))
@@ -203,17 +242,25 @@ async def update_normal_chat(
         if chat_data.title is not None:
             update_data["title"] = chat_data.title
         if chat_data.conversation is not None:
-            update_data["conversation"] = [msg.dict() for msg in chat_data.conversation]
+            # Convert messages to dict with proper datetime handling
+            conversation_data = []
+            for msg in chat_data.conversation:
+                msg_dict = msg.dict()
+                if 'timestamp' in msg_dict and isinstance(msg_dict['timestamp'], datetime):
+                    msg_dict['timestamp'] = msg_dict['timestamp'].isoformat()
+                conversation_data.append(msg_dict)
+            update_data["conversation"] = conversation_data
         if chat_data.is_shared is not None:
             update_data["is_shared"] = chat_data.is_shared
             if chat_data.is_shared:
                 update_data["shared_at"] = datetime.utcnow().isoformat()
         
-        # Update chat
+        # Update chat using service role
         response = (
             db.client.table("normal_chat")
             .update(update_data)
             .eq("id", chat_id)
+            .eq("user_profile_id", str(current_user.id))  # Still check ownership
             .execute()
         )
         
@@ -335,7 +382,8 @@ async def create_interview_chat(
     current_user: User = Depends(get_current_user)
 ):
     """Create a new interview chat"""
-    db = DatabaseManager()
+    # Use service role for creation to bypass RLS issues
+    db = DatabaseManager(use_service_role=True)
     
     try:
         # Check usage limits

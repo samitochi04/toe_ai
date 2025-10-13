@@ -1,0 +1,181 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply box-border;
+  }
+  
+  html {
+    @apply antialiased;
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply font-sans text-white-primary bg-dark-primary;
+  }
+
+  /* Focus styles */
+  *:focus {
+    @apply outline-none ring-2 ring-blue-2nd ring-offset-2 ring-offset-dark-primary;
+  }
+
+  /* Selection styles */
+  ::selection {
+    @apply bg-blue-2nd text-white-primary;
+  }
+}
+
+@layer components {
+  /* Button Components */
+  .btn {
+    @apply inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2;
+  }
+  
+  .btn-primary {
+    @apply bg-blue-2nd text-white-primary hover:bg-opacity-90 focus:ring-blue-2nd;
+  }
+  
+  .btn-secondary {
+    @apply bg-light-dark-secondary text-white-primary border border-gray-600 hover:bg-gray-700 focus:ring-gray-500;
+  }
+  
+  .btn-outline {
+    @apply bg-transparent text-white-primary border border-white-secondary hover:bg-white-primary hover:text-dark-primary focus:ring-white-secondary;
+  }
+  
+  .btn-ghost {
+    @apply bg-transparent text-white-secondary hover:bg-light-dark-secondary hover:text-white-primary focus:ring-gray-500;
+  }
+
+  /* Input Components */
+  .input {
+    @apply w-full rounded-xl border border-gray-600 bg-light-dark-secondary px-4 py-3 text-white-primary placeholder-gray-400 transition-colors duration-200 focus:border-blue-2nd focus:ring-blue-2nd;
+  }
+  
+  .input-error {
+    @apply border-error focus:border-error focus:ring-error;
+  }
+
+  /* Card Components */
+  .card {
+    @apply rounded-2xl bg-light-dark-secondary border border-gray-700 p-6;
+  }
+  
+  .card-hover {
+    @apply transition-all duration-200 hover:border-gray-600 hover:shadow-medium;
+  }
+
+  /* Modal Components */
+  .modal-overlay {
+    @apply fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm;
+  }
+  
+  .modal-content {
+    @apply relative w-full max-w-md rounded-2xl bg-light-dark-secondary p-6 shadow-strong;
+  }
+
+  /* Layout Components */
+  .container {
+    @apply mx-auto max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+  
+  .section {
+    @apply py-12 sm:py-16 lg:py-20;
+  }
+
+  /* Animation Classes */
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+  
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+  }
+
+  /* Gradient Text */
+  .gradient-text {
+    @apply bg-gradient-to-r from-blue-2nd to-blue bg-clip-text text-transparent;
+  }
+
+  /* Scrollbar */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: #374151 #1f2937;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-track {
+    @apply bg-gray-800;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    @apply bg-gray-600 rounded-full;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-500;
+  }
+}
+
+@layer utilities {
+  /* Text utilities */
+  .text-gradient {
+    @apply bg-gradient-to-r from-blue-2nd to-blue bg-clip-text text-transparent;
+  }
+  
+  /* Backdrop utilities */
+  .backdrop-blur-xs {
+    backdrop-filter: blur(2px);
+  }
+  
+  /* Animation delays */
+  .animate-delay-75 {
+    animation-delay: 75ms;
+  }
+  
+  .animate-delay-150 {
+    animation-delay: 150ms;
+  }
+  
+  .animate-delay-300 {
+    animation-delay: 300ms;
+  }
+}
+
+/* React Hot Toast Custom Styles */
+.toast-success {
+  @apply bg-light-dark-secondary border border-success text-white-primary;
+}
+
+.toast-error {
+  @apply bg-light-dark-secondary border border-error text-white-primary;
+}
+
+/* Responsive Design Breakpoints */
+@media (max-width: 475px) {
+  .container {
+    @apply px-3;
+  }
+}
+
+/* Print Styles */
+@media print {
+  * {
+    @apply text-black bg-white;
+  }
+}
