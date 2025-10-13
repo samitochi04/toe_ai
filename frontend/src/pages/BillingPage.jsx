@@ -5,6 +5,7 @@ import useAuthStore from '../store/authStore'
 import Button from '../components/common/Button'
 import Modal from '../components/common/Modal'
 import toast from 'react-hot-toast'
+import { api } from '../services/api'
 
 const BillingPage = () => {
   const { t } = useTranslation()
@@ -18,6 +19,7 @@ const BillingPage = () => {
     normalLimit: 10,
     interviewLimit: 5
   })
+  const [usageLoading, setUsageLoading] = useState(true)
 
   const isPremium = user?.subscription_tier === 'Premium'
 
@@ -76,15 +78,29 @@ const BillingPage = () => {
 
   const fetchUsageData = async () => {
     try {
-      // This would be replaced with actual API call
+      setUsageLoading(true)
+      const response = await api.get('/users/usage')
+      
+      if (response.data) {
+        setUsage({
+          normalChats: response.data.normal_chats_used || 0,
+          interviewChats: response.data.interview_chats_used || 0,
+          normalLimit: response.data.normal_chat_limit || 10,
+          interviewLimit: response.data.interview_chat_limit || 5
+        })
+      }
+    } catch (error) {
+      console.error('Error fetching usage:', error)
+      toast.error('Failed to load usage data')
+      // Set default values on error
       setUsage({
-        normalChats: 8,
-        interviewChats: 3,
+        normalChats: 0,
+        interviewChats: 0,
         normalLimit: 10,
         interviewLimit: 5
       })
-    } catch (error) {
-      console.error('Error fetching usage:', error)
+    } finally {
+      setUsageLoading(false)
     }
   }
 
@@ -148,52 +164,108 @@ const BillingPage = () => {
     </ul>
   )
 
-  const UsageCard = ({ title, used, limit, icon: Icon, color }) => (
-    <div className="bg-light-dark-secondary rounded-xl p-6 border border-gray-600">
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center space-x-3">
-          <div className={`p-2 rounded-lg bg-${color}-500/20`}>
-            <Icon className={`w-5 h-5 text-${color}-400`} />
-          </div>
-          <h3 className="font-medium text-white-primary">{title}</h3>
-        </div>
-        <span className={`text-sm px-2 py-1 rounded-full ${
-          used >= limit 
-            ? 'bg-red-500/20 text-red-400' 
-            : used >= limit * 0.8 
-              ? 'bg-yellow-500/20 text-yellow-400'
-              : 'bg-green-500/20 text-green-400'
-        }`}>
-          {used}/{limit}
-        </span>
-      </div>
-      
-      <div className="mb-3">
-        <div className="flex justify-between text-sm mb-1">
-          <span className="text-gray-400">Usage</span>
-          <span className="text-white-primary">{Math.round((used / limit) * 100)}%</span>
-        </div>
-        <div className="w-full bg-gray-700 rounded-full h-2">
-          <div 
-            className={`h-2 rounded-full transition-all duration-300 ${
-              used >= limit 
-                ? 'bg-red-500' 
-                : used >= limit * 0.8 
-                  ? 'bg-yellow-500'
-                  : `bg-${color}-500`
-            }`}
-            style={{ width: `${Math.min((used / limit) * 100, 100)}%` }}
-          />
-        </div>
-      </div>
+  const UsageCard = ({ title, used, limit, icon: Icon, color }) => {
+    const usagePercentage = Math.min((used / limit) * 100, 100)
+    
+    // Define static color values for inline styles
+    const colorStyles = {
+      blue: {
+        iconBg: 'rgba(59, 130, 246, 0.2)',
+        iconColor: '#60a5fa',
+        progressColor: '#3b82f6'
+      },
+      green: {
+        iconBg: 'rgba(34, 197, 94, 0.2)',
+        iconColor: '#4ade80',
+        progressColor: '#22c55e'
+      }
+    }
 
-      {used >= limit && (
-        <div className="text-xs text-red-400 bg-red-500/10 rounded-lg p-2">
-          Limit reached! Upgrade to Premium for unlimited access.
-        </div>
-      )}
-    </div>
-  )
+    const currentColors = colorStyles[color] || colorStyles.blue
+    
+    // Determine progress bar color based on usage
+    let progressColor = currentColors.progressColor
+    if (used >= limit) {
+      progressColor = '#ef4444' // red-500
+    } else if (used >= limit * 0.8) {
+      progressColor = '#eab308' // yellow-500
+    }
+
+    return (
+      <div className="bg-light-dark-secondary rounded-xl p-6 border border-gray-600">
+        {usageLoading ? (
+          // Loading skeleton
+          <div className="animate-pulse">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center space-x-3">
+                <div className="w-9 h-9 bg-gray-600 rounded-lg"></div>
+                <div className="h-4 bg-gray-600 rounded w-24"></div>
+              </div>
+              <div className="h-6 bg-gray-600 rounded w-12"></div>
+            </div>
+            <div className="mb-3">
+              <div className="flex justify-between text-sm mb-1">
+                <div className="h-3 bg-gray-600 rounded w-12"></div>
+                <div className="h-3 bg-gray-600 rounded w-8"></div>
+              </div>
+              <div className="w-full bg-gray-700 rounded-full h-2">
+                <div className="h-2 bg-gray-600 rounded-full w-1/2"></div>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <>
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center space-x-3">
+                <div 
+                  className="p-2 rounded-lg"
+                  style={{ backgroundColor: currentColors.iconBg }}
+                >
+                  <Icon 
+                    className="w-5 h-5" 
+                    style={{ color: currentColors.iconColor }}
+                  />
+                </div>
+                <h3 className="font-medium text-white-primary">{title}</h3>
+              </div>
+              <span className={`text-sm px-2 py-1 rounded-full ${
+                used >= limit 
+                  ? 'bg-red-500/20 text-red-400' 
+                  : used >= limit * 0.8 
+                    ? 'bg-yellow-500/20 text-yellow-400'
+                    : 'bg-green-500/20 text-green-400'
+              }`}>
+                {used}/{limit}
+              </span>
+            </div>
+            
+            <div className="mb-3">
+              <div className="flex justify-between text-sm mb-1">
+                <span className="text-gray-400">Usage</span>
+                <span className="text-white-primary">{Math.round(usagePercentage)}%</span>
+              </div>
+              <div className="w-full bg-gray-700 rounded-full h-2 overflow-hidden">
+                <div 
+                  className="h-full rounded-full transition-all duration-300 ease-out"
+                  style={{ 
+                    backgroundColor: progressColor,
+                    width: `${usagePercentage}%`,
+                    minWidth: usagePercentage > 0 ? '2px' : '0%' // Ensure visibility for small percentages
+                  }}
+                />
+              </div>
+            </div>
+
+            {used >= limit && (
+              <div className="text-xs text-red-400 bg-red-500/10 rounded-lg p-2">
+                Limit reached! Upgrade to Premium for unlimited access.
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-dark-primary">
@@ -232,6 +304,17 @@ const BillingPage = () => {
                 icon={Users}
                 color="green"
               />
+            </div>
+            
+            {/* Refresh usage button */}
+            <div className="text-center mt-4">
+              <button
+                onClick={fetchUsageData}
+                disabled={usageLoading}
+                className="text-blue-400 hover:text-blue-300 text-sm underline disabled:opacity-50"
+              >
+                {usageLoading ? 'Refreshing...' : 'Refresh Usage Data'}
+              </button>
             </div>
           </div>
         )}
