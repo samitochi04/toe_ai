@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import useAuthStore from './store/authStore'
 import { useEffect } from 'react'
+import { Toaster } from 'react-hot-toast'
 
 // Pages
 import LandingPage from './pages/LandingPage'
@@ -12,6 +13,7 @@ import ProfilePage from './pages/ProfilePage'
 import SettingsPage from './pages/SettingsPage'
 import BillingPage from './pages/BillingPage'
 import SharedChatPage from './pages/SharedChatPage'
+import SharesPage from './pages/SharesPage'
 import NotFoundPage from './pages/NotFoundPage'
 import InterviewChatsListPage from './pages/InterviewChatsListPage'
 
@@ -68,6 +70,7 @@ function App() {
             <Route path="interviews" element={<InterviewChatsListPage />} />
             <Route path="interview/new" element={<InterviewPage />} />
             <Route path="interview/:chatId" element={<InterviewPage />} />
+            <Route path="shares" element={<SharesPage />} />
             <Route path="premium" element={<BillingPage />} />
             <Route path="profile" element={<ProfilePage />} />
             <Route path="settings" element={<SettingsPage />} />
@@ -79,6 +82,32 @@ function App() {
           {/* 404 Route */}
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
+        
+        {/* Toast notifications */}
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            duration: 4000,
+            style: {
+              background: '#363636',
+              color: '#fff',
+            },
+            success: {
+              duration: 3000,
+              iconTheme: {
+                primary: '#10b981',
+                secondary: '#fff',
+              },
+            },
+            error: {
+              duration: 4000,
+              iconTheme: {
+                primary: '#ef4444',
+                secondary: '#fff',
+              },
+            },
+          }}
+        />
       </div>
     </ErrorBoundary>
   )

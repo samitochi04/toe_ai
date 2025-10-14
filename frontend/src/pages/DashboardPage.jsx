@@ -1,15 +1,14 @@
 import { useState, useEffect } from 'react'
-import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import useAuthStore from '../store/authStore'
+import { chatService } from '../services/chat'
 import { MoreVertical, MessageCircle, Video, Share2 } from 'lucide-react'
 
 const DashboardPage = () => {
-  const { t } = useTranslation()
   const navigate = useNavigate()
-  const { user } = useAuthStore()
+  const { user, userProfile } = useAuthStore()
   
-  // Mock data - replace with actual API calls
+  // Real data states
   const [recentChats, setRecentChats] = useState([])
   const [recentInterviews, setRecentInterviews] = useState([])
   const [recentShares, setRecentShares] = useState([])
@@ -18,29 +17,73 @@ const DashboardPage = () => {
     totalInterviews: 0,
     totalMinutes: 0
   })
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    // Mock data loading - replace with actual API calls
-    setRecentChats([
-      { id: 1, title: 'React Interview Prep', date: '2024-01-15', messages: 23 },
-      { id: 2, title: 'JavaScript Concepts', date: '2024-01-14', messages: 18 },
-      { id: 3, title: 'System Design', date: '2024-01-13', messages: 31 },
-    ])
+    const loadDashboardData = async () => {
+      try {
+        setIsLoading(true)
+        
+        // Load recent chats and interviews
+        const [normalChatsResponse, interviewChatsResponse] = await Promise.all([
+          chatService.getChats('normal'),
+          chatService.getChats('interview')
+        ])
+        
+        // Process normal chats
+        const normalChats = normalChatsResponse.chats || []
+        const recentNormalChats = normalChats
+          .slice(0, 5) // Get 5 most recent
+          .map(chat => ({
+            id: chat.id,
+            title: chat.title || 'Untitled Chat',
+            date: new Date(chat.updated_at || chat.created_at).toLocaleDateString(),
+            messages: chat.message_count || 0,
+            type: 'normal'
+          }))
+        
+        // Process interview chats
+        const interviewChats = interviewChatsResponse.chats || []
+        const recentInterviewsData = interviewChats
+          .slice(0, 5) // Get 5 most recent
+          .map(chat => ({
+            id: chat.id,
+            title: chat.title || 'Untitled Interview',
+            date: new Date(chat.updated_at || chat.created_at).toLocaleDateString(),
+            duration: `${Math.floor(Math.random() * 60) + 15} min`, // Mock duration for now
+            jobPosition: chat.job_position,
+            companyName: chat.company_name,
+            type: 'interview'
+          }))
+        
+        // Calculate stats
+        const totalMessages = normalChats.reduce((sum, chat) => sum + (chat.message_count || 0), 0)
+        const estimatedMinutes = Math.floor(totalMessages * 1.5) // Estimate 1.5 min per message
+        
+        setRecentChats(recentNormalChats)
+        setRecentInterviews(recentInterviewsData)
+        setStats({
+          totalChats: normalChats.length,
+          totalInterviews: interviewChats.length,
+          totalMinutes: estimatedMinutes
+        })
+        
+        // For now, keep shares empty as we'll implement that later
+        setRecentShares([])
+        
+      } catch (error) {
+        console.error('Error loading dashboard data:', error)
+        // Fallback to empty data on error
+        setRecentChats([])
+        setRecentInterviews([])
+        setRecentShares([])
+        setStats({ totalChats: 0, totalInterviews: 0, totalMinutes: 0 })
+      } finally {
+        setIsLoading(false)
+      }
+    }
     
-    setRecentInterviews([
-      { id: 1, title: 'Frontend Developer Interview', date: '2024-01-15', duration: '45 min' },
-      { id: 2, title: 'Full Stack Position', date: '2024-01-12', duration: '60 min' },
-    ])
-    
-    setRecentShares([
-      { id: 1, title: 'My React Interview', views: 156, date: '2024-01-10' },
-    ])
-    
-    setStats({
-      totalChats: 12,
-      totalInterviews: 8,
-      totalMinutes: 420
-    })
+    loadDashboardData()
   }, [])
 
   const GetStartedCard = ({ icon, title, description, onClick, bgColor = "bg-blue-2nd" }) => (
@@ -109,7 +152,7 @@ const DashboardPage = () => {
         {/* Welcome Section */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-white-primary mb-2">
-            {t('dashboard.welcome', { name: user?.full_name?.split(' ')[0] || 'User' })}
+            Welcome back, {user?.full_name?.split(' ')[0] || 'User'}!
           </h1>
           <p className="text-white-secondary">
             Ready to practice your next interview?
@@ -121,8 +164,10 @@ const DashboardPage = () => {
           <div className="bg-light-dark-secondary rounded-xl p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-white-secondary text-sm">{t('dashboard.stats.totalChats')}</p>
-                <p className="text-2xl font-bold text-white-primary">{stats.totalChats}</p>
+                <p className="text-white-secondary text-sm">Total Chats</p>
+                <p className="text-2xl font-bold text-white-primary">
+                  {isLoading ? '...' : stats.totalChats}
+                </p>
               </div>
               <MessageCircle className="w-8 h-8 text-blue-2nd" />
             </div>
@@ -131,20 +176,24 @@ const DashboardPage = () => {
           <div className="bg-light-dark-secondary rounded-xl p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-white-secondary text-sm">{t('dashboard.stats.totalInterviews')}</p>
-                <p className="text-2xl font-bold text-white-primary">{stats.totalInterviews}</p>
+                <p className="text-white-secondary text-sm">Total Interviews</p>
+                <p className="text-2xl font-bold text-white-primary">
+                  {isLoading ? '...' : stats.totalInterviews}
+                </p>
               </div>
-              <Video className="w-8 h-8 text-success" />
+              <Video className="w-8 h-8 text-green-500" />
             </div>
           </div>
           
           <div className="bg-light-dark-secondary rounded-xl p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-white-secondary text-sm">{t('dashboard.stats.totalMinutes')}</p>
-                <p className="text-2xl font-bold text-white-primary">{stats.totalMinutes}</p>
+                <p className="text-white-secondary text-sm">Practice Time</p>
+                <p className="text-2xl font-bold text-white-primary">
+                  {isLoading ? '...' : `${stats.totalMinutes} min`}
+                </p>
               </div>
-              <Share2 className="w-8 h-8 text-warning" />
+              <Share2 className="w-8 h-8 text-purple-500" />
             </div>
           </div>
         </div>
@@ -152,27 +201,27 @@ const DashboardPage = () => {
         {/* Get Started Section */}
         <div className="mb-8">
           <h2 className="text-xl font-semibold text-white-primary mb-4">
-            {t('dashboard.getStarted.title')}
+            Get Started
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <GetStartedCard
               icon="/src/assets/images/main_workspace_new_chat_icon.png"
-              title={t('dashboard.getStarted.newChat')}
+              title="New Chat"
               description="Start a conversation with AI to practice general questions"
               onClick={() => navigate('/chat/new')}
               bgColor="bg-blue-2nd"
             />
             <GetStartedCard
               icon="/src/assets/images/main_workspace_new_interview_icon.png"
-              title={t('dashboard.getStarted.newInterview')}
+              title="New Interview"
               description="Begin a mock interview session with voice interaction"
               onClick={() => navigate('/interview/new')}
               bgColor="bg-success"
             />
             <GetStartedCard
               icon="/src/assets/images/main_workspace_share_chat_icon.png"
-              title={t('dashboard.getStarted.shareChat')}
-              description="Share your interview practice with others"
+              title="Share Chat"
+              description="Share your interview practice with others (Premium feature)"
               onClick={() => navigate('/shares')}
               bgColor="bg-warning"
             />
@@ -185,24 +234,28 @@ const DashboardPage = () => {
           <div className="bg-light-dark-secondary rounded-xl p-6">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold text-white-primary">
-                {t('dashboard.recentInterviews.title')}
+                Recent Interviews
               </h3>
               <button 
                 onClick={() => navigate('/interviews')}
                 className="text-blue-2nd hover:text-blue-primary text-sm font-medium"
               >
-                {t('dashboard.recentInterviews.viewAll')}
+                View All
               </button>
             </div>
             
             <div className="space-y-3">
-              {recentInterviews.length > 0 ? (
+              {isLoading ? (
+                <div className="text-center py-8">
+                  <div className="text-white-secondary">Loading interviews...</div>
+                </div>
+              ) : recentInterviews.length > 0 ? (
                 recentInterviews.map(interview => (
                   <ChatItem key={interview.id} chat={interview} type="interview" />
                 ))
               ) : (
                 <p className="text-white-secondary text-center py-8">
-                  {t('dashboard.recentInterviews.noInterviews')}
+                  No interviews yet. Start your first AI interview to see it here!
                 </p>
               )}
             </div>
@@ -212,24 +265,28 @@ const DashboardPage = () => {
           <div className="bg-light-dark-secondary rounded-xl p-6">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold text-white-primary">
-                {t('dashboard.recentChats.title')}
+                Recent Chats
               </h3>
               <button 
                 onClick={() => navigate('/chats')}
                 className="text-blue-2nd hover:text-blue-primary text-sm font-medium"
               >
-                {t('dashboard.recentChats.viewAll')}
+                View All
               </button>
             </div>
             
             <div className="space-y-3">
-              {recentChats.length > 0 ? (
+              {isLoading ? (
+                <div className="text-center py-8">
+                  <div className="text-white-secondary">Loading chats...</div>
+                </div>
+              ) : recentChats.length > 0 ? (
                 recentChats.map(chat => (
                   <ChatItem key={chat.id} chat={chat} type="chat" />
                 ))
               ) : (
                 <p className="text-white-secondary text-center py-8">
-                  {t('dashboard.recentChats.noChats')}
+                  No chats yet. Start a conversation to see it here!
                 </p>
               )}
             </div>
@@ -239,25 +296,43 @@ const DashboardPage = () => {
           <div className="bg-light-dark-secondary rounded-xl p-6">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold text-white-primary">
-                {t('dashboard.recentShares.title')}
+                Recent Shares
               </h3>
               <button 
                 onClick={() => navigate('/shares')}
                 className="text-blue-2nd hover:text-blue-primary text-sm font-medium"
               >
-                {t('dashboard.recentShares.viewAll')}
+                View All
               </button>
             </div>
             
             <div className="space-y-3">
-              {recentShares.length > 0 ? (
+              {isLoading ? (
+                <div className="text-center py-8">
+                  <div className="text-white-secondary">Loading shares...</div>
+                </div>
+              ) : recentShares.length > 0 ? (
                 recentShares.map(share => (
                   <ChatItem key={share.id} chat={share} type="share" />
                 ))
               ) : (
-                <p className="text-white-secondary text-center py-8">
-                  {t('dashboard.recentShares.noShares')}
-                </p>
+                <div className="text-center py-8">
+                  <p className="text-white-secondary mb-4">
+                    No shared chats yet.
+                  </p>
+                  {userProfile?.subscription === 'premium' ? (
+                    <p className="text-white-secondary text-sm">
+                      Share your conversations with friends from the chat page!
+                    </p>
+                  ) : (
+                    <button
+                      onClick={() => navigate('/settings')}
+                      className="bg-gradient-to-r from-blue-primary to-purple-secondary text-white px-4 py-2 rounded-lg hover:opacity-90 transition-opacity text-sm font-medium"
+                    >
+                      Upgrade to Premium to Share
+                    </button>
+                  )}
+                </div>
               )}
             </div>
           </div>

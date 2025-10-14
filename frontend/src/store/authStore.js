@@ -253,6 +253,14 @@ const useAuthStore = create((set, get) => ({
     set({ error: null })
   },
 
+  // Update user data
+  updateUserData: (userData) => {
+    set(state => ({ 
+      user: { ...state.user, ...userData }
+    }))
+    storage.setUserData({ ...get().user, ...userData })
+  },
+
   // Helper getters
   getIsAuthenticated: () => get().isAuthenticated,
   getCurrentUser: () => get().user,

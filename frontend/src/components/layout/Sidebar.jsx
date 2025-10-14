@@ -185,7 +185,7 @@ const Sidebar = ({ isOpen, onToggle }) => {
         </div>
 
         {/* Bottom Section */}
-        <div className="border-t border-gray-700 bg-light-dark-secondary">
+        <div className="border-t border-gray-700">
           {/* Premium */}
           <MenuItem
             icon="/src/assets/images/premium_icon.png"
