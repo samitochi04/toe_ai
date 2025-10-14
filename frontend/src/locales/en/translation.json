@@ -305,5 +305,14 @@
     "premiumBenefits": "Premium Benefits",
     "maybeLater": "Maybe Later",
     "securePayment": "Cancel anytime • Secure payment • Instant access"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "chats": "Chats",
+    "interviews": "Interview Chats",
+    "newInterview": "New Interview",
+    "premium": "Premium",
+    "profile": "Profile",
+    "settings": "Settings"
   }
 }

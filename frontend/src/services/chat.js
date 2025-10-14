@@ -165,6 +165,87 @@ export const chatService = {
     }
   },
 
+  // Send interview message with context
+  sendInterviewMessage: async (chatId, content, jobPosition, companyName, difficulty, settings) => {
+    // Validate chatId first
+    if (!chatId || chatId === 'undefined' || chatId === 'null' || chatId === 'new') {
+      // If no valid chatId, create a new chat first
+      const chatData = {
+        title: `${jobPosition} Interview${companyName ? ` at ${companyName}` : ''}`,
+        job_position: jobPosition,
+        company_name: companyName,
+        conversation: [],  // Start with empty conversation
+        interview_settings: {
+          difficulty,
+          voice_type: settings?.voice_type || 'alloy',
+          voice_speed: settings?.voice_speed || 1.0,
+          language: settings?.language || 'en',
+          max_duration_minutes: settings?.max_duration_minutes || 60
+        }
+      }
+      
+      // Create new interview chat
+      const newChat = await api.post('/chats/interview', chatData)
+      
+      // Now send the message to the newly created chat
+      const messageData = {
+        content,
+        include_audio: true,
+        job_position: jobPosition,
+        company_name: companyName,
+        difficulty,
+        voice_type: settings?.voice_type || 'alloy',
+        voice_speed: settings?.voice_speed || 1.0
+      }
+      
+      // Send message to the newly created chat
+      const response = await api.post(`/chats/interview/${newChat.data.id}/message`, messageData)
+      
+      return {
+        ...response.data,
+        chat: newChat.data,
+        isNewChat: true
+      }
+    }
+    
+    // For existing chats, send message normally
+    const messageData = {
+      content,
+      include_audio: true,
+      job_position: jobPosition,
+      company_name: companyName,
+      difficulty,
+      voice_type: settings?.voice_type || 'alloy',
+      voice_speed: settings?.voice_speed || 1.0
+    }
+    
+    const response = await api.post(`/chats/interview/${chatId}/message`, messageData)
+    return {
+      ...response.data,
+      isNewChat: false
+    }
+  },
+
+  // Speech to text conversion
+  speechToText: async (audioFormData) => {
+    const response = await api.post('/ai/speech-to-text', audioFormData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+    return response.data
+  },
+
+  // Text to speech conversion
+  textToSpeech: async (text, voice = 'alloy', speed = 1.0) => {
+    const response = await api.post('/ai/text-to-speech', {
+      text,
+      voice,
+      speed
+    })
+    return response.data
+  },
+
   // Update chat
   updateChat: async (chatId, updates, chatType = 'normal') => {
     const endpoint = chatType === 'normal' 
@@ -198,5 +279,27 @@ export const chatService = {
     })
     
     return response.data
-  }
+  },
+
+  // Get specific interview chat
+  getInterviewChat: async (chatId) => {
+    // Validate chatId before making request
+    if (!chatId || chatId === 'undefined' || chatId === 'null' || chatId === 'new') {
+      throw new Error('Invalid chat ID provided')
+    }
+
+    // Validate UUID format
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+    if (!uuidRegex.test(chatId)) {
+      throw new Error('Invalid chat ID format')
+    }
+
+    try {
+      const response = await api.get(`/chats/interview/${chatId}`)
+      return response
+    } catch (error) {
+      console.error('Error fetching interview chat:', error)
+      throw error
+    }
+  },
 }

@@ -118,8 +118,8 @@ const Sidebar = ({ isOpen, onToggle }) => {
           <MenuItem
             icon="/src/assets/images/main_workspace_icon.png"
             label={t('workspace.mainWorkspace')}
-            path="/dashboard"
-            isActive={isActive('/dashboard')}
+            path="/workspace/dashboard"
+            isActive={isActive('/workspace/dashboard')}
           />
 
           {/* Chatting Section */}
@@ -165,6 +165,7 @@ const Sidebar = ({ isOpen, onToggle }) => {
                 path="/workspace/interview/new"
                 isActive={isActive('/workspace/interview/new')}
               />
+
               <SubMenuItem
                 icon="/src/assets/images/interviews_icon.png"
                 label={t('workspace.interviews')}

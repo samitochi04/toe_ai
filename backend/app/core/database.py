@@ -203,20 +203,42 @@ class DatabaseManager:
             service_db = DatabaseManager(use_service_role=True)
             
             if chat_type == "normal":
-                service_db.client.table("usage_tracking").update({
-                    "normal_chats_used": "normal_chats_used + 1",
-                    "updated_at": datetime.utcnow().isoformat()
-                }).eq("user_profile_id", user_id).execute()
+                # Use RPC function or proper SQL increment
+                service_db.client.rpc('increment_usage_count', {
+                    'user_id': user_id,
+                    'chat_type': 'normal'
+                }).execute()
             elif chat_type == "interview":
-                service_db.client.table("usage_tracking").update({
-                    "interview_chats_used": "interview_chats_used + 1", 
-                    "updated_at": datetime.utcnow().isoformat()
-                }).eq("user_profile_id", user_id).execute()
+                # Use RPC function or proper SQL increment
+                service_db.client.rpc('increment_usage_count', {
+                    'user_id': user_id,
+                    'chat_type': 'interview'
+                }).execute()
             
             return True
         except Exception as e:
             logger.error(f"Error incrementing usage for user {user_id}: {e}")
-            return False
+            # Fallback: manually get and update
+            try:
+                usage_response = service_db.client.table("usage_tracking").select("*").eq("user_profile_id", user_id).execute()
+                if usage_response.data:
+                    current_usage = usage_response.data[0]
+                    if chat_type == "normal":
+                        new_count = current_usage.get("normal_chats_used", 0) + 1
+                        service_db.client.table("usage_tracking").update({
+                            "normal_chats_used": new_count,
+                            "updated_at": datetime.utcnow().isoformat()
+                        }).eq("user_profile_id", user_id).execute()
+                    elif chat_type == "interview":
+                        new_count = current_usage.get("interview_chats_used", 0) + 1
+                        service_db.client.table("usage_tracking").update({
+                            "interview_chats_used": new_count,
+                            "updated_at": datetime.utcnow().isoformat()
+                        }).eq("user_profile_id", user_id).execute()
+                return True
+            except Exception as fallback_error:
+                logger.error(f"Fallback increment also failed: {fallback_error}")
+                return False
     
     async def log_api_usage(self, user_id: str, provider: str, endpoint: str, tokens: int = None, cost: float = None):
         """Log API usage"""

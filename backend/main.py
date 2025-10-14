@@ -57,7 +57,22 @@ app.include_router(api_router, prefix="/api/v1")
 # Serve static files (for audio files, profile pictures, etc.)
 if not os.path.exists("static"):
     os.makedirs("static")
+    os.makedirs("static/uploads", exist_ok=True)
+    os.makedirs("static/uploads/audio", exist_ok=True)
+    os.makedirs("static/uploads/images", exist_ok=True)
+    os.makedirs("static/uploads/pdfs", exist_ok=True)
+
 app.mount("/static", StaticFiles(directory="static"), name="static")
+
+# Add middleware for CORS on static files
+@app.middleware("http")
+async def add_cors_header(request, call_next):
+    response = await call_next(request)
+    if request.url.path.startswith("/static"):
+        response.headers["Access-Control-Allow-Origin"] = "*"
+        response.headers["Access-Control-Allow-Methods"] = "GET, OPTIONS"
+        response.headers["Access-Control-Allow-Headers"] = "*"
+    return response
 
 
 @app.get("/")

@@ -154,22 +154,25 @@ async def interview_chat(
             model=settings.OPENAI_MODEL,
             messages=messages,
             max_tokens=settings.OPENAI_MAX_TOKENS,
-            temperature=settings.OPENAI_TEMPERATURE
+            temperature=0.8  # Slightly higher for more natural interview conversation
         )
         
         # Extract response data
         ai_message = response.choices[0].message.content
         usage_data = response.usage
         
-        # Calculate cost (approximate) - only if cost calculation function exists
-        cost = 0.0
-        try:
-            cost = calculate_openai_cost(usage_data, settings.OPENAI_MODEL)
-        except NameError:
-            # Cost calculation function not implemented, use default
-            cost = (usage_data.total_tokens / 1000) * 0.002  # Approximate cost
+        # Calculate cost
+        cost = calculate_openai_cost(usage_data, settings.OPENAI_MODEL)
         
-        # Log API usage - only if log function exists
+        # Always generate audio for interview responses
+        audio_url = None
+        try:
+            audio_url = await generate_tts_audio(ai_message, str(current_user.id))
+        except Exception as tts_error:
+            logger.error(f"TTS generation failed: {tts_error}")
+            # Don't fail the whole request if TTS fails
+        
+        # Log API usage
         try:
             await db.log_api_usage(
                 user_id=str(current_user.id),
@@ -180,11 +183,6 @@ async def interview_chat(
             )
         except Exception as log_error:
             logger.warning(f"Failed to log API usage: {log_error}")
-        
-        # Generate audio if requested
-        audio_url = None
-        if request.include_audio:
-            audio_url = await generate_tts_audio(ai_message, current_user.id)
         
         # Create response message
         message = Message(
@@ -446,22 +444,43 @@ async def audio_chat(
 
 def build_interview_system_prompt(job_position: Optional[str], company_name: Optional[str], difficulty: str) -> str:
     """Build system prompt for interview context"""
-    base_prompt = "You are an experienced interviewer conducting a job interview. "
+    base_prompt = f"""You are Sarah, an experienced HR recruiter and interviewer at {company_name if company_name else 'the company'}. You are conducting a job interview for the position of {job_position if job_position else 'the role'}. Your role is to:
+
+1. Act as a professional, friendly interviewer/recruiter
+2. Ask relevant questions about the candidate's experience, skills, and qualifications for the {job_position if job_position else 'position'}
+3. Follow up on their answers with deeper, insightful questions
+4. Evaluate their fit for the role and company culture
+5. Be professional yet conversational and welcoming
+
+"""
+    
+    if company_name:
+        base_prompt += f"You work as an HR recruiter at {company_name}. "
     
     if job_position:
-        base_prompt += f"The position is {job_position}. "
-    if company_name:
-        base_prompt += f"The company is {company_name}. "
+        base_prompt += f"You are interviewing candidates for the {job_position} position. "
+        base_prompt += f"Focus on skills, experience, and qualifications relevant to this specific role. "
     
-    difficulty_prompts = {
-        "easy": "Ask beginner-level questions and provide helpful guidance.",
-        "medium": "Ask standard professional questions with moderate complexity.",
-        "hard": "Ask challenging questions and follow up with detailed scenarios."
+    difficulty_context = {
+        "easy": "Conduct a friendly, encouraging interview suitable for entry-level or junior candidates. Ask straightforward questions and provide guidance when needed.",
+        "medium": "Conduct a standard professional interview with follow-up questions. Expect solid experience and clear explanations from the candidate.",
+        "hard": "Conduct a rigorous interview with challenging technical questions, complex scenarios, and deep behavioral questions. Expect detailed, expert-level responses."
     }
     
-    base_prompt += difficulty_prompts.get(difficulty, difficulty_prompts["medium"])
-    base_prompt += " Be professional, encouraging, and provide constructive feedback when appropriate."
+    base_prompt += difficulty_context.get(difficulty, difficulty_context["medium"])
     
+    base_prompt += f"""
+
+Interview Guidelines:
+- Greet the candidate warmly when they introduce themselves
+- Ask one question at a time and wait for their response
+- Follow up on interesting points they mention
+- Ask about their experience, motivations, and technical skills
+- Inquire about their interest in {company_name if company_name else 'the company'} and the {job_position if job_position else 'role'}
+- Be encouraging and professional throughout
+
+Remember: You are the interviewer (Sarah), and the user is the candidate being interviewed. Always respond from the perspective of the interviewer asking questions and evaluating the candidate."""
+
     return base_prompt
 
 
@@ -483,27 +502,89 @@ def calculate_openai_cost(usage_data, model: str) -> float:
     return input_cost + output_cost
 
 
-async def generate_tts_audio(text: str, user_id: str) -> str:
+async def generate_tts_audio(text: str, user_id: str) -> Optional[str]:
     """Generate TTS audio and return URL"""
     try:
+        # Ensure audio directory exists
+        audio_dir = os.path.join(settings.UPLOAD_DIR, "audio")
+        os.makedirs(audio_dir, exist_ok=True)
+        
         # Generate audio filename
         audio_filename = f"tts_{user_id}_{uuid.uuid4()}.mp3"
-        audio_path = os.path.join(settings.UPLOAD_DIR, "audio", audio_filename)
+        audio_path = os.path.join(audio_dir, audio_filename)
         
         # Generate audio with OpenAI TTS
         response = await asyncio.to_thread(
             client.audio.speech.create,
             model=settings.TTS_MODEL,
-            voice=settings.TTS_VOICE,
-            input=text[:4000]  # Truncate if too long
+            voice="alloy",  # Professional voice for interviews
+            input=text[:4000],  # Truncate if too long
+            speed=1.0
         )
         
         # Save audio file
         with open(audio_path, "wb") as audio_file:
             audio_file.write(response.content)
         
-        return f"/static/uploads/audio/{audio_filename}"
+        # Return full URL for the audio file
+        return f"http://localhost:8000/static/uploads/audio/{audio_filename}"
         
     except Exception as e:
         logger.error(f"TTS generation error: {e}")
         return None
+
+
+@router.post("/interview/message")
+async def send_interview_message(
+    request: ChatMessageRequest,
+    job_position: Optional[str] = None,
+    company_name: Optional[str] = None,
+    difficulty: str = "medium",
+    voice_type: str = "alloy",
+    voice_speed: float = 1.0,
+    current_user: User = Depends(get_current_user)
+):
+    """Send message in interview context and get audio response"""
+    db = DatabaseManager()
+    
+    try:
+        # Get AI response with interview context
+        chat_response = await interview_chat(
+            request, 
+            job_position, 
+            company_name, 
+            difficulty, 
+            current_user
+        )
+        
+        # Generate audio for the AI response
+        if chat_response.message.content:
+            try:
+                tts_result = await text_to_speech(
+                    chat_response.message.content,
+                    voice_type,
+                    voice_speed,
+                    current_user
+                )
+                chat_response.message.audio_url = tts_result["audio_url"]
+            except Exception as tts_error:
+                logger.warning(f"TTS generation failed: {tts_error}")
+                # Continue without audio if TTS fails
+        
+        return {
+            "message": chat_response.message,
+            "usage": chat_response.usage,
+            "cost": chat_response.cost,
+            "interview_context": {
+                "job_position": job_position,
+                "company_name": company_name,
+                "difficulty": difficulty
+            }
+        }
+        
+    except Exception as e:
+        logger.error(f"Interview message error: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to process interview message"
+        )

@@ -398,6 +398,14 @@ async def create_interview_chat(
         chat_id = str(uuid.uuid4())
         now = datetime.utcnow().isoformat()
         
+        # Convert messages to dict with proper datetime handling
+        conversation_data = []
+        for msg in chat_data.conversation:
+            msg_dict = msg.dict()
+            if 'timestamp' in msg_dict and isinstance(msg_dict['timestamp'], datetime):
+                msg_dict['timestamp'] = msg_dict['timestamp'].isoformat()
+            conversation_data.append(msg_dict)
+        
         response = (
             db.client.table("interview_chat")
             .insert({
@@ -406,7 +414,7 @@ async def create_interview_chat(
                 "title": chat_data.title,
                 "job_position": chat_data.job_position,
                 "company_name": chat_data.company_name,
-                "conversation": [msg.dict() for msg in chat_data.conversation],
+                "conversation": conversation_data,
                 "interview_settings": chat_data.interview_settings.dict() if chat_data.interview_settings else {},
                 "duration_minutes": 0,
                 "created_at": now,
@@ -632,4 +640,102 @@ async def export_chat_pdf(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to export chat to PDF"
+        )
+
+
+@router.post("/interview/{chat_id}/message")
+async def send_interview_chat_message(
+    chat_id: str,
+    request: ChatMessageRequest,
+    current_user: User = Depends(get_current_user)
+):
+    """Send message to existing interview chat"""
+    db = DatabaseManager()
+    
+    try:
+        # Get existing chat
+        chat_response = (
+            db.client.table("interview_chat")
+            .select("*")
+            .eq("id", chat_id)
+            .eq("user_profile_id", str(current_user.id))
+            .execute()
+        )
+        
+        if not chat_response.data:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Interview chat not found"
+            )
+        
+        chat_data = chat_response.data[0]
+        
+        # Add user message to conversation (user is the candidate)
+        user_message = {
+            "role": "user",
+            "content": request.content,
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+        conversation = chat_data.get("conversation", [])
+        conversation.append(user_message)
+        
+        # Get AI response with context from chat (AI is the interviewer)
+        from app.api.routes.ai import interview_chat
+        
+        ai_request = ChatMessageRequest(
+            content=request.content,
+            include_audio=True,
+            conversation_history=conversation[-10:]  # Last 10 messages for context
+        )
+        
+        ai_response = await interview_chat(
+            ai_request,
+            chat_data.get("job_position"),
+            chat_data.get("company_name"),
+            chat_data.get("interview_settings", {}).get("difficulty", "medium"),
+            current_user
+        )
+        
+        # Add AI message to conversation (AI is the interviewer)
+        ai_message = {
+            "role": "assistant",
+            "content": ai_response.message.content,
+            "timestamp": datetime.utcnow().isoformat(),
+            "audio_url": ai_response.message.audio_url
+        }
+        
+        conversation.append(ai_message)
+        
+        # Update chat in database
+        update_response = (
+            db.client.table("interview_chat")
+            .update({
+                "conversation": conversation,
+                "updated_at": datetime.utcnow().isoformat()
+            })
+            .eq("id", chat_id)
+            .execute()
+        )
+        
+        if not update_response.data:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Failed to update chat"
+            )
+        
+        return {
+            "message": ai_response.message,
+            "chat": InterviewChat(**update_response.data[0]),
+            "usage": ai_response.usage,
+            "cost": ai_response.cost
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error sending interview message: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to send message"
         )

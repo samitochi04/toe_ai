@@ -13,6 +13,7 @@ import SettingsPage from './pages/SettingsPage'
 import BillingPage from './pages/BillingPage'
 import SharedChatPage from './pages/SharedChatPage'
 import NotFoundPage from './pages/NotFoundPage'
+import InterviewChatsListPage from './pages/InterviewChatsListPage'
 
 // Components
 import ProtectedRoute from './components/auth/ProtectedRoute'
@@ -45,29 +46,35 @@ function App() {
           <Route 
             path="/" 
             element={
-              isAuthenticated ? <Navigate to="/dashboard" replace /> : <LandingPage />
+              isAuthenticated ? <Navigate to="/workspace/dashboard" replace /> : <LandingPage />
             } 
           />
           <Route path="/shared/:shareToken" element={<SharedChatPage />} />
           
-          {/* Protected Workspace Routes */}
-          <Route path="/" element={
-            <ProtectedRoute>
-              <WorkspaceLayout />
-            </ProtectedRoute>
-          }>
+          {/* Protected Workspace Routes - FIXED: Removed nested WorkspaceLayout */}
+          <Route 
+            path="/workspace/*" 
+            element={
+              <ProtectedRoute>
+                <WorkspaceLayout />
+              </ProtectedRoute>
+            }
+          >
+            <Route index element={<Navigate to="dashboard" replace />} />
             <Route path="dashboard" element={<DashboardPage />} />
-            <Route path="workspace/chat/new" element={<ChatPage />} />
-            <Route path="workspace/chat/:chatId" element={<ChatPage />} />
-            <Route path="workspace/chats" element={<ChatsListPage />} />
-            <Route path="workspace/interview/new" element={<InterviewPage />} />
-            <Route path="workspace/interview/:interviewId" element={<InterviewPage />} />
-            <Route path="workspace/interviews" element={<InterviewPage />} />
-            <Route path="workspace/shares" element={<SharedChatPage />} />
-            <Route path="workspace/premium" element={<BillingPage />} />
-            <Route path="workspace/profile" element={<ProfilePage />} />
-            <Route path="workspace/settings" element={<SettingsPage />} />
+            <Route path="chats" element={<ChatsListPage />} />
+            <Route path="chat/new" element={<ChatPage />} />
+            <Route path="chat/:chatId" element={<ChatPage />} />
+            <Route path="interviews" element={<InterviewChatsListPage />} />
+            <Route path="interview/new" element={<InterviewPage />} />
+            <Route path="interview/:chatId" element={<InterviewPage />} />
+            <Route path="premium" element={<BillingPage />} />
+            <Route path="profile" element={<ProfilePage />} />
+            <Route path="settings" element={<SettingsPage />} />
           </Route>
+
+          {/* Redirect old dashboard route */}
+          <Route path="/dashboard" element={<Navigate to="/workspace/dashboard" replace />} />
           
           {/* 404 Route */}
           <Route path="*" element={<NotFoundPage />} />
