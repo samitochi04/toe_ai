@@ -237,5 +237,34 @@
     "notFound": "Page non trouvée",
     "unauthorized": "Vous n'êtes pas autorisé à accéder à cette page",
     "serverError": "Erreur serveur. Veuillez réessayer plus tard."
+  },
+  "billing": {
+    "title": "Facturation et Abonnement",
+    "subtitle": "Gérez votre abonnement et vos détails de paiement",
+    "currentPlan": "Plan Actuel",
+    "premiumDescription": "Chats illimités, téléchargements de fichiers et support prioritaire",
+    "freeDescription": "Chats limités avec fonctionnalités de base",
+    "normalChats": "Chats Normaux",
+    "interviewChats": "Chats d'Entretien",
+    "nextBilling": "Prochaine Date de Facturation",
+    "amount": "Montant",
+    "upgradePremium": "Passer à Premium",
+    "manageBilling": "Gérer la Facturation",
+    "cancelSubscription": "Annuler l'Abonnement",
+    "reactivateSubscription": "Réactiver l'Abonnement",
+    "paymentHistory": "Historique des Paiements",
+    "noPaymentHistory": "Aucun historique de paiement disponible",
+    "confirmCancel": "Êtes-vous sûr de vouloir annuler votre abonnement? Il restera actif jusqu'à la fin de la période de facturation actuelle.",
+    "cancelledMessage": "Votre abonnement sera annulé à la fin de la période de facturation actuelle."
+  },
+  "payment": {
+    "success": {
+      "title": "Paiement Réussi!",
+      "message": "Bienvenue chez TOE AI Premium! Votre abonnement est maintenant actif."
+    },
+    "cancel": {
+      "title": "Paiement Annulé",
+      "message": "Votre paiement a été annulé. Aucun frais n'a été facturé sur votre compte."
+    }
   }
 }

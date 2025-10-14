@@ -6,10 +6,13 @@ import Button from '../components/common/Button'
 import Modal from '../components/common/Modal'
 import toast from 'react-hot-toast'
 import { api } from '../services/api'
+import usePayments from '../hooks/usePayments'
 
 const BillingPage = () => {
   const { t } = useTranslation()
   const { user } = useAuthStore()
+  const { createCheckoutSession, isLoading: paymentLoading } = usePayments()
+  
   const [selectedPlan, setSelectedPlan] = useState('monthly')
   const [showPaymentModal, setShowPaymentModal] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -110,27 +113,10 @@ const BillingPage = () => {
   }
 
   const handlePayment = async () => {
-    setIsLoading(true)
     try {
-      const plan = plans[selectedPlan]
-      
-      // This would integrate with Stripe
-      const response = await fetch('/api/v1/payments/create-checkout-session', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('access_token')}`
-        },
-        body: JSON.stringify({
-          price_id: plan.priceId,
-          success_url: `${window.location.origin}/workspace/premium?success=true`,
-          cancel_url: `${window.location.origin}/workspace/premium?canceled=true`
-        })
-      })
-
-      const { checkout_url } = await response.json()
-      window.location.href = checkout_url
-
+      setIsLoading(true)
+      // Use the hook function directly instead of calling usePayments inside
+      await createCheckoutSession()
     } catch (error) {
       toast.error('Payment failed. Please try again.')
       console.error('Payment error:', error)
@@ -469,7 +455,7 @@ const BillingPage = () => {
           <div className="space-y-3">
             <Button
               onClick={handlePayment}
-              isLoading={isLoading}
+              isLoading={isLoading || paymentLoading}
               className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-dark-primary font-bold flex items-center justify-center space-x-2"
             >
               <CreditCard className="w-5 h-5" />

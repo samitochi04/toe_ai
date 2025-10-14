@@ -421,6 +421,46 @@ class AuthManager:
         except Exception as e:
             logger.error(f"Token refresh error: {e}")
             return None
+    
+    async def sign_out(self, token: str) -> bool:
+        """Sign out user"""
+        try:
+            # Verify token first to ensure it's valid
+            payload = self.verify_token(token, "access")
+            user_id = payload.get("sub")
+            
+            if user_id:
+                # Use Supabase to sign out
+                try:
+                    self.supabase.auth.sign_out()
+                    return True
+                except Exception as e:
+                    logger.warning(f"Supabase sign out failed: {e}")
+                    # Even if Supabase sign out fails, consider it successful
+                    # since the token verification worked
+                    return True
+            
+            return False
+        except AuthenticationError:
+            # If token is invalid/expired, consider sign out successful
+            return True
+        except Exception as e:
+            logger.error(f"Sign out error: {e}")
+            return False
+
+    async def update_password(self, user_id: str, new_password: str) -> bool:
+        """Update user password"""
+        try:
+            # Use Supabase Admin API to update password
+            service_supabase = get_service_supabase()
+            response = service_supabase.auth.admin.update_user_by_id(
+                user_id,
+                {"password": new_password}
+            )
+            return response.user is not None
+        except Exception as e:
+            logger.error(f"Password update failed: {e}")
+            return False
 
 
 # Dependency to get current user

@@ -16,6 +16,8 @@ import SharedChatPage from './pages/SharedChatPage'
 import SharesPage from './pages/SharesPage'
 import NotFoundPage from './pages/NotFoundPage'
 import InterviewChatsListPage from './pages/InterviewChatsListPage'
+import PaymentSuccessPage from './pages/PaymentSuccessPage'
+import PaymentCancelPage from './pages/PaymentCancelPage'
 
 // Components
 import ProtectedRoute from './components/auth/ProtectedRoute'
@@ -79,6 +81,17 @@ function App() {
           {/* Redirect old dashboard route */}
           <Route path="/dashboard" element={<Navigate to="/workspace/dashboard" replace />} />
           
+          {/* Payment Routes - Public but need auth context */}
+          <Route path="/payment/success" element={<PaymentSuccessPage />} />
+          <Route path="/payment/cancel" element={<PaymentCancelPage />} />
+          
+          {/* Billing Route - Protected */}
+          <Route path="/billing" element={
+            <ProtectedRoute>
+              <BillingPage />
+            </ProtectedRoute>
+          } />
+
           {/* 404 Route */}
           <Route path="*" element={<NotFoundPage />} />
         </Routes>

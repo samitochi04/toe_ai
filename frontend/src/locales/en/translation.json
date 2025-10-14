@@ -314,5 +314,34 @@
     "premium": "Premium",
     "profile": "Profile",
     "settings": "Settings"
+  },
+  "billing": {
+    "title": "Billing & Subscription",
+    "subtitle": "Manage your subscription and payment details",
+    "currentPlan": "Current Plan",
+    "premiumDescription": "Unlimited chats, file uploads, and priority support",
+    "freeDescription": "Limited chats with basic features",
+    "normalChats": "Normal Chats",
+    "interviewChats": "Interview Chats", 
+    "nextBilling": "Next Billing Date",
+    "amount": "Amount",
+    "upgradePremium": "Upgrade to Premium",
+    "manageBilling": "Manage Billing",
+    "cancelSubscription": "Cancel Subscription",
+    "reactivateSubscription": "Reactivate Subscription",
+    "paymentHistory": "Payment History",
+    "noPaymentHistory": "No payment history available",
+    "confirmCancel": "Are you sure you want to cancel your subscription? It will remain active until the end of the current billing period.",
+    "cancelledMessage": "Your subscription is set to cancel at the end of the current billing period."
+  },
+  "payment": {
+    "success": {
+      "title": "Payment Successful!",
+      "message": "Welcome to TOE AI Premium! Your subscription is now active."
+    },
+    "cancel": {
+      "title": "Payment Cancelled",
+      "message": "Your payment was cancelled. No charges have been made to your account."
+    }
   }
 }

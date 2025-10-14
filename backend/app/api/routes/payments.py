@@ -282,6 +282,79 @@ async def get_payment_history(
         )
 
 
+@router.get("/checkout-session/{session_id}")
+async def get_checkout_session(
+    session_id: str,
+    current_user: User = Depends(get_current_user)
+):
+    """Get checkout session status"""
+    try:
+        session = stripe.checkout.Session.retrieve(session_id)
+        
+        return {
+            "status": session.status,
+            "payment_status": session.payment_status,
+            "customer": session.customer,
+            "subscription": session.subscription,
+            "success_url": session.success_url,
+            "cancel_url": session.cancel_url
+        }
+        
+    except stripe.error.StripeError as e:
+        logger.error(f"Stripe error: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Stripe error: {str(e)}"
+        )
+    except Exception as e:
+        logger.error(f"Error getting checkout session: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to get checkout session"
+        )
+
+
+@router.get("/billing-portal")
+async def create_billing_portal_session(
+    return_url: str = "http://localhost:3000/billing",
+    current_user: User = Depends(get_current_user)
+):
+    """Create Stripe billing portal session"""
+    db = DatabaseManager()
+    
+    try:
+        subscription = await db.get_user_subscription(str(current_user.id))
+        
+        if not subscription or not subscription.get("stripe_customer_id"):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="No Stripe customer found"
+            )
+        
+        # Create billing portal session
+        portal_session = stripe.billing_portal.Session.create(
+            customer=subscription["stripe_customer_id"],
+            return_url=return_url,
+        )
+        
+        return {"url": portal_session.url}
+        
+    except stripe.error.StripeError as e:
+        logger.error(f"Stripe error: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Stripe error: {str(e)}"
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error creating billing portal session: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to create billing portal session"
+        )
+
+
 # ================================================
 # STRIPE WEBHOOKS
 # ================================================

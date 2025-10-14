@@ -22,6 +22,7 @@ export default defineConfig({
   server: {
     port: 3000,
     host: true,
+    allowedHosts: 'all', // Allow all hosts for development
     proxy: {
       '/api': {
         target: 'http://localhost:8000',
@@ -37,13 +38,12 @@ export default defineConfig({
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom'],
-          router: ['react-router-dom'],
-          ui: ['@headlessui/react', 'framer-motion'],
-          utils: ['axios', 'date-fns', 'js-cookie'],
-        },
-      },
     },
   },
+  optimizeDeps: {
+    include: ['react', 'react-dom', 'react-router-dom'],
+  },    router: ['react-router-dom'],
+})  },
   optimizeDeps: {
     include: ['react', 'react-dom', 'react-router-dom'],
   },
