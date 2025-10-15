@@ -96,7 +96,14 @@ const Sidebar = ({ isOpen, onToggle }) => {
 
   const SubMenuItem = ({ icon, label, path, isActive = false }) => (
     <button
-      onClick={() => navigate(path)}
+      onClick={() => {
+        // Force navigation with key change for "new" routes to trigger component remount
+        if (path.includes('/new')) {
+          navigate(`${path}?t=${Date.now()}`)
+        } else {
+          navigate(path)
+        }
+      }}
       className={`
         w-full flex items-center px-8 py-2 text-left transition-all duration-200
         ${isActive 
