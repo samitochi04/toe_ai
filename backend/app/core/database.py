@@ -112,17 +112,30 @@ class DatabaseManager:
     async def get_user_subscription(self, user_id: str):
         """Get user's current subscription"""
         try:
+            logger.debug(f"Getting subscription for user_profile_id: {user_id}")
+            
+            # Use service role to bypass RLS policies for subscription queries
+            service_db = DatabaseManager(use_service_role=True)
+            
             response = (
-                self.client.table("user_subscriptions")
+                service_db.client.table("user_subscriptions")
                 .select("*, subscription_tiers(*)")
                 .eq("user_profile_id", user_id)
-                .eq("status", "active")
-                .or_("status.eq.free")
+                .in_("status", ["active", "free"])
                 .order("created_at", desc=True)
                 .limit(1)
                 .execute()
             )
-            return response.data[0] if response.data else None
+            
+            logger.debug(f"Subscription query response: {response.data}")
+            
+            if response.data:
+                logger.debug(f"Found subscription: {response.data[0]}")
+                return response.data[0]
+            else:
+                logger.warning(f"No subscription found for user_profile_id: {user_id}")
+                return None
+                
         except Exception as e:
             logger.error(f"Error getting user subscription for {user_id}: {e}")
             return None

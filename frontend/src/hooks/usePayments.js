@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import { paymentApi } from '../services/payments'
+import useAuthStore from '../store/authStore'
 import toast from 'react-hot-toast'
 
 export const usePayments = () => {
+  const { refreshUserProfile } = useAuthStore()
   const [isLoading, setIsLoading] = useState(false)
   const [subscriptionStatus, setSubscriptionStatus] = useState(null)
   const [paymentHistory, setPaymentHistory] = useState([])

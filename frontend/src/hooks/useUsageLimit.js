@@ -16,7 +16,15 @@ export const useUsageLimit = () => {
   const [showLimitModal, setShowLimitModal] = useState(false)
   const [limitType, setLimitType] = useState('normal')
 
-  const isPremium = user?.subscription_tier === 'Premium'
+  const isPremium = user?.subscription?.status === 'active'
+  
+  // Debug log to check subscription status
+  console.log('User subscription debug:', {
+    user: user?.email,
+    hasSubscription: !!user?.subscription,
+    subscriptionStatus: user?.subscription?.status,
+    isPremium
+  })
 
   useEffect(() => {
     if (user) {

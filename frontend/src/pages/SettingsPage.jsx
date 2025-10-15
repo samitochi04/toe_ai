@@ -55,7 +55,7 @@ const SettingsPage = () => {
   const [subscription, setSubscription] = useState(null)
   const [subscriptionLoading, setSubscriptionLoading] = useState(true)
 
-  const isPremium = user?.subscription_tier === 'Premium'
+  const isPremium = user?.subscription?.status === 'active'
 
   useEffect(() => {
     loadUserData()

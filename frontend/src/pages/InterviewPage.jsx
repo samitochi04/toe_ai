@@ -70,7 +70,7 @@ const InterviewPage = () => {
   const messagesEndRef = useRef(null)
   const videoRef = useRef(null)
 
-  const isPremium = user?.subscription_tier === 'Premium'
+  const isPremium = user?.subscription?.status === 'active'
 
   // Load existing chat or setup new interview
   useEffect(() => {

@@ -24,7 +24,7 @@ const BillingPage = () => {
   })
   const [usageLoading, setUsageLoading] = useState(true)
 
-  const isPremium = user?.subscription_tier === 'Premium'
+  const isPremium = user?.subscription?.status === 'active'
 
   const plans = {
     monthly: {

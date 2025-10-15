@@ -3,11 +3,13 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { CheckCircle, Crown, ArrowRight } from 'lucide-react'
 import Button from '../components/common/Button'
+import useAuthStore from '../store/authStore'
 import { paymentApi } from '../services/payments'
 
 const PaymentSuccessPage = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
+  const { refreshUserProfile } = useAuthStore()
   const [searchParams] = useSearchParams()
   const [sessionData, setSessionData] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -16,10 +18,14 @@ const PaymentSuccessPage = () => {
 
   useEffect(() => {
     if (sessionId) {
-      // Verify the session with backend
-      paymentApi.getCheckoutSession(sessionId)
-        .then(response => {
-          setSessionData(response)
+      // Verify the session with backend and refresh user profile
+      Promise.all([
+        paymentApi.getCheckoutSession(sessionId),
+        refreshUserProfile() // Refresh user profile to get updated subscription status
+      ])
+        .then(([sessionResponse, profileResponse]) => {
+          setSessionData(sessionResponse)
+          console.log('User profile refreshed after payment:', profileResponse)
         })
         .catch(error => {
           console.error('Error verifying session:', error)
@@ -30,7 +36,7 @@ const PaymentSuccessPage = () => {
     } else {
       setIsLoading(false)
     }
-  }, [sessionId])
+  }, [sessionId, refreshUserProfile])
 
   return (
     <div className="min-h-screen bg-dark-primary flex items-center justify-center p-6">

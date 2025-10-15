@@ -19,6 +19,9 @@ const useAuthStore = create((set, get) => ({
         // Verify token is still valid
         await authService.verifyToken()
         set({ user, isAuthenticated: true, isLoading: false })
+        
+        // Fetch latest user profile including subscription data
+        await get().refreshUserProfile()
       } catch (error) {
         console.log('Token verification failed, attempting refresh...')
         // Try to refresh token
@@ -30,6 +33,9 @@ const useAuthStore = create((set, get) => ({
             storage.setRefreshToken(response.refresh_token)
             
             set({ user, isAuthenticated: true, isLoading: false })
+            
+            // Fetch latest user profile including subscription data  
+            await get().refreshUserProfile()
           } catch (refreshError) {
             console.error('Token refresh failed:', refreshError)
             // Refresh failed, clear storage
@@ -73,6 +79,9 @@ const useAuthStore = create((set, get) => ({
         error: null,
       })
 
+      // Fetch complete user profile including subscription data
+      await get().refreshUserProfile()
+
       return response
     } catch (error) {
       set({
@@ -101,6 +110,9 @@ const useAuthStore = create((set, get) => ({
         isLoading: false,
         error: null,
       })
+
+      // Fetch complete user profile including subscription data
+      await get().refreshUserProfile()
 
       return response
     } catch (error) {
@@ -149,6 +161,9 @@ const useAuthStore = create((set, get) => ({
                   isLoading: false,
                   error: null,
                 })
+
+                // Fetch complete user profile including subscription data
+                await get().refreshUserProfile()
 
                 resolve(authResponse)
               } else {
@@ -259,6 +274,40 @@ const useAuthStore = create((set, get) => ({
       user: { ...state.user, ...userData }
     }))
     storage.setUserData({ ...get().user, ...userData })
+  },
+
+  // Check if user is premium based on subscription status
+  isPremiumUser: () => {
+    const user = get().user
+    if (!user || !user.subscription) {
+      return false
+    }
+    // Check if subscription status is "active" (premium) vs "free"
+    return user.subscription.status === 'active'
+  },
+
+  // Refresh user profile data (useful after payment)
+  refreshUserProfile: async () => {
+    try {
+      const baseURL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api/v1'
+      const response = await fetch(`${baseURL}/users/profile`, {
+        headers: {
+          'Authorization': `Bearer ${storage.getAccessToken()}`
+        }
+      })
+      
+      if (response.ok) {
+        const profileData = await response.json()
+        set(state => ({ 
+          user: { ...state.user, ...profileData }
+        }))
+        storage.setUserData({ ...get().user, ...profileData })
+        return profileData
+      }
+    } catch (error) {
+      console.error('Failed to refresh user profile:', error)
+    }
+    return null
   },
 
   // Helper getters

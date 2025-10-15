@@ -40,7 +40,7 @@ const InterviewChatsListPage = () => {
     has_prev: false
   })
 
-  const isPremium = user?.subscription_tier === 'Premium'
+  const isPremium = user?.subscription?.status === 'active'
 
   useEffect(() => {
     loadChats()

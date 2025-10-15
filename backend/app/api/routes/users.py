@@ -25,6 +25,9 @@ async def get_user_profile(current_user: User = Depends(get_current_user)):
     db = DatabaseManager()
     
     try:
+            # Debug logging
+        logger.debug(f"Getting profile for user - id: {current_user.id}, auth_user_id: {current_user.auth_user_id}, email: {current_user.email}")
+        
         # Get usage information
         usage = await db.get_user_usage(str(current_user.id))
         

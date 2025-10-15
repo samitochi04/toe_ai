@@ -43,7 +43,7 @@ const SharesPage = () => {
   })
   const [activeTab, setActiveTab] = useState('my-shares') // 'my-shares' or 'create-share'
 
-  const isPremium = user?.subscription_tier === 'Premium'
+  const isPremium = user?.subscription?.status === 'active'
 
   useEffect(() => {
     loadData()
