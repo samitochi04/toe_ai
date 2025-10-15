@@ -38,12 +38,11 @@ export default defineConfig({
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom'],
+          router: ['react-router-dom'],
+        },
+      },
     },
   },
-  optimizeDeps: {
-    include: ['react', 'react-dom', 'react-router-dom'],
-  },    router: ['react-router-dom'],
-})  },
   optimizeDeps: {
     include: ['react', 'react-dom', 'react-router-dom'],
   },
