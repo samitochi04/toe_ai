@@ -11,11 +11,18 @@ export const usePayments = () => {
     setIsLoading(true)
     try {
       const response = await paymentApi.createCheckoutSession()
-      if (response.data?.checkout_url) {
+      console.log('Checkout session response:', response) // Debug log
+      
+      // The response structure should be: response.checkout_url (not response.data.checkout_url)
+      if (response?.checkout_url) {
+        console.log('Redirecting to:', response.checkout_url)
         // Redirect to Stripe checkout
-        window.location.href = response.data.checkout_url
+        window.location.href = response.checkout_url
+      } else {
+        console.error('No checkout_url in response:', response)
+        toast.error('Failed to get checkout URL')
       }
-      return response.data
+      return response
     } catch (error) {
       console.error('Error creating checkout session:', error)
       toast.error(error.response?.data?.detail || 'Failed to create checkout session')

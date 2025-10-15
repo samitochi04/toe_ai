@@ -4,6 +4,7 @@ export const paymentApi = {
   // Create checkout session for premium subscription
   createCheckoutSession: async () => {
     const response = await api.post('/payments/create-checkout-session')
+    console.log('Payment API response:', response.data) // Debug log
     return response.data
   },
 

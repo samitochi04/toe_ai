@@ -19,8 +19,38 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
-# Configure Stripe
-stripe.api_key = settings.STRIPE_SECRET_KEY
+# Configure Stripe with proper error handling
+try:
+    if not settings.STRIPE_SECRET_KEY:
+        logger.error("STRIPE_SECRET_KEY is not set in environment variables")
+        stripe.api_key = None
+    elif settings.STRIPE_SECRET_KEY.strip() == "":
+        logger.error("STRIPE_SECRET_KEY is empty")
+        stripe.api_key = None
+    else:
+        stripe.api_key = settings.STRIPE_SECRET_KEY.strip()
+        logger.info(f"Stripe API key configured successfully")
+        logger.info(f"Stripe key type: {'Live' if 'sk_live_' in settings.STRIPE_SECRET_KEY else 'Test' if 'sk_test_' in settings.STRIPE_SECRET_KEY else 'Unknown'}")
+        
+        # Test Stripe connection - use a simpler test
+        try:
+            # Try to list payment methods (safer test for restricted keys)
+            test_response = stripe.PaymentMethod.list(limit=1, type="card")
+            logger.info("Stripe connection test successful")
+        except stripe.error.AuthenticationError as auth_error:
+            logger.error(f"Stripe authentication failed: {auth_error}")
+        except stripe.error.PermissionError as perm_error:
+            logger.warning(f"Stripe permission limited (this is normal for restricted keys): {perm_error}")
+            logger.info("Stripe API key is valid but has limited permissions")
+        except Exception as stripe_test_error:
+            logger.error(f"Stripe connection test failed: {stripe_test_error}")
+            logger.error(f"Error type: {type(stripe_test_error)}")
+            # Don't fail the startup for connection test failures
+            pass
+            
+except Exception as e:
+    logger.error(f"Error configuring Stripe: {e}")
+    stripe.api_key = None
 
 
 # ================================================
@@ -35,6 +65,23 @@ async def create_checkout_session(
     db = DatabaseManager()
     
     try:
+        # Debug: Check Stripe configuration
+        logger.info(f"Creating checkout session for user: {current_user.email}")
+        logger.info(f"Stripe secret key available: {'Yes' if stripe.api_key else 'No'}")
+        
+        if not stripe.api_key:
+            logger.error("Stripe API key is not configured!")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Payment system not configured properly. Please check Stripe configuration."
+            )
+        
+        if not settings.STRIPE_PRICE_ID_PREMIUM:
+            logger.error("Stripe Price ID is not configured!")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Premium subscription price not configured"
+            )
         # Check if user already has an active subscription
         subscription = await db.get_user_subscription(str(current_user.id))
         if subscription and subscription.get("status") == "active":
@@ -49,15 +96,23 @@ async def create_checkout_session(
             stripe_customer_id = subscription["stripe_customer_id"]
         else:
             # Create new Stripe customer
-            customer = stripe.Customer.create(
-                email=current_user.email,
-                name=current_user.full_name,
-                metadata={
-                    "user_id": str(current_user.id),
-                    "alias": current_user.alias
-                }
-            )
-            stripe_customer_id = customer.id
+            try:
+                customer = stripe.Customer.create(
+                    email=current_user.email,
+                    name=current_user.full_name,
+                    metadata={
+                        "user_id": str(current_user.id),
+                        "alias": current_user.alias
+                    }
+                )
+                stripe_customer_id = customer.id
+                logger.info(f"Created Stripe customer: {stripe_customer_id}")
+            except stripe.error.StripeError as e:
+                logger.error(f"Stripe customer creation error: {e}")
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail=f"Failed to create customer: {str(e)}"
+                )
             
             # Update user subscription with customer ID
             if subscription:
@@ -69,21 +124,29 @@ async def create_checkout_session(
                 )
         
         # Create checkout session
-        checkout_session = stripe.checkout.Session.create(
-            customer=stripe_customer_id,
-            payment_method_types=['card'],
-            line_items=[{
-                'price': settings.STRIPE_PRICE_ID_PREMIUM,
-                'quantity': 1,
-            }],
-            mode='subscription',
-            success_url=f"{settings.ALLOWED_ORIGINS[0]}/payment/success?session_id={{CHECKOUT_SESSION_ID}}",
-            cancel_url=f"{settings.ALLOWED_ORIGINS[0]}/payment/cancel",
-            metadata={
-                "user_id": str(current_user.id),
-                "alias": current_user.alias
-            }
-        )
+        try:
+            checkout_session = stripe.checkout.Session.create(
+                customer=stripe_customer_id,
+                payment_method_types=['card'],
+                line_items=[{
+                    'price': settings.STRIPE_PRICE_ID_PREMIUM,
+                    'quantity': 1,
+                }],
+                mode='subscription',
+                success_url=f"{settings.ALLOWED_ORIGINS[0]}/payment/success?session_id={{CHECKOUT_SESSION_ID}}",
+                cancel_url=f"{settings.ALLOWED_ORIGINS[0]}/payment/cancel",
+                metadata={
+                    "user_id": str(current_user.id),
+                    "alias": current_user.alias
+                }
+            )
+            logger.info(f"Created checkout session: {checkout_session.id}")
+        except stripe.error.StripeError as e:
+            logger.error(f"Stripe checkout session creation error: {e}")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"Failed to create checkout session: {str(e)}"
+            )
         
         return {
             "checkout_url": checkout_session.url,
@@ -98,6 +161,10 @@ async def create_checkout_session(
         )
     except Exception as e:
         logger.error(f"Error creating checkout session: {e}")
+        logger.error(f"Error type: {type(e)}")
+        logger.error(f"Error args: {e.args}")
+        import traceback
+        logger.error(f"Traceback: {traceback.format_exc()}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to create checkout session"
