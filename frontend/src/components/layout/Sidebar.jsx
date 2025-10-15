@@ -2,7 +2,21 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate, useLocation } from 'react-router-dom'
 import useAuthStore from '../../store/authStore'
-import { ChevronDown, ChevronRight } from 'lucide-react'
+import { 
+  ChevronDown, 
+  ChevronRight, 
+  Home, 
+  MessageCircle, 
+  Plus, 
+  MessageSquare, 
+  Mic, 
+  FileText, 
+  Share2, 
+  Crown, 
+  Settings,
+  Menu,
+  X
+} from 'lucide-react'
 
 const Sidebar = ({ isOpen, onToggle }) => {
   const { t } = useTranslation()
@@ -58,7 +72,9 @@ const Sidebar = ({ isOpen, onToggle }) => {
           ${className}
         `}
       >
-        <img src={icon} alt={label} className="w-5 h-5 mr-3" />
+        <div className="w-5 h-5 mr-3">
+          {icon}
+        </div>
         {isOpen && (
           <>
             <span className="flex-1 text-sm font-medium">{label}</span>
@@ -89,34 +105,46 @@ const Sidebar = ({ isOpen, onToggle }) => {
         }
       `}
     >
-      <img src={icon} alt={label} className="w-4 h-4 mr-3" />
+      <div className="w-4 h-4 mr-3">
+        {icon}
+      </div>
       {isOpen && <span className="text-sm">{label}</span>}
     </button>
   )
 
   return (
     <div className={`
-      fixed left-0 top-0 h-full bg-light-dark-secondary border-r border-gray-700 transition-all duration-300 z-50
+      fixed left-0 top-0 h-full bg-light-dark-secondary border-r border-gray-700 transition-all duration-300 z-50 flex flex-col
       ${isOpen ? 'w-64' : 'w-16'}
     `}>
       {/* Header */}
-      <div className="flex items-center p-4 border-b border-gray-700">
-        <img 
-          src="/src/assets/images/toe_ai_logo.png" 
-          alt="TOE AI" 
-          className="w-8 h-8"
-        />
-        {isOpen && (
-          <span className="ml-3 text-lg font-bold text-white-primary">TOE AI</span>
-        )}
+      <div className="flex items-center justify-between p-4 border-b border-gray-700 flex-shrink-0">
+        <div className="flex items-center">
+          <img 
+            src="/src/assets/images/toe_ai_logo.png" 
+            alt="TOE AI" 
+            className="w-8 h-8"
+          />
+          {isOpen && (
+            <span className="ml-3 text-lg font-bold text-white-primary">TOE AI</span>
+          )}
+        </div>
+        
+        <button
+          onClick={onToggle}
+          className="p-2 rounded-lg hover:bg-gray-700 transition-colors text-white-secondary hover:text-white-primary"
+          title={isOpen ? "Close sidebar" : "Open sidebar"}
+        >
+          {isOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+        </button>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 flex flex-col overflow-y-auto">
-        <div className="flex-1 py-4">
+      <nav className="flex-1 flex flex-col justify-between overflow-y-auto">
+        <div className="py-4">
           {/* Main Workspace */}
           <MenuItem
-            icon="/src/assets/images/main_workspace_icon.png"
+            icon={<Home className="w-5 h-5" />}
             label={t('workspace.mainWorkspace')}
             path="/workspace/dashboard"
             isActive={isActive('/workspace/dashboard')}
@@ -124,7 +152,7 @@ const Sidebar = ({ isOpen, onToggle }) => {
 
           {/* Chatting Section */}
           <MenuItem
-            icon="/src/assets/images/chatting_icon.png"
+            icon={<MessageCircle className="w-5 h-5" />}
             label={t('workspace.chatting')}
             hasSubmenu={true}
             isExpanded={expandedSections.chatting}
@@ -134,13 +162,13 @@ const Sidebar = ({ isOpen, onToggle }) => {
           {expandedSections.chatting && isOpen && (
             <div className="bg-gray-800">
               <SubMenuItem
-                icon="/src/assets/images/new_chat_icon.png"
+                icon={<Plus className="w-4 h-4" />}
                 label={t('workspace.newChat')}
                 path="/workspace/chat/new"
                 isActive={isActive('/workspace/chat/new')}
               />
               <SubMenuItem
-                icon="/src/assets/images/chats_icon.png"
+                icon={<MessageSquare className="w-4 h-4" />}
                 label={t('workspace.chats')}
                 path="/workspace/chats"
                 isActive={isActive('/workspace/chats')}
@@ -150,7 +178,7 @@ const Sidebar = ({ isOpen, onToggle }) => {
 
           {/* Interview Chat Section */}
           <MenuItem
-            icon="/src/assets/images/interview_chat_icon.png"
+            icon={<Mic className="w-5 h-5" />}
             label={t('workspace.interviewChat')}
             hasSubmenu={true}
             isExpanded={expandedSections.interviewChat}
@@ -160,14 +188,14 @@ const Sidebar = ({ isOpen, onToggle }) => {
           {expandedSections.interviewChat && isOpen && (
             <div className="bg-gray-800">
               <SubMenuItem
-                icon="/src/assets/images/new_interview_icon.png"
+                icon={<Plus className="w-4 h-4" />}
                 label={t('workspace.newInterview')}
                 path="/workspace/interview/new"
                 isActive={isActive('/workspace/interview/new')}
               />
 
               <SubMenuItem
-                icon="/src/assets/images/interviews_icon.png"
+                icon={<FileText className="w-4 h-4" />}
                 label={t('workspace.interviews')}
                 path="/workspace/interviews"
                 isActive={isActive('/workspace/interviews')}
@@ -177,7 +205,7 @@ const Sidebar = ({ isOpen, onToggle }) => {
 
           {/* Shares */}
           <MenuItem
-            icon="/src/assets/images/share_icon.png"
+            icon={<Share2 className="w-5 h-5" />}
             label={t('workspace.shares')}
             path="/workspace/shares"
             isActive={isActive('/workspace/shares')}
@@ -188,7 +216,7 @@ const Sidebar = ({ isOpen, onToggle }) => {
         <div className="border-t border-gray-700">
           {/* Premium */}
           <MenuItem
-            icon="/src/assets/images/premium_icon.png"
+            icon={<Crown className="w-5 h-5" />}
             label={t('workspace.premium')}
             path="/workspace/premium"
             isActive={isActive('/workspace/premium')}
@@ -196,7 +224,7 @@ const Sidebar = ({ isOpen, onToggle }) => {
 
           {/* Settings */}
           <MenuItem
-            icon="/src/assets/images/settings_icon.png"
+            icon={<Settings className="w-5 h-5" />}
             label={t('workspace.settings')}
             path="/workspace/settings"
             isActive={isActive('/workspace/settings')}
