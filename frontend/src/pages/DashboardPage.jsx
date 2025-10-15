@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import useAuthStore from '../store/authStore'
 import { chatService } from '../services/chat'
+import shareService from '../services/share'
 import { MoreVertical, MessageCircle, Video, Share2 } from 'lucide-react'
 
 const DashboardPage = () => {
@@ -15,9 +16,10 @@ const DashboardPage = () => {
   const [stats, setStats] = useState({
     totalChats: 0,
     totalInterviews: 0,
-    totalMinutes: 0
+    totalShares: 0
   })
   const [isLoading, setIsLoading] = useState(true)
+  const [deleteModal, setDeleteModal] = useState({ show: false, chat: null, type: '' })
 
   useEffect(() => {
     const loadDashboardData = async () => {
@@ -50,26 +52,47 @@ const DashboardPage = () => {
             id: chat.id,
             title: chat.title || 'Untitled Interview',
             date: new Date(chat.updated_at || chat.created_at).toLocaleDateString(),
-            duration: `${Math.floor(Math.random() * 60) + 15} min`, // Mock duration for now
             jobPosition: chat.job_position,
             companyName: chat.company_name,
             type: 'interview'
           }))
+
+        // Load shares data if user is premium
+        let sharesData = []
+        let totalShares = 0
+        if (user?.subscription?.status === 'active') {
+          try {
+            const sharesResponse = await shareService.getSharedChats()
+            sharesData = sharesResponse.shares || []
+            totalShares = sharesData.length
+            
+            // Process recent shares (top 5)
+            const recentSharesData = sharesData
+              .slice(0, 5)
+              .map(share => ({
+                id: share.id,
+                title: share.title,
+                date: new Date(share.created_at).toLocaleDateString(),
+                views: share.view_count || 0,
+                type: 'share'
+              }))
+            
+            setRecentShares(recentSharesData)
+          } catch (error) {
+            console.error('Error loading shares:', error)
+            // Don't fail the entire load if shares fail
+            setRecentShares([])
+          }
+        }
         
-        // Calculate stats
-        const totalMessages = normalChats.reduce((sum, chat) => sum + (chat.message_count || 0), 0)
-        const estimatedMinutes = Math.floor(totalMessages * 1.5) // Estimate 1.5 min per message
-        
+        // Calculate stats with real data
         setRecentChats(recentNormalChats)
         setRecentInterviews(recentInterviewsData)
         setStats({
           totalChats: normalChats.length,
           totalInterviews: interviewChats.length,
-          totalMinutes: estimatedMinutes
+          totalShares: totalShares
         })
-        
-        // For now, keep shares empty as we'll implement that later
-        setRecentShares([])
         
       } catch (error) {
         console.error('Error loading dashboard data:', error)
@@ -77,14 +100,14 @@ const DashboardPage = () => {
         setRecentChats([])
         setRecentInterviews([])
         setRecentShares([])
-        setStats({ totalChats: 0, totalInterviews: 0, totalMinutes: 0 })
+        setStats({ totalChats: 0, totalInterviews: 0, totalShares: 0 })
       } finally {
         setIsLoading(false)
       }
     }
     
     loadDashboardData()
-  }, [])
+  }, [user?.subscription?.status])
 
   const GetStartedCard = ({ icon, title, description, onClick, bgColor = "bg-blue-2nd" }) => (
     <button
@@ -103,43 +126,171 @@ const DashboardPage = () => {
 
   const ChatItem = ({ chat, type = 'chat' }) => {
     const [showMenu, setShowMenu] = useState(false)
+    const menuRef = useRef(null)
+    
+    // Close menu when clicking outside
+    useEffect(() => {
+      const handleClickOutside = (event) => {
+        if (menuRef.current && !menuRef.current.contains(event.target)) {
+          setShowMenu(false)
+        }
+      }
+
+      if (showMenu) {
+        document.addEventListener('mousedown', handleClickOutside)
+      }
+
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside)
+      }
+    }, [showMenu])
+
+    const handleOpenChat = () => {
+      setShowMenu(false)
+      if (type === 'chat') {
+        navigate(`/workspace/chat/${chat.id}`)
+      } else if (type === 'interview') {
+        navigate(`/workspace/interview/${chat.id}`)
+      } else if (type === 'share') {
+        navigate(`/workspace/share/${chat.id}`)
+      }
+    }
+
+    const handleShareChat = () => {
+      setShowMenu(false)
+      navigate('/workspace/shares')
+    }
+
+    const handleExportPDF = async () => {
+      setShowMenu(false)
+      try {
+        // Implement PDF export functionality
+        console.log('Exporting PDF for:', chat.id)
+        // This would call an API endpoint to generate and download PDF
+      } catch (error) {
+        console.error('Error exporting PDF:', error)
+      }
+    }
+
+    const handleDeleteChat = () => {
+      setShowMenu(false)
+      setDeleteModal({ show: true, chat, type })
+    }
     
     return (
-      <div className="bg-light-dark-secondary rounded-lg p-4 hover:bg-gray-700 transition-colors group">
+      <div className="bg-light-dark-secondary rounded-lg p-4 hover:bg-gray-700 transition-colors group cursor-pointer"
+           onClick={handleOpenChat}>
         <div className="flex justify-between items-start">
           <div className="flex-1">
             <h4 className="font-medium text-white-primary mb-1">{chat.title}</h4>
             <div className="flex items-center text-sm text-white-secondary space-x-4">
               <span>{chat.date}</span>
-              {type === 'chat' && <span>{chat.messages} messages</span>}
-              {type === 'interview' && <span>{chat.duration}</span>}
-              {type === 'share' && <span>{chat.views} views</span>}
+              {type === 'chat' && chat.messages && <span>{chat.messages} messages</span>}
+              {type === 'interview' && chat.jobPosition && <span>{chat.jobPosition}</span>}
+              {type === 'share' && chat.views && <span>{chat.views} views</span>}
             </div>
           </div>
           
-          <div className="relative">
+          <div className="relative" ref={menuRef}>
             <button
-              onClick={() => setShowMenu(!showMenu)}
-              className="opacity-0 group-hover:opacity-100 p-1 rounded hover:bg-gray-600 transition-all"
+              onClick={(e) => {
+                e.stopPropagation()
+                setShowMenu(!showMenu)
+              }}
+              className="opacity-0 group-hover:opacity-100 p-2 rounded-md hover:bg-gray-600 transition-all duration-200"
             >
               <MoreVertical className="w-4 h-4 text-white-secondary" />
             </button>
             
             {showMenu && (
-              <div className="absolute right-0 top-8 bg-dark-primary border border-gray-600 rounded-lg py-2 min-w-[150px] z-10">
-                <button className="w-full px-4 py-2 text-left text-sm text-white-secondary hover:text-white-primary hover:bg-gray-700">
-                  Open
+              <div className="absolute right-0 top-full mt-1 bg-light-dark-secondary border border-gray-600 rounded-lg py-1 min-w-[140px] z-20 shadow-xl">
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    handleOpenChat()
+                  }}
+                  className="w-full px-3 py-2 text-left text-sm text-white-secondary hover:text-white-primary hover:bg-gray-700 transition-colors"
+                >
+                  Open {type}
                 </button>
-                <button className="w-full px-4 py-2 text-left text-sm text-white-secondary hover:text-white-primary hover:bg-gray-700">
-                  Share Chat
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    handleShareChat()
+                  }}
+                  className="w-full px-3 py-2 text-left text-sm text-white-secondary hover:text-white-primary hover:bg-gray-700 transition-colors"
+                >
+                  Share {type}
                 </button>
                 {user?.is_premium && (
-                  <button className="w-full px-4 py-2 text-left text-sm text-white-secondary hover:text-white-primary hover:bg-gray-700">
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      handleExportPDF()
+                    }}
+                    className="w-full px-3 py-2 text-left text-sm text-white-secondary hover:text-white-primary hover:bg-gray-700 transition-colors"
+                  >
                     Export as PDF
                   </button>
                 )}
+                <div className="border-t border-gray-600 my-1"></div>
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    handleDeleteChat()
+                  }}
+                  className="w-full px-3 py-2 text-left text-sm text-red-400 hover:text-red-300 hover:bg-gray-700 transition-colors"
+                >
+                  Delete {type}
+                </button>
               </div>
             )}
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  const DeleteModal = () => {
+    if (!deleteModal.show) return null
+
+    const confirmDelete = async () => {
+      try {
+        await chatService.deleteChat(deleteModal.chat.id)
+        setDeleteModal({ show: false, chat: null, type: '' })
+        // Refresh the dashboard data
+        window.location.reload()
+      } catch (error) {
+        console.error('Error deleting chat:', error)
+      }
+    }
+
+    const cancelDelete = () => {
+      setDeleteModal({ show: false, chat: null, type: '' })
+    }
+
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="bg-light-dark-secondary rounded-lg p-6 max-w-md w-full mx-4">
+          <h3 className="text-lg font-semibold text-white-primary mb-4">
+            Delete {deleteModal.type}
+          </h3>
+          <p className="text-white-secondary mb-6">
+            Are you sure you want to delete "{deleteModal.chat?.title}"? This action cannot be undone.
+          </p>
+          <div className="flex justify-end space-x-3">
+            <button
+              onClick={cancelDelete}
+              className="px-4 py-2 bg-gray-600 hover:bg-gray-500 text-white rounded-lg transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={confirmDelete}
+              className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg transition-colors"
+            >
+              Delete
+            </button>
           </div>
         </div>
       </div>
@@ -188,9 +339,9 @@ const DashboardPage = () => {
           <div className="bg-light-dark-secondary rounded-xl p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-white-secondary text-sm">Practice Time</p>
+                <p className="text-white-secondary text-sm">Total Shares</p>
                 <p className="text-2xl font-bold text-white-primary">
-                  {isLoading ? '...' : `${stats.totalMinutes} min`}
+                  {isLoading ? '...' : stats.totalShares}
                 </p>
               </div>
               <Share2 className="w-8 h-8 text-purple-500" />
@@ -208,21 +359,21 @@ const DashboardPage = () => {
               icon="/src/assets/images/main_workspace_new_chat_icon.png"
               title="New Chat"
               description="Start a conversation with AI to practice general questions"
-              onClick={() => navigate('/chat/new')}
+              onClick={() => navigate('/workspace/chat/new')}
               bgColor="bg-blue-2nd"
             />
             <GetStartedCard
               icon="/src/assets/images/main_workspace_new_interview_icon.png"
               title="New Interview"
               description="Begin a mock interview session with voice interaction"
-              onClick={() => navigate('/interview/new')}
+              onClick={() => navigate('/workspace/interview/new')}
               bgColor="bg-success"
             />
             <GetStartedCard
               icon="/src/assets/images/main_workspace_share_chat_icon.png"
               title="Share Chat"
               description="Share your interview practice with others (Premium feature)"
-              onClick={() => navigate('/shares')}
+              onClick={() => navigate('/workspace/shares')}
               bgColor="bg-warning"
             />
           </div>
@@ -237,7 +388,7 @@ const DashboardPage = () => {
                 Recent Interviews
               </h3>
               <button 
-                onClick={() => navigate('/interviews')}
+                onClick={() => navigate('/workspace/interviews')}
                 className="text-blue-2nd hover:text-blue-primary text-sm font-medium"
               >
                 View All
@@ -268,7 +419,7 @@ const DashboardPage = () => {
                 Recent Chats
               </h3>
               <button 
-                onClick={() => navigate('/chats')}
+                onClick={() => navigate('/workspace/chats')}
                 className="text-blue-2nd hover:text-blue-primary text-sm font-medium"
               >
                 View All
@@ -299,7 +450,7 @@ const DashboardPage = () => {
                 Recent Shares
               </h3>
               <button 
-                onClick={() => navigate('/shares')}
+                onClick={() => navigate('/workspace/shares')}
                 className="text-blue-2nd hover:text-blue-primary text-sm font-medium"
               >
                 View All
@@ -326,7 +477,7 @@ const DashboardPage = () => {
                     </p>
                   ) : (
                     <button
-                      onClick={() => navigate('/settings')}
+                      onClick={() => navigate('/workspace/premium')}
                       className="bg-gradient-to-r from-blue-primary to-purple-secondary text-white px-4 py-2 rounded-lg hover:opacity-90 transition-opacity text-sm font-medium"
                     >
                       Upgrade to Premium to Share
@@ -338,6 +489,9 @@ const DashboardPage = () => {
           </div>
         </div>
       </div>
+
+      {/* Delete Modal */}
+      <DeleteModal />
     </div>
   )
 }
