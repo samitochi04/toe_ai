@@ -258,6 +258,7 @@ export const chatService = {
         title: `${jobPosition} Interview${companyName ? ` at ${companyName}` : ''} - ${contentTitle}`,
         job_position: jobPosition,
         company_name: companyName,
+        language: settings?.language || 'en',
         conversation: [],
         interview_settings: {
           difficulty,
@@ -278,6 +279,7 @@ export const chatService = {
         job_position: jobPosition,
         company_name: companyName,
         difficulty,
+        language: settings?.language || 'en',
         voice_type: settings?.voice_type || 'alloy',
         voice_speed: settings?.voice_speed || 1.0
       }
@@ -299,6 +301,7 @@ export const chatService = {
       job_position: jobPosition,
       company_name: companyName,
       difficulty,
+      language: settings?.language || 'en',
       voice_type: settings?.voice_type || 'alloy',
       voice_speed: settings?.voice_speed || 1.0
     }

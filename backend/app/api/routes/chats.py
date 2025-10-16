@@ -414,6 +414,7 @@ async def create_interview_chat(
                 "title": chat_data.title,
                 "job_position": chat_data.job_position,
                 "company_name": chat_data.company_name,
+                "language": chat_data.language,
                 "conversation": conversation_data,
                 "interview_settings": chat_data.interview_settings.dict() if chat_data.interview_settings else {},
                 "duration_minutes": 0,
@@ -694,6 +695,7 @@ async def send_interview_chat_message(
             chat_data.get("job_position"),
             chat_data.get("company_name"),
             chat_data.get("interview_settings", {}).get("difficulty", "medium"),
+            chat_data.get("language", "en"),
             current_user
         )
         

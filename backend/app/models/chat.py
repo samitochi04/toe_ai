@@ -77,6 +77,7 @@ class InterviewChatCreate(ChatBase):
     """Interview chat creation model"""
     job_position: Optional[str] = Field(None, max_length=255)
     company_name: Optional[str] = Field(None, max_length=255)
+    language: str = Field(default="en", pattern="^(en|fr)$")
     interview_settings: Optional[InterviewSettings] = Field(default_factory=InterviewSettings)
 
 
@@ -85,6 +86,7 @@ class InterviewChatUpdate(BaseModel):
     title: Optional[str] = Field(None, min_length=1, max_length=255)
     job_position: Optional[str] = Field(None, max_length=255)
     company_name: Optional[str] = Field(None, max_length=255)
+    language: Optional[str] = Field(None, pattern="^(en|fr)$")
     conversation: Optional[List[Message]] = None
     interview_settings: Optional[InterviewSettings] = None
     duration_minutes: Optional[int] = None
@@ -97,6 +99,7 @@ class InterviewChat(ChatBase):
     user_profile_id: UUID
     job_position: Optional[str] = None
     company_name: Optional[str] = None
+    language: str = "en"
     interview_settings: InterviewSettings
     duration_minutes: int = 0
     is_shared: bool = False

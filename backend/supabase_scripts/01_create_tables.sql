@@ -102,6 +102,7 @@ CREATE TABLE IF NOT EXISTS public.interview_chat (
     title VARCHAR(255) NOT NULL,
     job_position VARCHAR(255),
     company_name VARCHAR(255),
+    language text DEFAULT 'en', -- Interview language (en, fr)
     conversation JSONB DEFAULT '[]', -- Array of messages with role, content, timestamp, audio_url
     interview_settings JSONB DEFAULT '{}', -- voice settings, language, etc.
     duration_minutes INTEGER DEFAULT 0,

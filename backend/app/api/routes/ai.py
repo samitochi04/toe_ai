@@ -141,6 +141,7 @@ async def interview_chat(
     job_position: Optional[str] = None,
     company_name: Optional[str] = None,
     difficulty: str = "medium",
+    language: str = "en",
     current_user: User = Depends(get_current_user)
 ):
     """Get AI response for interview chat with context"""
@@ -148,7 +149,7 @@ async def interview_chat(
     
     try:
         # Build system prompt for interview context
-        system_prompt = build_interview_system_prompt(job_position, company_name, difficulty)
+        system_prompt = build_interview_system_prompt(job_position, company_name, difficulty, language)
         
         # Prepare messages for OpenAI with conversation history
         messages = [
@@ -462,15 +463,32 @@ async def audio_chat(
 # HELPER FUNCTIONS
 # ================================================
 
-def build_interview_system_prompt(job_position: Optional[str], company_name: Optional[str], difficulty: str) -> str:
+def build_interview_system_prompt(job_position: Optional[str], company_name: Optional[str], difficulty: str, language: str = "en") -> str:
     """Build system prompt for interview context"""
-    base_prompt = f"""You are Sarah, an experienced HR recruiter and interviewer at {company_name if company_name else 'the company'}. You are conducting a job interview for the position of {job_position if job_position else 'the role'}. Your role is to:
+    
+    # Language-specific prompts
+    if language == "fr":
+        base_prompt = f"""Tu es Sarah, une recruteuse RH expérimentée et intervieweuse chez {company_name if company_name else 'la compagnie'}. Tu mènes un entretien d'embauche pour le poste de {job_position if job_position else 'le poste'}. Ton rôle est de:
+
+1. Agir comme une intervieweuse/recruteuse professionnelle et amicale
+2. Poser des questions pertinentes sur l'expérience, les compétences et les qualifications du candidat pour le {job_position if job_position else 'poste'}
+3. Creuser plus profondément avec des questions perspicaces sur leurs réponses
+4. Évaluer leur adéquation avec le poste et la culture d'entreprise
+5. Être professionnelle tout en restant conversationnelle et accueillante
+
+IMPORTANT: Réponds TOUJOURS en français. Mène l'entretien entièrement en français.
+
+"""
+    else:
+        base_prompt = f"""You are Sarah, an experienced HR recruiter and interviewer at {company_name if company_name else 'the company'}. You are conducting a job interview for the position of {job_position if job_position else 'the role'}. Your role is to:
 
 1. Act as a professional, friendly interviewer/recruiter
 2. Ask relevant questions about the candidate's experience, skills, and qualifications for the {job_position if job_position else 'position'}
 3. Follow up on their answers with deeper, insightful questions
 4. Evaluate their fit for the role and company culture
 5. Be professional yet conversational and welcoming
+
+IMPORTANT: Always respond in English. Conduct the interview entirely in English.
 
 """
     
@@ -481,15 +499,36 @@ def build_interview_system_prompt(job_position: Optional[str], company_name: Opt
         base_prompt += f"You are interviewing candidates for the {job_position} position. "
         base_prompt += f"Focus on skills, experience, and qualifications relevant to this specific role. "
     
-    difficulty_context = {
-        "easy": "Conduct a friendly, encouraging interview suitable for entry-level or junior candidates. Ask straightforward questions and provide guidance when needed.",
-        "medium": "Conduct a standard professional interview with follow-up questions. Expect solid experience and clear explanations from the candidate.",
-        "hard": "Conduct a rigorous interview with challenging technical questions, complex scenarios, and deep behavioral questions. Expect detailed, expert-level responses."
-    }
-    
-    base_prompt += difficulty_context.get(difficulty, difficulty_context["medium"])
-    
-    base_prompt += f"""
+    if language == "fr":
+        difficulty_context = {
+            "easy": "Mène un entretien amical et encourageant adapté aux candidats débutants ou juniors. Pose des questions directes et fournis des conseils si nécessaire.",
+            "medium": "Mène un entretien professionnel standard avec des questions de suivi. Attends-toi à une expérience solide et des explications claires du candidat.",
+            "hard": "Mène un entretien rigoureux avec des questions techniques difficiles, des scénarios complexes et des questions comportementales approfondies. Attends-toi à des réponses détaillées et expertes."
+        }
+        
+        base_prompt += difficulty_context.get(difficulty, difficulty_context["medium"])
+        
+        base_prompt += f"""
+
+Directives d'entretien:
+- Salue chaleureusement le candidat quand il se présente
+- Pose une question à la fois et attends sa réponse
+- Creuse les points intéressants qu'il mentionne
+- Demande à propos de son expérience, ses motivations et ses compétences techniques
+- Renseigne-toi sur son intérêt pour {company_name if company_name else 'la compagnie'} et le {job_position if job_position else 'poste'}
+- Sois encourageante et professionnelle tout au long
+
+Rappel: Tu es l'intervieweuse (Sarah), et l'utilisateur est le candidat qui passe l'entretien. Réponds toujours du point de vue de l'intervieweuse qui pose des questions et évalue le candidat."""
+    else:
+        difficulty_context = {
+            "easy": "Conduct a friendly, encouraging interview suitable for entry-level or junior candidates. Ask straightforward questions and provide guidance when needed.",
+            "medium": "Conduct a standard professional interview with follow-up questions. Expect solid experience and clear explanations from the candidate.",
+            "hard": "Conduct a rigorous interview with challenging technical questions, complex scenarios, and deep behavioral questions. Expect detailed, expert-level responses."
+        }
+        
+        base_prompt += difficulty_context.get(difficulty, difficulty_context["medium"])
+        
+        base_prompt += f"""
 
 Interview Guidelines:
 - Greet the candidate warmly when they introduce themselves

@@ -90,7 +90,7 @@ const InterviewPage = () => {
             setInterviewSettings({
               voice_type: response.interview_settings?.voice_type || 'alloy',
               voice_speed: response.interview_settings?.voice_speed || 1.0,
-              language: response.interview_settings?.language || 'en',
+              language: response.language || response.interview_settings?.language || 'en',
               max_duration_minutes: response.interview_settings?.max_duration_minutes || 60
             })
             
@@ -398,7 +398,7 @@ const InterviewPage = () => {
 
               <div>
                 <label className="block text-sm font-medium text-white-secondary mb-2">
-                  Company Name (Optional)
+                  Company Name *
                 </label>
                 <input
                   type="text"
@@ -407,6 +407,20 @@ const InterviewPage = () => {
                   placeholder="e.g., Google"
                   className="w-full px-4 py-3 bg-light-dark-secondary border border-gray-600 rounded-xl text-white-primary placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-primary"
                 />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-white-secondary mb-2">
+                  Interview Language
+                </label>
+                <select
+                  value={interviewSettings.language}
+                  onChange={(e) => setInterviewSettings(prev => ({ ...prev, language: e.target.value }))}
+                  className="w-full px-4 py-3 bg-light-dark-secondary border border-gray-600 rounded-xl text-white-primary focus:outline-none focus:ring-2 focus:ring-brand-primary"
+                >
+                  <option value="en">English</option>
+                  <option value="fr">French</option>
+                </select>
               </div>
 
               <div>
