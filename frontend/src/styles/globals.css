@@ -179,3 +179,87 @@
     @apply text-black bg-white;
   }
 }
+
+/* Markdown-specific styles for message bubbles */
+.prose-invert {
+  color: #e5e7eb;
+}
+
+.prose-invert h1,
+.prose-invert h2,
+.prose-invert h3,
+.prose-invert h4,
+.prose-invert h5,
+.prose-invert h6 {
+  color: #f9fafb;
+}
+
+.prose-invert strong {
+  color: #f9fafb;
+  font-weight: 600;
+}
+
+.prose-invert code {
+  color: #fbbf24;
+  background-color: #374151;
+}
+
+.prose-invert pre {
+  background-color: #1f2937;
+  color: #e5e7eb;
+}
+
+.prose-invert blockquote {
+  border-left-color: #60a5fa;
+  color: #d1d5db;
+}
+
+.prose-invert a {
+  color: #60a5fa;
+}
+
+.prose-invert a:hover {
+  color: #93c5fd;
+}
+
+.prose-invert table {
+  border-color: #4b5563;
+}
+
+.prose-invert th,
+.prose-invert td {
+  border-color: #4b5563;
+}
+
+.prose-invert hr {
+  border-color: #4b5563;
+}
+
+/* Ensure lists have proper spacing */
+.prose ul,
+.prose ol {
+  margin: 0.5rem 0;
+}
+
+.prose ul li,
+.prose ol li {
+  margin: 0.25rem 0;
+}
+
+/* Code block scrollbar styling */
+.prose pre::-webkit-scrollbar {
+  height: 6px;
+}
+
+.prose pre::-webkit-scrollbar-track {
+  background: #1f2937;
+}
+
+.prose pre::-webkit-scrollbar-thumb {
+  background: #4b5563;
+  border-radius: 3px;
+}
+
+.prose pre::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
+}
