@@ -63,8 +63,13 @@ export const chatService = {
       
       // If chatId is 'new' or undefined, create a new chat first
       if (chatId === 'new' || !chatId || chatId === 'undefined') {
+        // Generate title from first 10 words of user message
+        const words = content.trim().split(/\s+/)
+        const titleWords = words.slice(0, 10)
+        const title = titleWords.join(' ') + (words.length > 10 ? '...' : '')
+        
         const chatData = {
-          title: content.length > 50 ? content.substring(0, 50) + '...' : content,
+          title: title,
           conversation: []
         }
         
@@ -78,8 +83,13 @@ export const chatService = {
         } catch (error) {
           // If chat doesn't exist, create a new one
           console.warn('Chat not found, creating new chat:', error)
+          // Generate title from first 10 words of user message
+          const words = content.trim().split(/\s+/)
+          const titleWords = words.slice(0, 10)
+          const title = titleWords.join(' ') + (words.length > 10 ? '...' : '')
+          
           const chatData = {
-            title: content.length > 50 ? content.substring(0, 50) + '...' : content,
+            title: title,
             conversation: []
           }
           
@@ -137,7 +147,12 @@ export const chatService = {
       // Update the chat with new messages
       const updateData = {
         conversation: updatedConversation,
-        title: chat.title || (content.length > 50 ? content.substring(0, 50) + '...' : content)
+        title: chat.title || (() => {
+          // Generate title from first 10 words if title is empty
+          const words = content.trim().split(/\s+/)
+          const titleWords = words.slice(0, 10)
+          return titleWords.join(' ') + (words.length > 10 ? '...' : '')
+        })()
       }
       
       const updateEndpoint = chatType === 'normal' 
@@ -169,9 +184,14 @@ export const chatService = {
   sendInterviewMessage: async (chatId, content, jobPosition, companyName, difficulty, settings) => {
     // Validate chatId first
     if (!chatId || chatId === 'undefined' || chatId === 'null' || chatId === 'new') {
+      // Generate title from first 10 words for interview title
+      const words = content.trim().split(/\s+/)
+      const titleWords = words.slice(0, 10)
+      const contentTitle = titleWords.join(' ') + (words.length > 10 ? '...' : '')
+      
       // If no valid chatId, create a new chat first
       const chatData = {
-        title: `${jobPosition} Interview${companyName ? ` at ${companyName}` : ''}`,
+        title: `${jobPosition} Interview${companyName ? ` at ${companyName}` : ''} - ${contentTitle}`,
         job_position: jobPosition,
         company_name: companyName,
         conversation: [],  // Start with empty conversation
