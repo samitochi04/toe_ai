@@ -137,7 +137,7 @@ const Sidebar = ({ isOpen, onToggle }) => {
       <div className="flex items-center justify-between p-4 border-b border-gray-700 flex-shrink-0">
         <div className="flex items-center">
           <img 
-            src="/src/assets/images/toe_ai_logo.png" 
+            src="/toe_ai_logo.png" 
             alt="TOE AI" 
             className="w-8 h-8"
           />

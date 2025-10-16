@@ -29,7 +29,7 @@ const LandingPage = () => {
             {/* Logo */}
             <div className="flex items-center space-x-2">
               <img 
-                src="/src/assets/images/toe_ai_logo.png" 
+                src="/toe_ai_logo.png" 
                 alt="TOE AI Logo" 
                 className="w-10 h-10 object-contain"
               />
@@ -47,7 +47,7 @@ const LandingPage = () => {
             <div className="relative">
               {/* Landing Page Image */}
               <img 
-                src="/src/assets/images/landing_page_image.png" 
+                src="/landing_page_image.png" 
                 alt="Professional Interview Character" 
                 className="w-96 h-[32rem] object-contain animate-float"
               />

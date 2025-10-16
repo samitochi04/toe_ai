@@ -42,7 +42,10 @@ STRIPE_SECRET_KEY=your-stripe-secret-key
 STRIPE_PUBLISHABLE_KEY=your-stripe-publishable-key
 
 # CORS (add your domain)
-ALLOWED_ORIGINS=["http://localhost:3000","https://yourdomain.com"]
+ALLOWED_ORIGINS=["http://localhost:3000","http://your-deployment-url","https://your-deployment-url"]
+
+# Frontend API URL (for production deployment)
+VITE_API_BASE_URL=http://your-deployment-url:8001/api/v1
 ```
 
 ## Commands

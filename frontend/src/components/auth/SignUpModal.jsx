@@ -66,7 +66,7 @@ const SignUpModal = ({ isOpen, onClose, onSwitchToSignIn }) => {
         {/* Logo */}
         <div className="flex justify-center mb-6">
           <img 
-            src="/src/assets/images/toe_ai_logo.png" 
+            src="/toe_ai_logo.png" 
             alt="TOE AI Logo" 
             className="w-12 h-12 object-contain"
           />
