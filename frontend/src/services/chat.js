@@ -61,15 +61,30 @@ export const chatService = {
       let chat = null
       let isNewChat = false
       
+      // Allow sending files without text content
+      if (!content.trim() && files.length === 0) {
+        throw new Error('Please provide a message or attach a file')
+      }
+      
       // If chatId is 'new' or undefined, create a new chat first
       if (chatId === 'new' || !chatId || chatId === 'undefined') {
-        // Generate title from first 10 words of user message
-        const words = content.trim().split(/\s+/)
+        // Generate title from first 10 words of user message or file names
+        const words = content.trim() ? content.trim().split(/\s+/) : []
         const titleWords = words.slice(0, 10)
-        const title = titleWords.join(' ') + (words.length > 10 ? '...' : '')
+        let title = titleWords.join(' ')
+        
+        // If no text but has files, use file names for title
+        if (!title && files.length > 0) {
+          title = `File: ${files[0].name}`
+        }
+        
+        // Add ellipsis if needed
+        if (words.length > 10) {
+          title += '...'
+        }
         
         const chatData = {
-          title: title,
+          title: title || 'New Chat',
           conversation: []
         }
         
@@ -81,15 +96,21 @@ export const chatService = {
         try {
           chat = await chatService.getChat(chatId, chatType)
         } catch (error) {
-          // If chat doesn't exist, create a new one
           console.warn('Chat not found, creating new chat:', error)
-          // Generate title from first 10 words of user message
-          const words = content.trim().split(/\s+/)
+          const words = content.trim() ? content.trim().split(/\s+/) : []
           const titleWords = words.slice(0, 10)
-          const title = titleWords.join(' ') + (words.length > 10 ? '...' : '')
+          let title = titleWords.join(' ')
+          
+          if (!title && files.length > 0) {
+            title = `File: ${files[0].name}`
+          }
+          
+          if (words.length > 10) {
+            title += '...'
+          }
           
           const chatData = {
-            title: title,
+            title: title || 'New Chat',
             conversation: []
           }
           
@@ -103,13 +124,41 @@ export const chatService = {
       const conversationHistory = chat.conversation || []
       const recentMessages = conversationHistory.slice(-10)
       
-      // Send message to AI with context
+      // Upload files first if any
+      let processedFiles = []
+      if (files && files.length > 0) {
+        try {
+          const uploadResult = await chatService.uploadFiles(files)
+          processedFiles = uploadResult.files.map(file => ({
+            name: file.name || file.original_name || file.filename,
+            original_name: file.original_name || file.name || file.filename,
+            filename: file.filename || file.safe_filename,
+            file_path: file.file_path,
+            path: file.file_path,
+            content_type: file.content_type || file.type,
+            type: file.content_type || file.type,
+            size: file.size,
+            id: file.id
+          }))
+        } catch (uploadError) {
+          console.error('File upload failed:', uploadError)
+          throw new Error('Failed to upload files. Please try again.')
+        }
+      }
+      
+      // Send message to AI with context and files
       const aiEndpoint = chatType === 'interview' ? '/ai/interview/chat' : '/ai/chat/completion'
       
+      // Build the request body - ensure all required fields are present
       const requestBody = {
-        content,
-        conversation_history: recentMessages, // Include recent conversation
-        include_audio: chatType === 'interview'
+        content: content || 'Please analyze the attached file(s).',
+        include_audio: chatType === 'interview',
+        conversation_history: recentMessages.map(msg => ({
+          role: msg.role,
+          content: msg.content,
+          timestamp: msg.timestamp || msg.created_at
+        })) || [],
+        files: processedFiles || []
       }
       
       // Add interview-specific parameters if needed
@@ -119,18 +168,24 @@ export const chatService = {
         requestBody.difficulty = chat.interview_settings?.difficulty || 'medium'
       }
       
+      console.log('Sending request to AI:', {
+        ...requestBody,
+        files: requestBody.files.length > 0 ? `${requestBody.files.length} files` : 'no files'
+      })
+      
       const aiResponse = await api.post(aiEndpoint, requestBody)
       
-      // Build updated conversation
+      // Build updated conversation - preserve original user message
       const userMessage = {
         id: `user-${Date.now()}`,
         role: 'user',
-        content,
+        content: content || '[File attached]',
         timestamp: new Date().toISOString(),
-        files: files.map(file => ({
-          name: file.name,
-          type: file.type,
-          size: file.size
+        files: processedFiles.map(file => ({
+          name: file.original_name || file.name,
+          type: file.content_type,
+          size: file.size,
+          id: file.id
         }))
       }
       
@@ -148,10 +203,19 @@ export const chatService = {
       const updateData = {
         conversation: updatedConversation,
         title: chat.title || (() => {
-          // Generate title from first 10 words if title is empty
-          const words = content.trim().split(/\s+/)
+          const words = content.trim() ? content.trim().split(/\s+/) : []
           const titleWords = words.slice(0, 10)
-          return titleWords.join(' ') + (words.length > 10 ? '...' : '')
+          let title = titleWords.join(' ')
+          
+          if (!title && processedFiles.length > 0) {
+            title = `File: ${processedFiles[0].name}`
+          }
+          
+          if (words.length > 10) {
+            title += '...'
+          }
+          
+          return title || 'New Chat'
         })()
       }
       
@@ -194,7 +258,7 @@ export const chatService = {
         title: `${jobPosition} Interview${companyName ? ` at ${companyName}` : ''} - ${contentTitle}`,
         job_position: jobPosition,
         company_name: companyName,
-        conversation: [],  // Start with empty conversation
+        conversation: [],
         interview_settings: {
           difficulty,
           voice_type: settings?.voice_type || 'alloy',

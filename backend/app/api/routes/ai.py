@@ -45,7 +45,7 @@ async def chat_completion(
     try:
         # Prepare messages for OpenAI with conversation history
         messages = [
-            {"role": "system", "content": "You are a helpful AI assistant designed to help users prepare for interviews and answer general questions."}
+            {"role": "system", "content": "You are a helpful AI assistant designed to help users prepare for interviews and answer general questions. You can analyze documents, provide feedback on resumes and cover letters, and help with various professional development tasks. When users upload files, you should acknowledge that you can see and analyze their content."}
         ]
         
         # Add conversation history if provided
@@ -58,8 +58,28 @@ async def chat_completion(
                     if content:
                         messages.append({"role": role, "content": content})
         
+        # Process files if any are attached
+        file_content = ""
+        if hasattr(request, 'files') and request.files and len(request.files) > 0:
+            try:
+                file_content = await process_attached_files(request.files)
+                logger.info(f"Processed {len(request.files)} files, content length: {len(file_content)}")
+            except Exception as file_error:
+                logger.error(f"Error processing files: {file_error}")
+                file_content = f"[Error processing {len(request.files)} attached file(s): {str(file_error)}]"
+        
+        # Combine user message with file content
+        user_content = request.content
+        if file_content:
+            if user_content and user_content.strip():
+                user_content += f"\n\nAttached file content:\n{file_content}"
+            else:
+                user_content = f"Please analyze this attached file:\n\n{file_content}"
+        
         # Add current user message
-        messages.append({"role": "user", "content": request.content})
+        messages.append({"role": "user", "content": user_content})
+        
+        logger.info(f"Sending to OpenAI: {len(messages)} messages, user content length: {len(user_content)}")
         
         # Make OpenAI API call
         response = await asyncio.to_thread(
@@ -588,3 +608,207 @@ async def send_interview_message(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to process interview message"
         )
+
+
+async def process_attached_files(files: list) -> str:
+    """Process attached files and extract text content"""
+    if not files:
+        return ""
+        
+    file_contents = []
+    
+    for file_info in files:
+        try:
+            # Get file information
+            file_path = file_info.get('file_path') or file_info.get('path')
+            file_name = file_info.get('original_name') or file_info.get('name') or file_info.get('filename', 'Unknown file')
+            file_type = file_info.get('content_type') or file_info.get('type', '')
+            
+            logger.info(f"Processing file: {file_name}, path: {file_path}, type: {file_type}")
+            
+            if not file_path:
+                logger.warning(f"No file path found for file: {file_info}")
+                file_contents.append(f"--- {file_name} ---\n[Error: No file path provided]\n")
+                continue
+            
+            if not os.path.exists(file_path):
+                logger.warning(f"File not found: {file_path}")
+                file_contents.append(f"--- {file_name} ---\n[Error: File not found at {file_path}]\n")
+                continue
+            
+            # Extract text based on file type
+            if file_type and (file_type.startswith('text/') or file_name.endswith(('.txt', '.md'))):
+                # Read text files directly
+                try:
+                    with open(file_path, 'r', encoding='utf-8') as f:
+                        content = f.read()[:15000]  # Limit to 15k characters
+                        file_contents.append(f"--- {file_name} ---\n{content}\n")
+                        logger.info(f"Successfully read text file: {file_name}")
+                except UnicodeDecodeError:
+                    try:
+                        with open(file_path, 'r', encoding='latin-1') as f:
+                            content = f.read()[:15000]
+                            file_contents.append(f"--- {file_name} ---\n{content}\n")
+                            logger.info(f"Successfully read text file with latin-1: {file_name}")
+                    except Exception as e:
+                        logger.error(f"Error reading text file {file_name}: {e}")
+                        file_contents.append(f"--- {file_name} ---\n[Error reading file: {str(e)}]\n")
+            
+            elif file_name.lower().endswith('.pdf'):
+                # Extract text from PDF using multiple methods
+                pdf_content = ""
+                
+                # Try PyPDF2 first
+                try:
+                    import PyPDF2
+                    with open(file_path, 'rb') as f:
+                        reader = PyPDF2.PdfReader(f)
+                        text_parts = []
+                        
+                        # Read all pages, but limit total content
+                        for page_num, page in enumerate(reader.pages):
+                            if len(''.join(text_parts)) > 12000:  # Stop if we have enough content
+                                break
+                            try:
+                                page_text = page.extract_text()
+                                if page_text.strip():
+                                    text_parts.append(f"\n--- Page {page_num + 1} ---\n{page_text}")
+                            except Exception as page_error:
+                                logger.warning(f"Error extracting page {page_num + 1} from {file_name}: {page_error}")
+                                continue
+                        
+                        pdf_content = ''.join(text_parts)
+                        
+                        if pdf_content.strip():
+                            file_contents.append(f"--- {file_name} ---\n{pdf_content[:15000]}\n")
+                            logger.info(f"Successfully extracted PDF content using PyPDF2: {file_name}")
+                        else:
+                            # Try alternative PDF processing
+                            pdf_content = await try_alternative_pdf_extraction(file_path, file_name)
+                            if pdf_content:
+                                file_contents.append(f"--- {file_name} ---\n{pdf_content}\n")
+                            else:
+                                file_contents.append(f"--- {file_name} ---\n[PDF appears to be empty or text could not be extracted. This might be a scanned PDF or contain only images. Please try converting it to text first.]\n")
+                
+                except ImportError:
+                    logger.error("PyPDF2 not installed - attempting alternative PDF processing")
+                    # Try alternative method
+                    pdf_content = await try_alternative_pdf_extraction(file_path, file_name)
+                    if pdf_content:
+                        file_contents.append(f"--- {file_name} ---\n{pdf_content}\n")
+                    else:
+                        file_contents.append(f"--- {file_name} ---\n[PDF processing libraries not available. Please install PyPDF2 or provide the text content directly.]\n")
+                
+                except Exception as pdf_error:
+                    logger.error(f"PDF processing error for {file_name}: {pdf_error}")
+                    # Try alternative method as fallback
+                    pdf_content = await try_alternative_pdf_extraction(file_path, file_name)
+                    if pdf_content:
+                        file_contents.append(f"--- {file_name} ---\n{pdf_content}\n")
+                    else:
+                        file_contents.append(f"--- {file_name} ---\n[Error reading PDF: {str(pdf_error)}. This might be a protected, scanned, or complex PDF.]\n")
+            
+            elif file_name.lower().endswith(('.doc', '.docx')):
+                # Extract text from Word documents
+                try:
+                    import docx
+                    doc = docx.Document(file_path)
+                    text_parts = []
+                    
+                    for paragraph in doc.paragraphs:
+                        text_parts.append(paragraph.text)
+                        if len('\n'.join(text_parts)) > 15000:  # Limit content
+                            break
+                    
+                    text = '\n'.join(text_parts)
+                    
+                    if text.strip():
+                        file_contents.append(f"--- {file_name} ---\n{text[:15000]}\n")
+                        logger.info(f"Successfully extracted Word document content: {file_name}")
+                    else:
+                        file_contents.append(f"--- {file_name} ---\n[Document appears to be empty or contains only formatting/images]\n")
+                
+                except ImportError:
+                    file_contents.append(f"--- {file_name} ---\n[Word document processing not available - python-docx not installed]\n")
+                    logger.warning("python-docx not available for Word document processing")
+                
+                except Exception as doc_error:
+                    logger.error(f"Word document processing error for {file_name}: {doc_error}")
+                    file_contents.append(f"--- {file_name} ---\n[Error reading Word document: {str(doc_error)}]\n")
+            
+            elif file_type and file_type.startswith('image/'):
+                # For images, provide helpful message
+                file_size_mb = round(os.path.getsize(file_path) / (1024 * 1024), 2)
+                file_contents.append(f"--- {file_name} ---\n[Image file uploaded ({file_size_mb}MB) - I can see this is an image file but cannot analyze visual content. If this image contains text (like a screenshot or document scan), please describe what you'd like me to help you with regarding this image, or use OCR tools to extract the text first.]\n")
+                logger.info(f"Image file noted: {file_name}")
+            
+            else:
+                # For other file types, provide helpful message
+                file_size_mb = round(os.path.getsize(file_path) / (1024 * 1024), 2)
+                file_contents.append(f"--- {file_name} ---\n[File uploaded ({file_size_mb}MB) but type '{file_type}' is not supported for text extraction. Supported formats: PDF, Word documents (.doc/.docx), text files (.txt), and images. Please describe what you'd like me to help you with regarding this file.]\n")
+                logger.info(f"Unsupported file type: {file_name} ({file_type})")
+        
+        except Exception as e:
+            logger.error(f"Error processing file {file_info}: {e}")
+            file_name = file_info.get('name', 'Unknown file')
+            file_contents.append(f"--- {file_name} ---\n[Error processing file: {str(e)}]\n")
+    
+    result = "\n".join(file_contents) if file_contents else ""
+    logger.info(f"File processing complete. Total content length: {len(result)}")
+    return result
+
+
+async def try_alternative_pdf_extraction(file_path: str, file_name: str) -> str:
+    """Try alternative PDF extraction methods"""
+    try:
+        # Try using pdfplumber if available
+        try:
+            import pdfplumber
+            with pdfplumber.open(file_path) as pdf:
+                text_parts = []
+                for page_num, page in enumerate(pdf.pages):
+                    if len(''.join(text_parts)) > 12000:
+                        break
+                    try:
+                        page_text = page.extract_text()
+                        if page_text and page_text.strip():
+                            text_parts.append(f"\n--- Page {page_num + 1} ---\n{page_text}")
+                    except Exception:
+                        continue
+                
+                content = ''.join(text_parts)
+                if content.strip():
+                    logger.info(f"Successfully extracted PDF using pdfplumber: {file_name}")
+                    return content[:15000]
+        except ImportError:
+            pass
+        
+        # Try using pymupdf (fitz) if available
+        try:
+            import fitz  # PyMuPDF
+            doc = fitz.open(file_path)
+            text_parts = []
+            
+            for page_num in range(min(len(doc), 10)):  # Limit to first 10 pages
+                if len(''.join(text_parts)) > 12000:
+                    break
+                try:
+                    page = doc[page_num]
+                    page_text = page.get_text()
+                    if page_text and page_text.strip():
+                        text_parts.append(f"\n--- Page {page_num + 1} ---\n{page_text}")
+                except Exception:
+                    continue
+            
+            doc.close()
+            content = ''.join(text_parts)
+            if content.strip():
+                logger.info(f"Successfully extracted PDF using PyMuPDF: {file_name}")
+                return content[:15000]
+        except ImportError:
+            pass
+            
+    except Exception as e:
+        logger.error(f"Alternative PDF extraction failed for {file_name}: {e}")
+    
+    return ""

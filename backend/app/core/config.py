@@ -66,9 +66,9 @@ class Settings(BaseSettings):
     STRIPE_PRICE_ID_PREMIUM: str = ""
     
     # File Storage
-    UPLOAD_DIR: str = "static/uploads"
-    MAX_FILE_SIZE: int = 25 * 1024 * 1024  # 25MB
-    ALLOWED_AUDIO_EXTENSIONS: List[str] = ["mp3", "wav", "m4a", "webm", "ogg"]
+    UPLOAD_DIR: str = "uploads"
+    MAX_FILE_SIZE: int = 10 * 1024 * 1024  # 10MB
+    ALLOWED_AUDIO_EXTENSIONS: List[str] = ["mp3", "wav", "m4a", "ogg"]
     ALLOWED_IMAGE_EXTENSIONS: List[str] = ["jpg", "jpeg", "png", "gif", "webp"]
     
     # Rate Limiting
@@ -133,6 +133,14 @@ def create_upload_dirs():
     (upload_dir / "images").mkdir(exist_ok=True)
     (upload_dir / "pdfs").mkdir(exist_ok=True)
     (upload_dir / "temp").mkdir(exist_ok=True)
+    (upload_dir / "user_files").mkdir(exist_ok=True)
+    
+    # Set proper permissions (readable/writable)
+    try:
+        import stat
+        upload_dir.chmod(stat.S_IRWXU | stat.S_IRWXG | stat.S_IROTH | stat.S_IXOTH)
+    except Exception as e:
+        print(f"Warning: Could not set directory permissions: {e}")
 
 
 # Create directories on import

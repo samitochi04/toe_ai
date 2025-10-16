@@ -103,6 +103,7 @@ const ChatInterface = () => {
   }
 
   const handleSendMessage = async (content, files = []) => {
+    // Allow sending if either content OR files are present
     if (!content.trim() && files.length === 0) return
 
     // Check usage limit before sending

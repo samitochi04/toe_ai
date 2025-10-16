@@ -5,6 +5,7 @@ Main API router for TOE AI Backend
 from fastapi import APIRouter
 
 from app.api.routes import auth, users, chats, ai, payments, sharing, admin
+from app.api.routes import files  # Add this import
 
 api_router = APIRouter()
 
@@ -16,3 +17,4 @@ api_router.include_router(ai.router, prefix="/ai", tags=["AI Services"])
 api_router.include_router(payments.router, prefix="/payments", tags=["Payments"])
 api_router.include_router(sharing.router, prefix="/sharing", tags=["Sharing"])
 api_router.include_router(admin.router, prefix="/admin", tags=["Admin"])
+api_router.include_router(files.router, prefix="/files", tags=["Files"])  # Add this line

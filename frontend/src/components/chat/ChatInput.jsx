@@ -28,6 +28,8 @@ const ChatInput = ({
 
   const handleSubmit = (e) => {
     e.preventDefault()
+    
+    // Allow sending if either text OR files are present
     if (!value.trim() && attachedFiles.length === 0) return
     if (disabled || isLoading) return
     
