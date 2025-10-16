@@ -11,6 +11,16 @@ class AllowAllCORSMiddleware(BaseHTTPMiddleware):
     Should be disabled in production with proper CORS configuration
     """
     async def dispatch(self, request: Request, call_next):
+        # Handle preflight OPTIONS requests immediately
+        if request.method == "OPTIONS":
+            response = Response()
+            response.headers["Access-Control-Allow-Origin"] = "*"
+            response.headers["Access-Control-Allow-Credentials"] = "true"
+            response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS, PATCH"
+            response.headers["Access-Control-Allow-Headers"] = "*"
+            response.headers["Access-Control-Max-Age"] = "600"
+            return response
+        
         # Process the request
         response = await call_next(request)
         

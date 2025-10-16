@@ -35,8 +35,7 @@ class Settings(BaseSettings):
         "https://reach-jane-logged-moreover.trycloudflare.com",
         "http://vwkcwwc4o4gwgs0c08scookk.168.231.82.151.sslip.io",  # Frontend domain
         "http://l8ogcwc84sgk08c08wgwkkw8.168.231.82.151.sslip.io",  # Backend domain
-        "https://*.168.231.82.151.sslip.io",  # Wildcard for all subdomains
-        # "*"  # During development only - remove this in production
+        "*"  # Allow all origins in development
     ]
     
     # Supabase
