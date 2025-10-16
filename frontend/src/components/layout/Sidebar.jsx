@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate, useLocation } from 'react-router-dom'
 import useAuthStore from '../../store/authStore'
+import useChatStore from '../../store/chatStore'
 import { 
   ChevronDown, 
   ChevronRight, 
@@ -23,6 +24,7 @@ const Sidebar = ({ isOpen, onToggle }) => {
   const navigate = useNavigate()
   const location = useLocation()
   const { signOut, user } = useAuthStore()
+  const { clearCurrentChat } = useChatStore()
   
   const [expandedSections, setExpandedSections] = useState({
     chatting: false,
@@ -47,6 +49,20 @@ const Sidebar = ({ isOpen, onToggle }) => {
 
   const isActive = (path) => {
     return location.pathname === path
+  }
+
+  const handleNewChat = () => {
+    // Clear the current chat state first
+    clearCurrentChat()
+    // Then navigate to new chat
+    navigate('/workspace/chat/new', { replace: true })
+  }
+
+  const handleNewInterview = () => {
+    // Clear any existing chat state
+    clearCurrentChat()
+    // Navigate to new interview
+    navigate('/workspace/interview/new', { replace: true })
   }
 
   const MenuItem = ({ 
@@ -96,14 +112,7 @@ const Sidebar = ({ isOpen, onToggle }) => {
 
   const SubMenuItem = ({ icon, label, path, isActive = false }) => (
     <button
-      onClick={() => {
-        // Force navigation with key change for "new" routes to trigger component remount
-        if (path.includes('/new')) {
-          navigate(`${path}?t=${Date.now()}`)
-        } else {
-          navigate(path)
-        }
-      }}
+      onClick={() => navigate(path)}
       className={`
         w-full flex items-center px-8 py-2 text-left transition-all duration-200
         ${isActive 
@@ -173,6 +182,7 @@ const Sidebar = ({ isOpen, onToggle }) => {
                 label={t('workspace.newChat')}
                 path="/workspace/chat/new"
                 isActive={isActive('/workspace/chat/new')}
+                onClick={handleNewChat}
               />
               <SubMenuItem
                 icon={<MessageSquare className="w-4 h-4" />}
@@ -199,6 +209,7 @@ const Sidebar = ({ isOpen, onToggle }) => {
                 label={t('workspace.newInterview')}
                 path="/workspace/interview/new"
                 isActive={isActive('/workspace/interview/new')}
+                onClick={handleNewInterview}
               />
 
               <SubMenuItem

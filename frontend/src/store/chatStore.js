@@ -121,7 +121,10 @@ const useChatStore = create(
       clearCurrentChat: () => {
         set({
           currentChat: null,
-          messages: []
+          messages: [],
+          isLoading: false,
+          isTyping: false,
+          error: null
         })
       },
 

@@ -47,7 +47,13 @@ const ChatInterface = () => {
   useEffect(() => {
     console.log('ChatInterface: chatId from params:', chatId) // Debug log
     
-    if (chatId && chatId !== 'new') {
+    // Always clear state first to prevent showing old content
+    clearCurrentChat()
+    
+    if (chatId === 'new') {
+      // For new chat, just clear state (already done above)
+      return
+    } else if (chatId && chatId !== 'new') {
       // Validate chatId before attempting to load
       if (chatId === 'undefined' || chatId === 'null') {
         console.error('Invalid chatId detected, redirecting to new chat')
@@ -63,19 +69,11 @@ const ChatInterface = () => {
         return
       }
       
+      // Load the specific chat
       loadChat(chatId)
-    } else if (chatId === 'new') {
-      clearCurrentChat()
     } else {
-      // No chatId or invalid chatId, redirect to new chat
+      // No chatId, redirect to new chat
       navigate('/workspace/chat/new', { replace: true })
-    }
-
-    return () => {
-      // Clean up when leaving chat
-      if (chatId === 'new') {
-        clearCurrentChat()
-      }
     }
   }, [chatId, loadChat, clearCurrentChat, navigate])
 
@@ -172,8 +170,16 @@ const ChatInterface = () => {
 
       {/* Messages Area */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        {/* Show loading state when switching chats */}
+        {isLoading && (
+          <div className="flex flex-col items-center justify-center h-full text-center">
+            <div className="w-8 h-8 border-2 border-blue-400 border-t-transparent rounded-full animate-spin mb-4"></div>
+            <p className="text-white-secondary">Loading chat...</p>
+          </div>
+        )}
+
         {/* Show error message if chat failed to load */}
-        {error && error !== 'USAGE_LIMIT_REACHED' && (
+        {error && error !== 'USAGE_LIMIT_REACHED' && !isLoading && (
           <div className="flex flex-col items-center justify-center h-full text-center">
             <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mb-4">
               <svg className="w-8 h-8 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -192,7 +198,8 @@ const ChatInterface = () => {
           </div>
         )}
         
-        {messages.length === 0 && !isLoading && !error && (
+        {/* Show welcome message for new chats */}
+        {!isLoading && !error && messages.length === 0 && chatId === 'new' && (
           <div className="flex flex-col items-center justify-center h-full text-center">
             <div className="w-16 h-16 bg-blue-500/20 rounded-full flex items-center justify-center mb-4">
               <svg className="w-8 h-8 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -217,7 +224,8 @@ const ChatInterface = () => {
           </div>
         )}
 
-        {!error && messages.map((message, index) => (
+        {/* Show messages only when not loading and no error */}
+        {!error && !isLoading && messages.map((message, index) => (
           <MessageBubble
             key={message.id || `message-${index}`}
             message={message}
@@ -226,7 +234,7 @@ const ChatInterface = () => {
         ))}
 
         {/* Typing indicator */}
-        {!error && isTyping && (
+        {!error && !isLoading && isTyping && (
           <MessageBubble
             key="typing-indicator"
             message={{
