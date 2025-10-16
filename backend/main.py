@@ -13,6 +13,7 @@ from contextlib import asynccontextmanager
 from app.core.config import settings
 from app.core.database import init_db
 from app.api.main import api_router
+from app.core.cors_middleware import AllowAllCORSMiddleware  # Import the custom CORS middleware
 
 
 @asynccontextmanager
@@ -49,10 +50,13 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allow_headers=["*"],
+    expose_headers=["*"],
+    max_age=600,  # Cache preflight results for 10 minutes
 )
 
-# Include API router
-app.include_router(api_router, prefix="/api/v1")
+# Add the custom CORS middleware for development mode only
+if settings.ENVIRONMENT == "development":
+    app.add_middleware(AllowAllCORSMiddleware)
 
 # Serve static files (for audio files, profile pictures, etc.)
 if not os.path.exists("static"):

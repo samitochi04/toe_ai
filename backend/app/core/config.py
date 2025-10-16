@@ -32,7 +32,11 @@ class Settings(BaseSettings):
         "http://localhost:3001", 
         "http://127.0.0.1:3000",
         "http://127.0.0.1:3001",
-        "https://reach-jane-logged-moreover.trycloudflare.com"  # Add your tunnel URL
+        "https://reach-jane-logged-moreover.trycloudflare.com",
+        "http://vwkcwwc4o4gwgs0c08scookk.168.231.82.151.sslip.io",  # Frontend domain
+        "http://l8ogcwc84sgk08c08wgwkkw8.168.231.82.151.sslip.io",  # Backend domain
+        "https://*.168.231.82.151.sslip.io",  # Wildcard for all subdomains
+        # "*"  # During development only - remove this in production
     ]
     
     # Supabase
