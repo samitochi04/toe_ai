@@ -57,8 +57,6 @@ const InterviewPage = () => {
   const [currentChatId, setCurrentChatId] = useState(null)
 
   // Additional UI states
-  const [showTranscription, setShowTranscription] = useState(true)
-  const [currentTranscription, setCurrentTranscription] = useState('')
   const [showUpgradeModal, setShowUpgradeModal] = useState(false)
   const [showConversation, setShowConversation] = useState(false)
   const [isVideoTransitioning, setIsVideoTransitioning] = useState(false)
@@ -131,7 +129,7 @@ const InterviewPage = () => {
     // Clear transcription when AI stops speaking
     if (!isAISpeaking) {
       setTimeout(() => {
-        setCurrentTranscription('')
+        // Cleared transcription state
       }, 2000) // Clear after 2 seconds
     }
   }, [isAISpeaking])
@@ -142,6 +140,16 @@ const InterviewPage = () => {
       scrollToBottom()
     }
   }, [messages, showConversation])
+
+  // Auto-resize textarea when input changes
+  useEffect(() => {
+    const textarea = document.querySelector('textarea[placeholder="Type your response..."]')
+    if (textarea) {
+      textarea.style.height = 'auto'
+      const newHeight = Math.min(Math.max(textarea.scrollHeight, 40), 200)
+      textarea.style.height = newHeight + 'px'
+    }
+  }, [inputMessage])
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -162,7 +170,15 @@ const InterviewPage = () => {
     // Start with introduction message
     setTimeout(async () => {
       const userName = user?.full_name?.split(' ')[0] || 'Candidate'
-      const introMessage = `Hello, I am ${userName}. I am here for the ${jobPosition} position${companyName ? ` at ${companyName}` : ''}.`
+      
+      // Create language-appropriate introduction message
+      let introMessage
+      if (interviewSettings.language === 'fr') {
+        introMessage = `Bonjour, je suis ${userName}. Je suis ici pour le poste de ${jobPosition}${companyName ? ` chez ${companyName}` : ''}.`
+      } else {
+        introMessage = `Hello, I am ${userName}. I am here for the ${jobPosition} position${companyName ? ` at ${companyName}` : ''}.`
+      }
+      
       await handleSendMessage(introMessage)
     }, 1000)
   }
@@ -214,7 +230,7 @@ const InterviewPage = () => {
           setMessages(prev => [...prev, aiMessage])
           
           // Update transcription with AI message
-          setCurrentTranscription(aiMsg.content)
+          // Store AI response for potential transcription use
           
           // Play audio if available and not muted
           if (aiMsg.audio_url && !isMuted) {
@@ -240,6 +256,7 @@ const InterviewPage = () => {
       }, 300)
 
       const audio = new Audio(audioUrl)
+      audio.muted = isMuted
       audioRef.current = audio
       
       audio.onended = () => {
@@ -268,6 +285,22 @@ const InterviewPage = () => {
         setIsVideoTransitioning(false)
       }, 300)
     }
+  }
+
+  const handleMuteToggle = () => {
+    setIsMuted(!isMuted)
+    
+    // If there's currently playing audio, mute/unmute it immediately
+    if (audioRef.current) {
+      audioRef.current.muted = !isMuted
+    }
+    
+    // Also control the background video
+    if (videoRef.current) {
+      videoRef.current.muted = !isMuted
+    }
+    
+    toast.success(isMuted ? 'Audio unmuted' : 'Audio muted')
   }
 
   const handleVoiceRecord = async () => {
@@ -303,7 +336,7 @@ const InterviewPage = () => {
             const response = await chatService.speechToText(formData)
             if (response.text) {
               setInputMessage(response.text)
-              setCurrentTranscription(`Your response: ${response.text}`)
+              // Store transcription for potential use
             }
           } catch (error) {
             console.error('Speech to text error:', error)
@@ -479,7 +512,7 @@ const InterviewPage = () => {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => setIsMuted(!isMuted)}
+            onClick={handleMuteToggle}
             className="text-white-secondary hover:text-white-primary"
           >
             {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
@@ -495,13 +528,13 @@ const InterviewPage = () => {
         </div>
       </div>
 
-      {/* Main Content Area */}
-      <div className="flex-1 flex overflow-hidden">
-        {/* Left Side - Video/Image Section */}
-        <div className="flex-1 flex flex-col p-6 min-w-0">
-          {/* Video/Image Container */}
-          <div className="flex-1 flex items-center justify-center mb-6">
-            <div className="relative w-full max-w-md aspect-square rounded-2xl overflow-hidden bg-gray-800 shadow-2xl">
+      {/* Main Content Area with Scroll */}
+      <div className="flex-1 flex flex-col overflow-y-auto scroll-smooth">
+        {/* Video/Image Section - Full Width */}
+        <div className="flex-1 flex flex-col" id="interview-video">
+          {/* Video/Image Container - Expanded */}
+          <div className="flex-1 flex items-center justify-center p-4 pb-2 min-h-[60vh]">
+            <div className="relative w-full max-w-5xl aspect-video rounded-2xl overflow-hidden bg-gray-800 shadow-2xl border border-gray-700">
               {/* Static Image */}
               <img
                 src={staticInterviewImage}
@@ -517,7 +550,7 @@ const InterviewPage = () => {
                 src={interviewVideo}
                 autoPlay
                 loop
-                muted
+                muted={isMuted}
                 playsInline
                 className={`absolute inset-0 w-full h-full object-cover transition-all duration-300 ${
                   isAISpeaking ? 'opacity-100' : 'opacity-0'
@@ -545,190 +578,168 @@ const InterviewPage = () => {
                   <span className="text-white text-sm">Speaking...</span>
                 </div>
               )}
+              
+              {/* Loading Indicator when processing user message */}
+              {isLoading && !isAISpeaking && !isVideoTransitioning && (
+                <div className="absolute bottom-4 left-4 flex items-center gap-2 bg-black bg-opacity-50 px-3 py-2 rounded-full">
+                  <div className="flex space-x-1">
+                    <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
+                    <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse delay-100"></div>
+                    <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse delay-200"></div>
+                  </div>
+                  <span className="text-white text-sm">Loading...</span>
+                </div>
+              )}
             </div>
           </div>
 
-          {/* Input Area */}
-          <div className="border-t border-gray-600 pt-4">
-            <div className="flex items-end gap-3">
-              <div className="flex-1 relative">
-                <textarea
-                  value={inputMessage}
-                  onChange={(e) => setInputMessage(e.target.value)}
-                  placeholder="Type your response..."
-                  rows={1}
-                  className="w-full px-4 py-3 pr-12 bg-light-dark-secondary border border-gray-600 rounded-xl text-white-primary placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-primary resize-none"
-                  onKeyPress={(e) => {
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                      e.preventDefault()
-                      handleSendMessage()
-                    }
-                  }}
-                />
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleFileUpload}
-                  className="absolute right-2 top-2 text-white-secondary hover:text-white-primary"
-                >
-                  <Paperclip className="w-4 h-4" />
-                </Button>
+          {/* Input Area - Enhanced UX */}
+          <div className="p-4 bg-gray-900/80 border-t border-gray-700/50">
+            <div className="max-w-4xl mx-auto">
+              {/* File attachments area */}
+              <div className="mb-3">
+                {/* Placeholder for file attachments - positioned above input */}
               </div>
               
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleVoiceRecord}
-                className={`p-3 ${isRecording ? 'text-red-400 bg-red-500/20' : 'text-white-secondary hover:text-white-primary'}`}
-              >
-                {isRecording ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
-              </Button>
-              
-              <Button
-                onClick={() => handleSendMessage()}
-                disabled={!inputMessage.trim() || isLoading}
-                className="px-6 py-3"
-              >
-                <Send className="w-4 h-4" />
-              </Button>
+              <div className="flex items-end gap-3 bg-light-dark-secondary rounded-2xl border border-gray-600 focus-within:border-brand-primary/60 focus-within:shadow-lg focus-within:shadow-brand-primary/20 transition-all duration-200 p-3">
+                <div className="flex-1 relative min-h-[24px]">
+                  <textarea
+                    value={inputMessage}
+                    onChange={(e) => {
+                      setInputMessage(e.target.value)
+                      // Auto-resize textarea
+                      e.target.style.height = 'auto'
+                      const newHeight = Math.min(Math.max(e.target.scrollHeight, 40), 200)
+                      e.target.style.height = newHeight + 'px'
+                    }}
+                    placeholder="Type your response..."
+                    rows={1}
+                    className="w-full px-2 py-2 pr-10 bg-transparent text-white-primary placeholder-gray-400 focus:outline-none resize-none scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-700 scrollbar-corner-transparent"
+                    style={{ 
+                      minHeight: '40px', 
+                      maxHeight: '200px',
+                      lineHeight: '1.5',
+                      fontSize: '14px'
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault()
+                        handleSendMessage()
+                      }
+                    }}
+                  />
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleFileUpload}
+                    className="absolute right-1 top-1 text-gray-400 hover:text-white-primary rounded-lg p-1.5 h-auto"
+                  >
+                    <Paperclip className="w-4 h-4" />
+                  </Button>
+                </div>
+                
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleVoiceRecord}
+                    className={`p-2.5 rounded-lg transition-all duration-200 ${
+                      isRecording 
+                        ? 'text-red-400 bg-red-500/20 hover:bg-red-500/30' 
+                        : 'text-gray-400 hover:text-white-primary hover:bg-gray-700'
+                    }`}
+                  >
+                    {isRecording ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+                  </Button>
+                  
+                  <Button
+                    onClick={() => handleSendMessage()}
+                    disabled={!inputMessage.trim() || isLoading}
+                    className={`p-2.5 rounded-lg transition-all duration-200 ${
+                      inputMessage.trim() && !isLoading
+                        ? 'bg-brand-primary hover:bg-brand-primary/90 text-white'
+                        : 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                    }`}
+                  >
+                    <Send className="w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
             </div>
           </div>
 
           {/* Conversation Section with Toggle */}
-          <div className="mt-4 border-t border-gray-600 pt-4">
-            <button
-              onClick={() => setShowConversation(!showConversation)}
-              className="w-full flex items-center justify-between p-3 bg-light-dark-secondary rounded-xl hover:bg-gray-700 transition-colors"
-            >
-              <div className="flex items-center gap-3">
-                <span className="text-white-primary font-medium">Interview Conversation</span>
-                {messages.length > 0 && (
-                  <span className="px-2 py-1 bg-brand-primary text-white text-xs rounded-full">
-                    {messages.length}
-                  </span>
-                )}
-              </div>
-              {showConversation ? (
-                <ChevronUp className="w-5 h-5 text-white-secondary" />
-              ) : (
-                <ChevronDown className="w-5 h-5 text-white-secondary" />
-              )}
-            </button>
-            
-            {showConversation && (
-              <div className="mt-3 max-h-80 overflow-y-auto space-y-3 p-4 bg-gray-900 rounded-xl scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800">
-                {messages.length === 0 ? (
-                  <div className="text-center text-white-secondary py-8">
-                    <p className="text-sm">No messages yet. Start the conversation!</p>
-                  </div>
+          <div className="p-4 pt-2 bg-gray-900/30">
+            <div className="max-w-4xl mx-auto">
+              <button
+                onClick={() => setShowConversation(!showConversation)}
+                className="w-full flex items-center justify-between p-4 bg-light-dark-secondary rounded-xl hover:bg-gray-700 transition-all duration-200 border border-gray-600 hover:border-brand-primary/50"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="text-white-primary font-medium">Interview Conversation</span>
+                  {messages.length > 0 && (
+                    <span className="px-2 py-1 bg-brand-primary text-white text-xs rounded-full">
+                      {messages.length}
+                    </span>
+                  )}
+                </div>
+                {showConversation ? (
+                  <ChevronUp className="w-5 h-5 text-white-secondary" />
                 ) : (
-                  <>
-                    {messages.map((message, index) => (
-                      <div
-                        key={message.id || index}
-                        className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                      >
+                  <ChevronDown className="w-5 h-5 text-white-secondary" />
+                )}
+              </button>
+              
+              {showConversation && (
+                <div className="mt-4 max-h-80 overflow-y-auto space-y-3 p-4 bg-gray-900 rounded-xl border border-gray-700 scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800">
+                  {messages.length === 0 ? (
+                    <div className="text-center text-white-secondary py-8">
+                      <p className="text-sm">No messages yet. Start the conversation!</p>
+                    </div>
+                  ) : (
+                    <>
+                      {messages.map((message, index) => (
                         <div
-                          className={`max-w-[85%] rounded-lg p-3 text-sm ${
-                            message.role === 'user'
-                              ? 'bg-brand-primary text-white'
-                              : 'bg-gray-700 text-white-primary'
-                          }`}
+                          key={message.id || index}
+                          className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
                         >
-                          <p className="whitespace-pre-wrap">{message.content}</p>
-                          <p className="text-xs opacity-70 mt-1">
-                            {formatDateTime(message.timestamp)}
-                          </p>
-                        </div>
-                      </div>
-                    ))}
-                    
-                    {isLoading && (
-                      <div className="flex justify-start">
-                        <div className="max-w-[85%] rounded-lg p-3 bg-gray-700 text-white-primary">
-                          <div className="flex items-center space-x-2">
-                            <div className="flex space-x-1">
-                              <div className="w-2 h-2 bg-white-secondary rounded-full animate-pulse"></div>
-                              <div className="w-2 h-2 bg-white-secondary rounded-full animate-pulse delay-100"></div>
-                              <div className="w-2 h-2 bg-white-secondary rounded-full animate-pulse delay-200"></div>
-                            </div>
-                            <span className="text-sm">AI is thinking...</span>
+                          <div
+                            className={`max-w-[85%] rounded-lg p-3 text-sm ${
+                              message.role === 'user'
+                                ? 'bg-brand-primary text-white'
+                                : 'bg-gray-700 text-white-primary'
+                            }`}
+                          >
+                            <p className="whitespace-pre-wrap">{message.content}</p>
+                            <p className="text-xs opacity-70 mt-1">
+                              {formatDateTime(message.timestamp)}
+                            </p>
                           </div>
                         </div>
-                      </div>
-                    )}
-                  </>
-                )}
-                
-                <div ref={messagesEndRef} />
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Right Side - Live Transcription */}
-        <div className="w-80 min-w-80 border-l border-gray-600 p-6 flex flex-col bg-gray-900/30">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-white-primary">Live Transcription</h3>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setShowTranscription(!showTranscription)}
-              className="text-white-secondary hover:text-white-primary"
-            >
-              {showTranscription ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
-            </Button>
-          </div>
-          
-          {showTranscription && (
-            <div className="flex-1 bg-gray-900 rounded-xl p-4 overflow-y-auto">
-              {isAISpeaking && (
-                <div className="mb-4 p-3 bg-blue-500 bg-opacity-20 rounded-lg border-l-4 border-blue-500">
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
-                    <span className="text-blue-300 text-sm font-medium">AI Speaking</span>
-                  </div>
-                  <p className="text-white-primary text-sm">
-                    {currentTranscription || "Listen carefully to the AI's response..."}
-                  </p>
+                      ))}
+                      
+                      {isLoading && (
+                        <div className="flex justify-start">
+                          <div className="max-w-[85%] rounded-lg p-3 bg-gray-700 text-white-primary">
+                            <div className="flex items-center space-x-2">
+                              <div className="flex space-x-1">
+                                <div className="w-2 h-2 bg-white-secondary rounded-full animate-pulse"></div>
+                                <div className="w-2 h-2 bg-white-secondary rounded-full animate-pulse delay-100"></div>
+                                <div className="w-2 h-2 bg-white-secondary rounded-full animate-pulse delay-200"></div>
+                              </div>
+                              <span className="text-sm">AI is thinking...</span>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  )}
+                  
+                  <div ref={messagesEndRef} />
                 </div>
               )}
-              
-              {isRecording && (
-                <div className="mb-4 p-3 bg-red-500 bg-opacity-20 rounded-lg border-l-4 border-red-500">
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse"></div>
-                    <span className="text-red-300 text-sm font-medium">Recording</span>
-                  </div>
-                  <p className="text-white-primary text-sm">
-                    Speak clearly into your microphone...
-                  </p>
-                </div>
-              )}
-              
-              {!isAISpeaking && !isRecording && (
-                <div className="text-center text-white-secondary py-8">
-                  <Mic className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                  <p className="text-sm">
-                    Start speaking or wait for AI response to see live transcription
-                  </p>
-                </div>
-              )}
-              
-              {/* Recent transcriptions */}
-              <div className="space-y-2 mt-4">
-                {messages.slice(-3).map((message, index) => (
-                  <div key={index} className="p-2 bg-gray-800 rounded text-xs text-white-secondary">
-                    <span className="text-white-primary font-medium">
-                      {message.role === 'user' ? 'You' : 'AI'}:
-                    </span>{' '}
-                    {message.content.substring(0, 100)}
-                    {message.content.length > 100 ? '...' : ''}
-                  </div>
-                ))}
-              </div>
             </div>
-          )}
+          </div>
         </div>
       </div>
 
