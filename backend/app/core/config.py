@@ -27,16 +27,14 @@ class Settings(BaseSettings):
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
     
     # CORS
-    ALLOWED_ORIGINS: List[str] = [
-        "http://localhost:3000",
-        "http://localhost:3001", 
-        "http://127.0.0.1:3000",
-        "http://127.0.0.1:3001",
-        "https://reach-jane-logged-moreover.trycloudflare.com",
-        "http://vwkcwwc4o4gwgs0c08scookk.168.231.82.151.sslip.io",  # Frontend domain
-        "http://l8ogcwc84sgk08c08wgwkkw8.168.231.82.151.sslip.io",  # Backend domain
-        "*"  # Allow all origins in development
-    ]
+    ALLOWED_ORIGINS: str = "http://localhost:3000,http://localhost:3001,http://127.0.0.1:3000,http://127.0.0.1:3001"
+    
+    @property
+    def cors_origins(self) -> List[str]:
+        """Parse ALLOWED_ORIGINS into a list"""
+        if self.ALLOWED_ORIGINS == "*":
+            return ["*"]
+        return [origin.strip() for origin in self.ALLOWED_ORIGINS.split(",") if origin.strip()]
     
     # Supabase
     SUPABASE_URL: str = ""
