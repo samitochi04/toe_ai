@@ -79,6 +79,10 @@ async def add_cors_header(request, call_next):
     return response
 
 
+# Include API router
+app.include_router(api_router, prefix="/api/v1")
+
+
 @app.get("/")
 async def root():
     """Root endpoint - Health check"""

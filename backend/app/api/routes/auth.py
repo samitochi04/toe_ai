@@ -1,9 +1,10 @@
 """
-Authentication routes for TOE AI Backend
+Authentication routes
 """
 
 from fastapi import APIRouter, HTTPException, Depends, status
-from fastapi.security import HTTPAuthorizationCredentials
+from pydantic import BaseModel, EmailStr
+from typing import Optional
 from datetime import timedelta
 import logging
 
@@ -17,6 +18,21 @@ from app.models.user import (
 logger = logging.getLogger(__name__)
 
 router = APIRouter()
+
+class LoginRequest(BaseModel):
+    email: EmailStr
+    password: str
+
+class RegisterRequest(BaseModel):
+    email: EmailStr
+    password: str
+    full_name: str
+
+class TokenResponse(BaseModel):
+    access_token: str
+    refresh_token: str
+    token_type: str = "bearer"
+    user: dict
 
 
 @router.post("/register", response_model=LoginResponse, status_code=status.HTTP_201_CREATED)
@@ -74,51 +90,33 @@ async def register(user_data: UserCreate):
         )
 
 
-@router.post("/login", response_model=LoginResponse)
-async def login(login_data: LoginRequest):
+@router.post("/login", response_model=TokenResponse)
+async def login(request: LoginRequest):
     """Login with email and password"""
     auth_manager = AuthManager()
     
-    try:
-        # Authenticate user
-        result = await auth_manager.authenticate_user(
-            email=login_data.email,
-            password=login_data.password
-        )
-        
-        if not result:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Incorrect email or password",
-                headers={"WWW-Authenticate": "Bearer"},
-            )
-        
-        # Create tokens
-        access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
-        access_token = auth_manager.create_access_token(
-            data={"sub": result["auth_user"].id},
-            expires_delta=access_token_expires
-        )
-        refresh_token = auth_manager.create_refresh_token(
-            data={"sub": result["auth_user"].id}
-        )
-        
-        return LoginResponse(
-            access_token=access_token,
-            refresh_token=refresh_token,
-            token_type="bearer",
-            expires_in=settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
-            user=User(**result["profile"])
-        )
-        
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"Login error: {e}")
+    result = await auth_manager.authenticate_user(request.email, request.password)
+    
+    if not result:
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Login failed"
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect email or password"
         )
+    
+    # Create tokens
+    access_token = auth_manager.create_access_token(
+        data={"sub": result["auth_user"].id}
+    )
+    refresh_token = auth_manager.create_refresh_token(
+        data={"sub": result["auth_user"].id}
+    )
+    
+    return {
+        "access_token": access_token,
+        "refresh_token": refresh_token,
+        "token_type": "bearer",
+        "user": result["profile"]
+    }
 
 
 @router.post("/google", response_model=LoginResponse)
@@ -187,29 +185,9 @@ async def refresh_token(refresh_data: RefreshTokenRequest):
 
 
 @router.post("/logout")
-async def logout(credentials: HTTPAuthorizationCredentials = Depends(security)):
-    """Logout user"""
-    auth_manager = AuthManager()
-    
-    try:
-        success = await auth_manager.sign_out(credentials.credentials)
-        
-        if not success:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Logout failed"
-            )
-        
-        return {"message": "Successfully logged out"}
-        
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"Logout error: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Logout failed"
-        )
+async def logout(current_user: User = Depends(get_current_user)):
+    """Logout current user"""
+    return {"message": "Successfully logged out"}
 
 
 @router.put("/password")
