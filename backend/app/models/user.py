@@ -15,6 +15,7 @@ class UserBase(BaseModel):
     full_name: str = Field(..., min_length=1, max_length=255)
     bio: Optional[str] = Field(None, max_length=500)
     profile_picture_url: Optional[str] = None
+    phone: Optional[str] = Field(None, max_length=20)
 
 
 class UserCreate(UserBase):
@@ -37,6 +38,7 @@ class UserUpdate(BaseModel):
     full_name: Optional[str] = Field(None, min_length=1, max_length=255)
     bio: Optional[str] = Field(None, max_length=500)
     profile_picture_url: Optional[str] = None
+    phone: Optional[str] = Field(None, max_length=20)
 
 
 class UserPasswordUpdate(BaseModel):

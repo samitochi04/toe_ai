@@ -257,14 +257,219 @@
     "confirmCancel": "Êtes-vous sûr de vouloir annuler votre abonnement? Il restera actif jusqu'à la fin de la période de facturation actuelle.",
     "cancelledMessage": "Votre abonnement sera annulé à la fin de la période de facturation actuelle."
   },
-  "payment": {
-    "success": {
-      "title": "Paiement Réussi!",
-      "message": "Bienvenue chez TOE AI Premium! Votre abonnement est maintenant actif."
+  "settings": {
+    "title": "Paramètres",
+    "loading": "Chargement des paramètres...",
+    "profile": {
+      "title": "Informations du profil",
+      "edit": "Modifier",
+      "save": "Enregistrer",
+      "cancel": "Annuler",
+      "fullName": "Nom complet",
+      "email": "E-mail",
+      "alias": "Alias (pour le partage)",
+      "phone": "Téléphone (Optionnel)",
+      "bio": "Bio (Optionnel)",
+      "enterFullName": "Entrez votre nom complet",
+      "enterAlias": "Entrez votre alias",
+      "enterPhone": "Entrez votre numéro de téléphone",
+      "enterBio": "Parlez-nous de vous...",
+      "notSet": "Non défini",
+      "cannotChange": "Ne peut pas être modifié",
+      "noBio": "Aucune bio définie",
+      "updateSuccess": "Profil mis à jour avec succès !",
+      "updateError": "Échec de la mise à jour du profil"
     },
-    "cancel": {
-      "title": "Paiement Annulé",
-      "message": "Votre paiement a été annulé. Aucun frais n'a été facturé sur votre compte."
+    "language": {
+      "title": "Langue et région",
+      "selectLanguage": "Sélectionner la langue",
+      "english": "English",
+      "french": "Français"
+    },
+    "subscription": {
+      "title": "Abonnement",
+      "freePlan": "Plan gratuit",
+      "premiumPlan": "Plan premium",
+      "active": "Actif",
+      "inactive": "Inactif",
+      "expires": "Expire",
+      "features": "Fonctionnalités :",
+      "upgradeButton": "Passer au premium",
+      "manageButton": "Gérer l'abonnement",
+      "upgradePromo": {
+        "title": "Passer au premium",
+        "description": "Débloquez les chats illimités, les fonctionnalités vocales, le téléchargement de fichiers et plus encore !"
+      }
+    },
+    "paymentMethods": {
+      "title": "Méthodes de paiement",
+      "addCard": "Ajouter une carte",
+      "addFirstCard": "Ajoutez votre première carte",
+      "noMethods": "Aucune méthode de paiement ajoutée",
+      "premiumOnly": "Les méthodes de paiement sont disponibles uniquement pour les abonnés premium",
+      "upgradeRequired": "Passer au premium",
+      "expires": "Expire",
+      "cardNumber": "Numéro de carte",
+      "expiryDate": "MM/AA",
+      "cvv": "CVV",
+      "cardholderName": "Nom du titulaire",
+      "enterCardNumber": "Entrez le numéro de carte",
+      "enterExpiry": "MM/AA",
+      "enterCVV": "CVV",
+      "enterName": "Entrez le nom du titulaire",
+      "addCardButton": "Ajouter une carte",
+      "adding": "Ajout en cours...",
+      "addSuccess": "Méthode de paiement ajoutée avec succès !",
+      "addError": "Échec de l'ajout de la méthode de paiement",
+      "removeError": "Échec de la suppression de la méthode de paiement",
+      "premiumRequired": "Abonnement premium requis pour ajouter des méthodes de paiement"
     }
+  },
+  "subscriptionManagement": {
+    "title": "Gestion de l'abonnement",
+    "subtitle": "Gérez votre abonnement premium",
+    "loading": "Chargement des détails de l'abonnement...",
+    "currentPlan": {
+      "title": "Plan actuel",
+      "fullAccess": "Accès complet à toutes les fonctionnalités",
+      "nextBilling": "Prochaine date de facturation",
+      "paymentMethod": "Méthode de paiement"
+    },
+    "features": {
+      "title": "Fonctionnalités premium",
+      "unlimited": "Chats normaux illimités",
+      "unlimitedInterviews": "Chats d'entretien illimités",
+      "premiumAI": "Modèles IA premium",
+      "prioritySupport": "Support prioritaire",
+      "advancedFeatures": "Fonctionnalités avancées",
+      "fileUploads": "Téléchargement de fichiers",
+      "chatSharing": "Partage de chats",
+      "pdfExport": "Exporter les chats en PDF"
+    },
+    "billingHistory": {
+      "title": "Historique de facturation",
+      "subscription": "Abonnement premium",
+      "paid": "payé"
+    },
+    "quickActions": {
+      "title": "Actions rapides",
+      "updatePayment": "Mettre à jour la méthode de paiement",
+      "downloadInvoice": "Télécharger la facture",
+      "contactSupport": "Contacter le support"
+    },
+    "subscriptionDetails": {
+      "title": "Détails de l'abonnement",
+      "plan": "Plan",
+      "status": "Statut",
+      "renewalDate": "Date de renouvellement",
+      "amount": "Montant"
+    },
+    "cancelSubscription": {
+      "title": "Annuler l'abonnement",
+      "description": "Vous pouvez annuler votre abonnement à tout moment. Vous continuerez à avoir accès aux fonctionnalités premium jusqu'à la fin de votre période de facturation actuelle.",
+      "button": "Annuler l'abonnement",
+      "processing": "Traitement en cours...",
+      "success": "Demande d'annulation d'abonnement soumise. Vous continuerez à avoir accès jusqu'à la fin de votre période de facturation actuelle."
+    },
+    "invoiceDownload": "La fonctionnalité de téléchargement de facture sera bientôt disponible"
+  },
+  "notFound": {
+    "title": "404 - Page non trouvée",
+    "description": "Oops ! La page que vous recherchez n'existe pas. Elle a peut-être été déplacée ou supprimée.",
+    "button": "Retour à l'accueil"
+  },
+  "paymentSuccess": {
+    "title": "Paiement réussi !",
+    "description": "Bienvenue chez TOE AI Premium ! Votre abonnement est maintenant actif.",
+    "premiumPlan": "Plan premium",
+    "unlimitedAccess": "Vous avez maintenant un accès illimité à toutes les fonctionnalités !",
+    "startChatting": "Commencer à chatter",
+    "viewBilling": "Voir la facturation",
+    "verifying": "Vérification du paiement..."
+  },
+  "paymentCancel": {
+    "title": "Paiement annulé",
+    "description": "Votre paiement a été annulé. Aucun frais n'a été prélevé sur votre compte.",
+    "premiumPlan": "Plan premium",
+    "upgradeAnytime": "Vous pouvez passer au premium à tout moment pour débloquer des fonctionnalités illimitées.",
+    "tryAgain": "Réessayer",
+    "backToDashboard": "Retour au tableau de bord"
+  },
+  "interviewsList": {
+    "title": "Chats d'entretien",
+    "subtitle": "Pratiquez et révisez vos sessions d'entretien",
+    "newInterview": "Nouvel entretien",
+    "searchPlaceholder": "Rechercher des entretiens...",
+    "noInterviews": "Aucun entretien encore",
+    "noSearchResults": "Aucun entretien trouvé",
+    "tryDifferentSearch": "Essayez un terme de recherche différent",
+    "getStarted": "Commencez par créer votre premier entretien",
+    "createFirst": "Créer le premier entretien",
+    "difficulty": {
+      "easy": "Facile",
+      "medium": "Moyen",
+      "hard": "Difficile"
+    },
+    "status": {
+      "completed": "Terminé",
+      "inProgress": "En cours"
+    },
+    "actions": {
+      "open": "Ouvrir",
+      "export": "Exporter PDF",
+      "delete": "Supprimer"
+    },
+    "exportSuccess": "Entretien exporté avec succès !",
+    "exportError": "Échec de l'exportation de l'entretien",
+    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cet entretien ?",
+    "deleteSuccess": "Entretien supprimé avec succès !",
+    "deleteError": "Échec de la suppression de l'entretien"
+  },
+  "shares": {
+    "title": "Partages",
+    "subtitle": "Gérez vos chats et entretiens partagés",
+    "myShares": "Mes partages",
+    "shareChat": "Partager le chat",
+    "shareInterview": "Partager l'entretien",
+    "noShares": "Aucun chat partagé encore",
+    "premiumRequired": {
+      "title": "Fonctionnalité premium",
+      "description": "Le partage de chats est disponible uniquement pour les abonnés premium.",
+      "features": [
+        "Partager des chats illimités",
+        "Contrôler les permissions d'accès",
+        "Définir des dates d'expiration",
+        "Suivre les vues et l'engagement"
+      ],
+      "upgradeButton": "Passer au premium"
+    },
+    "shareModal": {
+      "title": "Partager le chat",
+      "chatTitle": "Titre",
+      "description": "Description (Optionnel)",
+      "allowComments": "Autoriser les commentaires",
+      "expiresIn": "Expire dans",
+      "days": "jours",
+      "shareButton": "Partager le chat",
+      "cancel": "Annuler"
+    },
+    "actions": {
+      "copyLink": "Copier le lien",
+      "delete": "Supprimer le partage",
+      "view": "Voir"
+    },
+    "messages": {
+      "linkCopied": "Lien de partage copié dans le presse-papiers !",
+      "shareSuccess": "Chat partagé avec succès !",
+      "shareError": "Échec du partage du chat",
+      "deleteSuccess": "Partage supprimé avec succès !",
+      "deleteError": "Échec de la suppression du partage"
+    }
+  },
+  "sharedChat": {
+    "loading": "Chargement du chat partagé...",
+    "notFound": "Chat partagé non trouvé",
+    "expired": "Ce chat partagé a expiré",
+    "error": "Échec du chargement du chat partagé"
   }
 }

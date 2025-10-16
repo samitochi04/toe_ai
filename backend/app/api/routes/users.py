@@ -66,6 +66,8 @@ async def update_user_profile(
             update_data["bio"] = user_data.bio
         if user_data.profile_picture_url is not None:
             update_data["profile_picture_url"] = user_data.profile_picture_url
+        if user_data.phone is not None:
+            update_data["phone"] = user_data.phone
         
         if not update_data:
             return current_user

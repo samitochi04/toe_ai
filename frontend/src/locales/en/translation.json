@@ -334,14 +334,219 @@
     "confirmCancel": "Are you sure you want to cancel your subscription? It will remain active until the end of the current billing period.",
     "cancelledMessage": "Your subscription is set to cancel at the end of the current billing period."
   },
-  "payment": {
-    "success": {
-      "title": "Payment Successful!",
-      "message": "Welcome to TOE AI Premium! Your subscription is now active."
+  "settings": {
+    "title": "Settings",
+    "loading": "Loading settings...",
+    "profile": {
+      "title": "Profile Information",
+      "edit": "Edit",
+      "save": "Save",
+      "cancel": "Cancel",
+      "fullName": "Full Name",
+      "email": "Email",
+      "alias": "Alias (for sharing)",
+      "phone": "Phone (Optional)",
+      "bio": "Bio (Optional)",
+      "enterFullName": "Enter your full name",
+      "enterAlias": "Enter your alias",
+      "enterPhone": "Enter your phone number",
+      "enterBio": "Tell us about yourself...",
+      "notSet": "Not set",
+      "cannotChange": "Cannot be changed",
+      "noBio": "No bio set",
+      "updateSuccess": "Profile updated successfully!",
+      "updateError": "Failed to update profile"
     },
-    "cancel": {
-      "title": "Payment Cancelled",
-      "message": "Your payment was cancelled. No charges have been made to your account."
+    "language": {
+      "title": "Language & Region",
+      "selectLanguage": "Select Language",
+      "english": "English",
+      "french": "Français"
+    },
+    "subscription": {
+      "title": "Membership",
+      "freePlan": "Free Plan",
+      "premiumPlan": "Premium Plan",
+      "active": "Active",
+      "inactive": "Inactive",
+      "expires": "Expires",
+      "features": "Features:",
+      "upgradeButton": "Upgrade to Premium",
+      "manageButton": "Manage Subscription",
+      "upgradePromo": {
+        "title": "Upgrade to Premium",
+        "description": "Unlock unlimited chats, voice features, file uploads, and more!"
+      }
+    },
+    "paymentMethods": {
+      "title": "Payment Methods",
+      "addCard": "Add Card",
+      "addFirstCard": "Add Your First Card",
+      "noMethods": "No payment methods added yet",
+      "premiumOnly": "Payment methods are available for Premium subscribers only",
+      "upgradeRequired": "Upgrade to Premium",
+      "expires": "Expires",
+      "cardNumber": "Card Number",
+      "expiryDate": "MM/YY",
+      "cvv": "CVV",
+      "cardholderName": "Cardholder Name",
+      "enterCardNumber": "Enter card number",
+      "enterExpiry": "MM/YY",
+      "enterCVV": "CVV",
+      "enterName": "Enter cardholder name",
+      "addCardButton": "Add Card",
+      "adding": "Adding...",
+      "addSuccess": "Payment method added successfully!",
+      "addError": "Failed to add payment method",
+      "removeError": "Failed to remove payment method",
+      "premiumRequired": "Premium subscription required to add payment methods"
     }
+  },
+  "subscriptionManagement": {
+    "title": "Subscription Management",
+    "subtitle": "Manage your premium subscription",
+    "loading": "Loading subscription details...",
+    "currentPlan": {
+      "title": "Current Plan",
+      "fullAccess": "Full access to all features",
+      "nextBilling": "Next Billing Date",
+      "paymentMethod": "Payment Method"
+    },
+    "features": {
+      "title": "Premium Features",
+      "unlimited": "Unlimited normal chats",
+      "unlimitedInterviews": "Unlimited interview chats",
+      "premiumAI": "Premium AI models",
+      "prioritySupport": "Priority support",
+      "advancedFeatures": "Advanced features",
+      "fileUploads": "File uploads",
+      "chatSharing": "Chat sharing",
+      "pdfExport": "Export chats to PDF"
+    },
+    "billingHistory": {
+      "title": "Billing History",
+      "subscription": "Premium Subscription",
+      "paid": "paid"
+    },
+    "quickActions": {
+      "title": "Quick Actions",
+      "updatePayment": "Update Payment Method",
+      "downloadInvoice": "Download Invoice",
+      "contactSupport": "Contact Support"
+    },
+    "subscriptionDetails": {
+      "title": "Subscription Details",
+      "plan": "Plan",
+      "status": "Status",
+      "renewalDate": "Renewal Date",
+      "amount": "Amount"
+    },
+    "cancelSubscription": {
+      "title": "Cancel Subscription",
+      "description": "You can cancel your subscription at any time. You'll continue to have access to premium features until your current billing period ends.",
+      "button": "Cancel Subscription",
+      "processing": "Processing...",
+      "success": "Subscription cancellation request submitted. You will continue to have access until your current billing period ends."
+    },
+    "invoiceDownload": "Invoice download functionality will be available soon"
+  },
+  "notFound": {
+    "title": "404 - Page Not Found",
+    "description": "Oops! The page you're looking for doesn't exist. It might have been moved or deleted.",
+    "button": "Go Back Home"
+  },
+  "paymentSuccess": {
+    "title": "Payment Successful!",
+    "description": "Welcome to TOE AI Premium! Your subscription is now active.",
+    "premiumPlan": "Premium Plan",
+    "unlimitedAccess": "You now have unlimited access to all features!",
+    "startChatting": "Start Chatting",
+    "viewBilling": "View Billing",
+    "verifying": "Verifying payment..."
+  },
+  "paymentCancel": {
+    "title": "Payment Cancelled",
+    "description": "Your payment was cancelled. No charges have been made to your account.",
+    "premiumPlan": "Premium Plan",
+    "upgradeAnytime": "You can upgrade to premium anytime to unlock unlimited features.",
+    "tryAgain": "Try Again",
+    "backToDashboard": "Back to Dashboard"
+  },
+  "interviewsList": {
+    "title": "Interview Chats",
+    "subtitle": "Practice and review your interview sessions",
+    "newInterview": "New Interview",
+    "searchPlaceholder": "Search interviews...",
+    "noInterviews": "No interviews yet",
+    "noSearchResults": "No interviews found",
+    "tryDifferentSearch": "Try a different search term",
+    "getStarted": "Get started by creating your first interview",
+    "createFirst": "Create First Interview",
+    "difficulty": {
+      "easy": "Easy",
+      "medium": "Medium",
+      "hard": "Hard"
+    },
+    "status": {
+      "completed": "Completed",
+      "inProgress": "In Progress"
+    },
+    "actions": {
+      "open": "Open",
+      "export": "Export PDF",
+      "delete": "Delete"
+    },
+    "exportSuccess": "Interview exported successfully!",
+    "exportError": "Failed to export interview",
+    "deleteConfirm": "Are you sure you want to delete this interview?",
+    "deleteSuccess": "Interview deleted successfully!",
+    "deleteError": "Failed to delete interview"
+  },
+  "shares": {
+    "title": "Shares",
+    "subtitle": "Manage your shared chats and interviews",
+    "myShares": "My Shares",
+    "shareChat": "Share Chat",
+    "shareInterview": "Share Interview", 
+    "noShares": "No shared chats yet",
+    "premiumRequired": {
+      "title": "Premium Feature",
+      "description": "Chat sharing is available for Premium subscribers only.",
+      "features": [
+        "Share unlimited chats",
+        "Control access permissions",
+        "Set expiration dates",
+        "Track views and engagement"
+      ],
+      "upgradeButton": "Upgrade to Premium"
+    },
+    "shareModal": {
+      "title": "Share Chat",
+      "chatTitle": "Title",
+      "description": "Description (Optional)",
+      "allowComments": "Allow Comments",
+      "expiresIn": "Expires in",
+      "days": "days",
+      "shareButton": "Share Chat",
+      "cancel": "Cancel"
+    },
+    "actions": {
+      "copyLink": "Copy Link",
+      "delete": "Delete Share",
+      "view": "View"
+    },
+    "messages": {
+      "linkCopied": "Share link copied to clipboard!",
+      "shareSuccess": "Chat shared successfully!",
+      "shareError": "Failed to share chat",
+      "deleteSuccess": "Share deleted successfully!",
+      "deleteError": "Failed to delete share"
+    }
+  },
+  "sharedChat": {
+    "loading": "Loading shared chat...",
+    "notFound": "Shared chat not found",
+    "expired": "This shared chat has expired",
+    "error": "Failed to load shared chat"
   }
 }

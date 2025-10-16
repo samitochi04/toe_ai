@@ -12,6 +12,7 @@ import InterviewPage from './pages/InterviewPage'
 import ProfilePage from './pages/ProfilePage'
 import SettingsPage from './pages/SettingsPage'
 import BillingPage from './pages/BillingPage'
+import SubscriptionManagementPage from './pages/SubscriptionManagementPage'
 import SharedChatPage from './pages/SharedChatPage'
 import SharesPage from './pages/SharesPage'
 import NotFoundPage from './pages/NotFoundPage'
@@ -74,6 +75,7 @@ function App() {
             <Route path="interview/:chatId" element={<InterviewPage />} />
             <Route path="shares" element={<SharesPage />} />
             <Route path="premium" element={<BillingPage />} />
+            <Route path="subscription-management" element={<SubscriptionManagementPage />} />
             <Route path="profile" element={<ProfilePage />} />
             <Route path="settings" element={<SettingsPage />} />
           </Route>

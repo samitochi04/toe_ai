@@ -12,7 +12,8 @@ import {
   Plus,
   Trash2,
   Eye,
-  EyeOff
+  EyeOff,
+  Settings
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import useAuthStore from '../store/authStore'
@@ -77,12 +78,31 @@ const SettingsPage = () => {
       // Load subscription info
       try {
         const profileData = await profileService.getProfile()
-        setSubscription(profileData.subscription || {
-          tier: 'Free',
-          status: 'active',
-          expires_at: null,
-          features: ['10 normal chats/day', '5 interview chats/day', 'Basic support']
-        })
+        const userSubscription = profileData.subscription || user?.subscription
+        
+        if (userSubscription && userSubscription.status === 'active' && userSubscription.tier?.toLowerCase() === 'premium') {
+          setSubscription({
+            tier: 'Premium',
+            status: 'active',
+            expires_at: userSubscription.expires_at,
+            features: [
+              'Unlimited normal chats',
+              'Unlimited interview chats', 
+              'Premium AI models',
+              'Priority support',
+              'Advanced features',
+              'File uploads',
+              'Chat sharing'
+            ]
+          })
+        } else {
+          setSubscription({
+            tier: 'Free',
+            status: 'active',
+            expires_at: null,
+            features: ['10 normal chats/day', '5 interview chats/day', 'Basic support']
+          })
+        }
       } catch (error) {
         console.error('Error loading subscription:', error)
         // Set default free subscription
@@ -118,16 +138,17 @@ const SettingsPage = () => {
       // Only send fields that the backend accepts
       const updateData = {
         full_name: profile.full_name,
-        bio: profile.bio
+        bio: profile.bio,
+        phone: profile.phone
       }
       
       const updatedUser = await profileService.updateProfile(updateData)
       updateUserData(updatedUser)
       setIsEditingProfile(false)
-      toast.success('Profile updated successfully!')
+      toast.success(t('settings.profile.updateSuccess'))
     } catch (error) {
       console.error('Error updating profile:', error)
-      toast.error('Failed to update profile')
+      toast.error(t('settings.profile.updateError'))
     } finally {
       setProfileLoading(false)
     }
@@ -152,7 +173,7 @@ const SettingsPage = () => {
 
   const handleAddCard = async () => {
     if (!isPremium) {
-      toast.error('Premium subscription required to add payment methods')
+      toast.error(t('settings.paymentMethods.premiumRequired'))
       return
     }
 
@@ -184,6 +205,7 @@ const SettingsPage = () => {
   }
 
   const maskCardNumber = (number) => {
+    if (!number) return '**** **** **** ****'
     const cleaned = number.replace(/\s/g, '')
     return `**** **** **** ${cleaned.slice(-4)}`
   }
@@ -191,7 +213,7 @@ const SettingsPage = () => {
   if (subscriptionLoading) {
     return (
       <div className="min-h-screen bg-dark-primary flex items-center justify-center">
-        <div className="text-white-primary">Loading settings...</div>
+        <div className="text-white-primary">{t('settings.loading')}</div>
       </div>
     )
   }
@@ -200,7 +222,7 @@ const SettingsPage = () => {
     <div className="min-h-screen bg-dark-primary">
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <h1 className="text-3xl font-bold text-white-primary mb-8">
-          Settings
+          {t('settings.title')}
         </h1>
 
         <div className="space-y-8">
@@ -209,7 +231,7 @@ const SettingsPage = () => {
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
                 <User className="w-6 h-6 text-brand-primary" />
-                <h2 className="text-xl font-semibold text-white-primary">Profile Information</h2>
+                <h2 className="text-xl font-semibold text-white-primary">{t('settings.profile.title')}</h2>
               </div>
               <Button
                 variant={isEditingProfile ? "ghost" : "primary"}
@@ -231,86 +253,86 @@ const SettingsPage = () => {
                 }}
               >
                 {isEditingProfile ? <X className="w-4 h-4" /> : <Edit className="w-4 h-4" />}
-                {isEditingProfile ? 'Cancel' : 'Edit'}
+                {isEditingProfile ? t('settings.profile.cancel') : t('settings.profile.edit')}
               </Button>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-white-secondary mb-2">
-                  Full Name
+                  {t('settings.profile.fullName')}
                 </label>
                 {isEditingProfile ? (
                   <Input
                     value={profile.full_name}
                     onChange={(e) => setProfile({ ...profile, full_name: e.target.value })}
-                    placeholder="Enter your full name"
+                    placeholder={t('settings.profile.enterFullName')}
                   />
                 ) : (
                   <div className="p-3 bg-gray-800 rounded-xl text-white-primary">
-                    {profile.full_name || 'Not set'}
+                    {profile.full_name || t('settings.profile.notSet')}
                   </div>
                 )}
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-white-secondary mb-2">
-                  Email
+                  {t('settings.profile.email')}
                 </label>
                 <div className="p-3 bg-gray-800 rounded-xl text-white-secondary">
-                  {profile.email} (Cannot be changed)
+                  {profile.email} ({t('settings.profile.cannotChange')})
                 </div>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-white-secondary mb-2">
-                  Alias (for sharing)
+                  {t('settings.profile.alias')}
                 </label>
                 {isEditingProfile ? (
                   <Input
                     value={profile.alias}
                     onChange={(e) => setProfile({ ...profile, alias: e.target.value })}
-                    placeholder="Enter your alias"
+                    placeholder={t('settings.profile.enterAlias')}
                   />
                 ) : (
                   <div className="p-3 bg-gray-800 rounded-xl text-white-primary">
-                    {profile.alias || 'Not set'}
+                    {profile.alias || t('settings.profile.notSet')}
                   </div>
                 )}
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-white-secondary mb-2">
-                  Phone (Optional)
+                  {t('settings.profile.phone')}
                 </label>
                 {isEditingProfile ? (
                   <Input
                     value={profile.phone}
                     onChange={(e) => setProfile({ ...profile, phone: e.target.value })}
-                    placeholder="Enter your phone number"
+                    placeholder={t('settings.profile.enterPhone')}
                   />
                 ) : (
                   <div className="p-3 bg-gray-800 rounded-xl text-white-primary">
-                    {profile.phone || 'Not set'}
+                    {profile.phone || t('settings.profile.notSet')}
                   </div>
                 )}
               </div>
 
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-white-secondary mb-2">
-                  Bio (Optional)
+                  {t('settings.profile.bio')}
                 </label>
                 {isEditingProfile ? (
                   <textarea
                     value={profile.bio}
                     onChange={(e) => setProfile({ ...profile, bio: e.target.value })}
-                    placeholder="Tell us about yourself..."
+                    placeholder={t('settings.profile.enterBio')}
                     rows={3}
                     className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-xl text-white-primary placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-primary resize-none"
                   />
                 ) : (
                   <div className="p-3 bg-gray-800 rounded-xl text-white-primary min-h-[80px]">
-                    {profile.bio || 'No bio set'}
+                    {profile.bio || t('settings.profile.noBio')}
                   </div>
                 )}
               </div>
@@ -324,7 +346,7 @@ const SettingsPage = () => {
                   className="px-6"
                 >
                   <Save className="w-4 h-4 mr-2" />
-                  Save Changes
+                  {t('settings.profile.save')}
                 </Button>
               </div>
             )}
@@ -334,7 +356,7 @@ const SettingsPage = () => {
           <div className="bg-light-dark-secondary rounded-xl p-6">
             <div className="flex items-center gap-3 mb-6">
               <Globe className="w-6 h-6 text-brand-primary" />
-              <h2 className="text-xl font-semibold text-white-primary">Language Preferences</h2>
+              <h2 className="text-xl font-semibold text-white-primary">{t('settings.language.title')}</h2>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -349,7 +371,7 @@ const SettingsPage = () => {
                 <div className="flex items-center gap-3">
                   <span className="text-2xl">🇺🇸</span>
                   <div className="text-left">
-                    <div className="text-white-primary font-medium">English</div>
+                    <div className="text-white-primary font-medium">{t('settings.language.english')}</div>
                     <div className="text-white-secondary text-sm">United States</div>
                   </div>
                 </div>
@@ -366,7 +388,7 @@ const SettingsPage = () => {
                 <div className="flex items-center gap-3">
                   <span className="text-2xl">🇫🇷</span>
                   <div className="text-left">
-                    <div className="text-white-primary font-medium">Français</div>
+                    <div className="text-white-primary font-medium">{t('settings.language.french')}</div>
                     <div className="text-white-secondary text-sm">France</div>
                   </div>
                 </div>
@@ -378,35 +400,44 @@ const SettingsPage = () => {
           <div className="bg-light-dark-secondary rounded-xl p-6">
             <div className="flex items-center gap-3 mb-6">
               <Crown className="w-6 h-6 text-yellow-500" />
-              <h2 className="text-xl font-semibold text-white-primary">Membership</h2>
+              <h2 className="text-xl font-semibold text-white-primary">{t('settings.subscription.title')}</h2>
             </div>
 
             <div className="bg-gray-800 rounded-xl p-6">
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <h3 className="text-lg font-semibold text-white-primary">
-                    {subscription?.tier || 'Free'} Plan
+                    {subscription?.tier || t('settings.subscription.freePlan')} {t('settings.subscription.title')}
                   </h3>
                   <p className="text-white-secondary">
-                    {subscription?.status === 'active' ? 'Active' : 'Inactive'}
+                    {subscription?.status === 'active' ? t('settings.subscription.active') : t('settings.subscription.inactive')}
                     {subscription?.expires_at && (
-                      <span> • Expires {new Date(subscription.expires_at).toLocaleDateString()}</span>
+                      <span> • {t('settings.subscription.expires')} {new Date(subscription.expires_at).toLocaleDateString()}</span>
                     )}
                   </p>
                 </div>
-                {!isPremium && (
+                {isPremium ? (
+                  <Button
+                    onClick={() => navigate('/workspace/subscription-management')}
+                    variant="outline"
+                    className="px-6"
+                  >
+                    <Settings className="w-4 h-4 mr-2" />
+                    {t('settings.subscription.manageButton')}
+                  </Button>
+                ) : (
                   <Button
                     onClick={() => navigate('/workspace/premium')}
                     className="px-6"
                   >
                     <Crown className="w-4 h-4 mr-2" />
-                    Upgrade to Premium
+                    {t('settings.subscription.upgradeButton')}
                   </Button>
                 )}
               </div>
 
               <div className="space-y-2">
-                <h4 className="font-medium text-white-primary">Features:</h4>
+                <h4 className="font-medium text-white-primary">{t('settings.subscription.features')}</h4>
                 <ul className="space-y-1">
                   {(subscription?.features || []).map((feature, index) => (
                     <li key={index} className="text-white-secondary text-sm flex items-center gap-2">
@@ -421,10 +452,10 @@ const SettingsPage = () => {
                 <div className="mt-4 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
                   <div className="flex items-center gap-2 mb-2">
                     <Crown className="w-4 h-4 text-yellow-500" />
-                    <span className="text-yellow-500 font-medium">Upgrade to Premium</span>
+                    <span className="text-yellow-500 font-medium">{t('settings.subscription.upgradePromo.title')}</span>
                   </div>
                   <p className="text-white-secondary text-sm">
-                    Unlock unlimited chats, voice features, file uploads, and more!
+                    {t('settings.subscription.upgradePromo.description')}
                   </p>
                 </div>
               )}
@@ -436,7 +467,7 @@ const SettingsPage = () => {
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
                 <CreditCard className="w-6 h-6 text-brand-primary" />
-                <h2 className="text-xl font-semibold text-white-primary">Payment Methods</h2>
+                <h2 className="text-xl font-semibold text-white-primary">{t('settings.paymentMethods.title')}</h2>
               </div>
               {isPremium && (
                 <Button
@@ -445,7 +476,7 @@ const SettingsPage = () => {
                   onClick={() => setShowAddCard(true)}
                 >
                   <Plus className="w-4 h-4 mr-2" />
-                  Add Card
+                  {t('settings.paymentMethods.addCard')}
                 </Button>
               )}
             </div>
@@ -454,19 +485,19 @@ const SettingsPage = () => {
               <div className="text-center py-8">
                 <CreditCard className="w-12 h-12 text-gray-600 mx-auto mb-4" />
                 <p className="text-white-secondary mb-4">
-                  Payment methods are available for Premium subscribers only
+                  {t('settings.paymentMethods.premiumOnly')}
                 </p>
                 <Button onClick={() => navigate('/workspace/premium')}>
-                  Upgrade to Premium
+                  {t('settings.paymentMethods.upgradeRequired')}
                 </Button>
               </div>
             ) : paymentMethods.length === 0 ? (
               <div className="text-center py-8">
                 <CreditCard className="w-12 h-12 text-gray-600 mx-auto mb-4" />
-                <p className="text-white-secondary mb-4">No payment methods added yet</p>
+                <p className="text-white-secondary mb-4">{t('settings.paymentMethods.noMethods')}</p>
                 <Button onClick={() => setShowAddCard(true)}>
                   <Plus className="w-4 h-4 mr-2" />
-                  Add Your First Card
+                  {t('settings.paymentMethods.addFirstCard')}
                 </Button>
               </div>
             ) : (
@@ -482,7 +513,7 @@ const SettingsPage = () => {
                           {maskCardNumber(card.number)}
                         </div>
                         <div className="text-white-secondary text-sm">
-                          Expires {card.expiry} • {card.name}
+                          {t('settings.paymentMethods.expires')} {card.expiry} • {card.name}
                         </div>
                       </div>
                     </div>
@@ -504,17 +535,17 @@ const SettingsPage = () => {
         {/* Add Card Modal */}
         <Modal isOpen={showAddCard} onClose={() => setShowAddCard(false)} size="lg">
           <div className="p-6">
-            <h3 className="text-xl font-semibold text-white-primary mb-6">Add Payment Method</h3>
+            <h3 className="text-xl font-semibold text-white-primary mb-6">{t('settings.paymentMethods.title')}</h3>
             
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-white-secondary mb-2">
-                  Card Number
+                  {t('settings.paymentMethods.cardNumber')}
                 </label>
                 <Input
                   value={formatCardNumber(cardForm.number)}
                   onChange={(e) => setCardForm({ ...cardForm, number: e.target.value.replace(/\s/g, '') })}
-                  placeholder="1234 5678 9012 3456"
+                  placeholder={t('settings.paymentMethods.enterCardNumber')}
                   maxLength={19}
                 />
               </div>
@@ -522,26 +553,26 @@ const SettingsPage = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-white-secondary mb-2">
-                    Expiry Date
+                    {t('settings.paymentMethods.expiryDate')}
                   </label>
                   <Input
                     value={cardForm.expiry}
                     onChange={(e) => setCardForm({ ...cardForm, expiry: e.target.value })}
-                    placeholder="MM/YY"
+                    placeholder={t('settings.paymentMethods.enterExpiry')}
                     maxLength={5}
                   />
                 </div>
                 
                 <div>
                   <label className="block text-sm font-medium text-white-secondary mb-2">
-                    CVV
+                    {t('settings.paymentMethods.cvv')}
                   </label>
                   <div className="relative">
                     <Input
                       type={showCvv ? "text" : "password"}
                       value={cardForm.cvv}
                       onChange={(e) => setCardForm({ ...cardForm, cvv: e.target.value })}
-                      placeholder="123"
+                      placeholder={t('settings.paymentMethods.enterCVV')}
                       maxLength={4}
                     />
                     <button
@@ -557,12 +588,12 @@ const SettingsPage = () => {
 
               <div>
                 <label className="block text-sm font-medium text-white-secondary mb-2">
-                  Cardholder Name
+                  {t('settings.paymentMethods.cardholderName')}
                 </label>
                 <Input
                   value={cardForm.name}
                   onChange={(e) => setCardForm({ ...cardForm, name: e.target.value })}
-                  placeholder="John Doe"
+                  placeholder={t('settings.paymentMethods.enterName')}
                 />
               </div>
             </div>
@@ -573,14 +604,14 @@ const SettingsPage = () => {
                 onClick={() => setShowAddCard(false)}
                 className="flex-1"
               >
-                Cancel
+                {t('settings.profile.cancel')}
               </Button>
               <Button
                 onClick={handleAddCard}
                 className="flex-1"
                 disabled={!cardForm.number || !cardForm.expiry || !cardForm.cvv || !cardForm.name}
               >
-                Add Card
+                {t('settings.paymentMethods.addCardButton')}
               </Button>
             </div>
           </div>
