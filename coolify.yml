@@ -1,0 +1,63 @@
+# TOE AI Coolify Configuration
+# This file contains configuration for Coolify deployment
+
+# Project Information
+name: toe-ai
+description: TOE AI - TopOneEmployee AI Interview Application
+
+# Services Configuration
+services:
+  frontend:
+    image: toe-ai-frontend
+    port: 80
+    domains:
+      - yourdomain.com
+      - www.yourdomain.com
+    environment:
+      VITE_API_URL: https://api.yourdomain.com
+    
+  backend:
+    image: toe-ai-backend  
+    port: 8000
+    domains:
+      - api.yourdomain.com
+    environment:
+      # Configure these in Coolify environment variables
+      ENVIRONMENT: production
+      DEBUG: false
+      SECRET_KEY: ${SECRET_KEY}
+      SUPABASE_URL: ${SUPABASE_URL}
+      SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY}
+      SUPABASE_SERVICE_KEY: ${SUPABASE_SERVICE_KEY}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
+      STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
+      ALLOWED_ORIGINS: '["https://yourdomain.com","https://www.yourdomain.com"]'
+
+# Build Configuration
+build:
+  frontend:
+    context: ./frontend
+    dockerfile: Dockerfile
+  backend:
+    context: ./backend
+    dockerfile: Dockerfile.prod
+
+# Health Checks
+healthcheck:
+  frontend: /health
+  backend: /docs
+
+# Resources
+resources:
+  frontend:
+    memory: 512MB
+    cpu: 0.5
+  backend:
+    memory: 1GB
+    cpu: 1.0
+
+# Volumes
+volumes:
+  backend_uploads: /app/static/uploads

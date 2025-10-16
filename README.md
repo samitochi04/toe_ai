@@ -387,6 +387,51 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 }
 ```
 
+## 🚢 Deployment
+
+### Quick Deployment with Docker
+
+TOE AI is fully containerized and ready for deployment with Docker Compose.
+
+#### Production Deployment
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/toe_ai.git
+cd toe_ai
+
+# Configure environment variables
+cp .env.production .env
+# Edit .env with your production values
+
+# Deploy with Docker Compose
+chmod +x deploy.sh
+./deploy.sh deploy
+```
+
+#### Coolify Deployment (Recommended)
+1. Install Coolify on your VPS
+2. Create a new project from this repository
+3. Configure environment variables in Coolify dashboard
+4. Deploy with one click
+
+For detailed deployment instructions, see [DEPLOYMENT.md](DEPLOYMENT.md).
+
+### Environment Configuration
+Key environment variables for production:
+- `SECRET_KEY`: Secure random key for JWT tokens
+- `SUPABASE_URL` & `SUPABASE_ANON_KEY`: Database connection
+- `OPENAI_API_KEY`: AI services
+- `STRIPE_SECRET_KEY`: Payment processing
+- `ALLOWED_ORIGINS`: Frontend domain for CORS
+
+### Infrastructure Requirements
+- **Server**: Linux VPS with 2GB+ RAM
+- **Docker**: 20.10+ with Docker Compose
+- **Ports**: 80 (frontend), 8000 (backend), 443 (SSL)
+- **Storage**: 20GB+ for application and uploads
+
 ---
 
-**TOE AI** - Empowering job seekers with AI-powered interview preparation. Built with ❤️ using FastAPI, Supabase, and OpenAI.
+**TOE AI** - Empowering job seekers with AI-powered interview preparation. Built with ❤️ using FastAPI, React, Supabase, and OpenAI.
+
+Ready to deploy? Check out our [comprehensive deployment guide](DEPLOYMENT.md)!
