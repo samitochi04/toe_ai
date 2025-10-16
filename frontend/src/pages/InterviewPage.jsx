@@ -55,6 +55,7 @@ const InterviewPage = () => {
   const [isAISpeaking, setIsAISpeaking] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [currentChatId, setCurrentChatId] = useState(null)
+  const [attachedFiles, setAttachedFiles] = useState([])
 
   // Additional UI states
   const [showUpgradeModal, setShowUpgradeModal] = useState(false)
@@ -67,6 +68,7 @@ const InterviewPage = () => {
   const audioRef = useRef(null)
   const messagesEndRef = useRef(null)
   const videoRef = useRef(null)
+  const fileInputRef = useRef(null)
 
   const isPremium = user?.subscription?.status === 'active'
 
@@ -184,30 +186,51 @@ const InterviewPage = () => {
   }
 
   const handleSendMessage = async (messageContent = inputMessage) => {
-    if (!messageContent.trim()) return
+    if (!messageContent.trim() && attachedFiles.length === 0) return
 
     try {
       setIsLoading(true)
       
-      // Add user message immediately
+      // Add user message immediately with file info
       const userMessage = {
         id: Date.now(),
         role: 'user',
-        content: messageContent,
-        timestamp: new Date().toISOString()
+        content: messageContent || (attachedFiles.length > 0 ? '[File attached]' : ''),
+        timestamp: new Date().toISOString(),
+        files: attachedFiles.map(file => ({
+          name: file.name,
+          type: file.type,
+          size: file.size
+        }))
       }
       setMessages(prev => [...prev, userMessage])
       setInputMessage('')
-
-      // Send to API
-      const response = await chatService.sendInterviewMessage(
-        currentChatId,
-        messageContent,
-        jobPosition,
-        companyName,
-        difficulty,
-        interviewSettings
-      )
+      
+      let response
+      
+      // Use different methods based on whether files are attached
+      if (attachedFiles.length > 0) {
+        // Use sendMessage for file handling
+        response = await chatService.sendMessage(
+          currentChatId || 'new',
+          messageContent,
+          attachedFiles,
+          'interview'
+        )
+        
+        // Clear attached files after sending
+        setAttachedFiles([])
+      } else {
+        // Use regular interview message sending
+        response = await chatService.sendInterviewMessage(
+          currentChatId,
+          messageContent,
+          jobPosition,
+          companyName,
+          difficulty,
+          interviewSettings
+        )
+      }
 
       // Update chat ID if new chat
       if (response.isNewChat && response.chat) {
@@ -360,7 +383,56 @@ const InterviewPage = () => {
       setShowUpgradeModal(true)
       return
     }
-    toast.info('File upload feature coming soon')
+    fileInputRef.current?.click()
+  }
+
+  const handleFileChange = (event) => {
+    const files = Array.from(event.target.files)
+    if (files.length === 0) return
+
+    // Validate files
+    const maxSize = 10 * 1024 * 1024 // 10MB
+    const allowedTypes = ['image/*', 'application/pdf', 'text/*', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document']
+    
+    const validFiles = []
+    const errors = []
+
+    files.forEach(file => {
+      if (file.size > maxSize) {
+        errors.push(`${file.name}: File too large (max 10MB)`)
+        return
+      }
+
+      const isValidType = allowedTypes.some(type => {
+        if (type.endsWith('/*')) {
+          return file.type.startsWith(type.split('/')[0])
+        }
+        return file.type === type
+      })
+
+      if (!isValidType) {
+        errors.push(`${file.name}: Unsupported file type`)
+        return
+      }
+
+      validFiles.push(file)
+    })
+
+    if (errors.length > 0) {
+      toast.error(errors.join('\n'))
+    }
+
+    if (validFiles.length > 0) {
+      setAttachedFiles(prev => [...prev, ...validFiles])
+      toast.success(`${validFiles.length} file(s) attached`)
+    }
+
+    // Reset input
+    event.target.value = ''
+  }
+
+  const handleRemoveFile = (fileIndex) => {
+    setAttachedFiles(prev => prev.filter((_, index) => index !== fileIndex))
   }
 
   const handleExportPDF = () => {
@@ -574,7 +646,7 @@ const InterviewPage = () => {
               {/* AI Speaking Indicator */}
               {isAISpeaking && !isVideoTransitioning && (
                 <div className="absolute bottom-4 left-4 flex items-center gap-2 bg-black bg-opacity-50 px-3 py-2 rounded-full">
-                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                  <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse"></div>
                   <span className="text-white text-sm">Speaking...</span>
                 </div>
               )}
@@ -597,9 +669,37 @@ const InterviewPage = () => {
           <div className="p-4 bg-gray-900/80 border-t border-gray-700/50">
             <div className="max-w-4xl mx-auto">
               {/* File attachments area */}
-              <div className="mb-3">
-                {/* Placeholder for file attachments - positioned above input */}
-              </div>
+              {attachedFiles.length > 0 && (
+                <div className="mb-3 flex flex-wrap gap-2">
+                  {attachedFiles.map((file, index) => (
+                    <div key={index} className="flex items-center gap-2 bg-gray-700 px-3 py-2 rounded-lg border border-gray-600">
+                      <div className="flex items-center gap-2">
+                        {file.type.startsWith('image/') ? (
+                          <img 
+                            src={URL.createObjectURL(file)} 
+                            alt={file.name}
+                            className="w-8 h-8 object-cover rounded"
+                          />
+                        ) : (
+                          <div className="w-8 h-8 bg-gray-600 rounded flex items-center justify-center">
+                            <Paperclip className="w-4 h-4 text-gray-300" />
+                          </div>
+                        )}
+                        <div>
+                          <p className="text-sm text-white-primary truncate max-w-32">{file.name}</p>
+                          <p className="text-xs text-gray-400">{(file.size / 1024).toFixed(1)} KB</p>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => handleRemoveFile(index)}
+                        className="text-gray-400 hover:text-red-400 transition-colors"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
               
               <div className="flex items-end gap-3 bg-light-dark-secondary rounded-2xl border border-gray-600 focus-within:border-brand-primary/60 focus-within:shadow-lg focus-within:shadow-brand-primary/20 transition-all duration-200 p-3">
                 <div className="flex-1 relative min-h-[24px]">
@@ -654,9 +754,9 @@ const InterviewPage = () => {
                   
                   <Button
                     onClick={() => handleSendMessage()}
-                    disabled={!inputMessage.trim() || isLoading}
+                    disabled={(!inputMessage.trim() && attachedFiles.length === 0) || isLoading}
                     className={`p-2.5 rounded-lg transition-all duration-200 ${
-                      inputMessage.trim() && !isLoading
+                      (inputMessage.trim() || attachedFiles.length > 0) && !isLoading
                         ? 'bg-brand-primary hover:bg-brand-primary/90 text-white'
                         : 'bg-gray-600 text-gray-400 cursor-not-allowed'
                     }`}
@@ -711,6 +811,19 @@ const InterviewPage = () => {
                             }`}
                           >
                             <p className="whitespace-pre-wrap">{message.content}</p>
+                            
+                            {/* Display attached files */}
+                            {message.files && message.files.length > 0 && (
+                              <div className="mt-2 flex flex-wrap gap-2">
+                                {message.files.map((file, fileIndex) => (
+                                  <div key={fileIndex} className="flex items-center gap-2 bg-black/20 px-2 py-1 rounded text-xs">
+                                    <Paperclip className="w-3 h-3" />
+                                    <span className="truncate max-w-24">{file.name}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                            
                             <p className="text-xs opacity-70 mt-1">
                               {formatDateTime(message.timestamp)}
                             </p>
@@ -772,6 +885,16 @@ const InterviewPage = () => {
           </div>
         </div>
       </Modal>
+      
+      {/* Hidden File Input */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        multiple
+        accept="image/*,.pdf,.txt,.doc,.docx"
+        onChange={handleFileChange}
+        className="hidden"
+      />
     </div>
   )
 }

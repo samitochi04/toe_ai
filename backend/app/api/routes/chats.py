@@ -515,7 +515,19 @@ async def update_interview_chat(
         if chat_data.company_name is not None:
             update_data["company_name"] = chat_data.company_name
         if chat_data.conversation is not None:
-            update_data["conversation"] = [msg.dict() for msg in chat_data.conversation]
+            # Properly serialize conversation with datetime handling
+            conversation_data = []
+            for msg in chat_data.conversation:
+                msg_dict = msg.dict()
+                # Ensure timestamp is ISO formatted string
+                if 'timestamp' in msg_dict and msg_dict['timestamp']:
+                    if hasattr(msg_dict['timestamp'], 'isoformat'):
+                        msg_dict['timestamp'] = msg_dict['timestamp'].isoformat()
+                    elif isinstance(msg_dict['timestamp'], str):
+                        # Already a string, keep as is
+                        pass
+                conversation_data.append(msg_dict)
+            update_data["conversation"] = conversation_data
         if chat_data.interview_settings is not None:
             update_data["interview_settings"] = chat_data.interview_settings.dict()
         if chat_data.duration_minutes is not None:

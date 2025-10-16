@@ -29,6 +29,11 @@ class Message(BaseModel):
     timestamp: datetime = Field(default_factory=datetime.utcnow)
     audio_url: Optional[str] = None
     metadata: Optional[Dict[str, Any]] = None
+    
+    class Config:
+        json_encoders = {
+            datetime: lambda v: v.isoformat()
+        }
 
 
 class ChatBase(BaseModel):

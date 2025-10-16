@@ -166,8 +166,26 @@ async def interview_chat(
                     if content:
                         messages.append({"role": role, "content": content})
         
+        # Process files if any are attached
+        file_content = ""
+        if hasattr(request, 'files') and request.files and len(request.files) > 0:
+            try:
+                file_content = await process_attached_files(request.files)
+                logger.info(f"Processed {len(request.files)} files for interview chat, content length: {len(file_content)}")
+            except Exception as file_error:
+                logger.error(f"Error processing files in interview chat: {file_error}")
+                file_content = f"[Error processing {len(request.files)} attached file(s): {str(file_error)}]"
+        
+        # Combine user message with file content
+        user_content = request.content
+        if file_content:
+            if user_content and user_content.strip():
+                user_content += f"\n\nAttached file content:\n{file_content}"
+            else:
+                user_content = f"Please analyze this attached file for the interview:\n\n{file_content}"
+        
         # Add current user message
-        messages.append({"role": "user", "content": request.content})
+        messages.append({"role": "user", "content": user_content})
         
         # Make OpenAI API call
         response = await asyncio.to_thread(
