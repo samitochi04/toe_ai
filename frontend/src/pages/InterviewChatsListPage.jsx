@@ -11,7 +11,7 @@ import {
   Clock,
   MoreVertical,
   Trash2,
-  Share,
+  ExternalLink,
   Download,
   ArrowLeft
 } from 'lucide-react'
@@ -20,6 +20,7 @@ import useAuthStore from '../store/authStore'
 import Button from '../components/common/Button'
 import Modal from '../components/common/Modal'
 import { api } from '../services/api'
+import { chatService } from '../services/chat'
 import { formatDateTime } from '../utils/helpers'
 
 const InterviewChatsListPage = () => {
@@ -103,23 +104,58 @@ const InterviewChatsListPage = () => {
     }
   }
 
-  const handleShareChat = (chat) => {
-    if (!isPremium) {
-      toast.error('Sharing is available for Premium users only')
-      return
-    }
-    // TODO: Implement sharing functionality
-    toast.info('Sharing feature coming soon')
+  const handleOpenChat = (chat) => {
+    navigate(`/workspace/interview/${chat.id}`)
     setShowOptionsMenu(null)
   }
 
-  const handleExportChat = (chat) => {
+  const handleExportChat = async (chat) => {
     if (!isPremium) {
       toast.error('PDF export is available for Premium users only')
       return
     }
-    // TODO: Implement PDF export
-    toast.info('PDF export feature coming soon')
+
+    try {
+      toast.loading('Generating PDF...', { id: `pdf-export-${chat.id}` })
+      
+      const pdfData = await chatService.exportChatToPDF(chat.id, 'interview', {
+        includeMetadata: true,
+        includeAudioLinks: false
+      })
+
+      // Create download URL for the PDF
+      const baseUrl = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api/v1').replace('/api/v1', '')
+      const pdfUrl = `${baseUrl}${pdfData.pdf_url}`
+      
+      // Open PDF in new tab for viewing and downloading
+      const newWindow = window.open(pdfUrl, '_blank')
+      
+      if (newWindow) {
+        toast.success('PDF generated successfully! Check your new tab.', { id: `pdf-export-${chat.id}` })
+      } else {
+        // Fallback if popup is blocked - create download link
+        const link = document.createElement('a')
+        link.href = pdfUrl
+        link.download = pdfData.filename
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+        toast.success('PDF downloaded successfully!', { id: `pdf-export-${chat.id}` })
+      }
+    } catch (error) {
+      console.error('Error exporting PDF:', error)
+      
+      if (error.response?.status === 404) {
+        toast.error('Chat not found. Please refresh and try again.', { id: `pdf-export-${chat.id}` })
+      } else if (error.response?.status === 403) {
+        toast.error('You need a premium subscription to export PDFs.', { id: `pdf-export-${chat.id}` })
+      } else if (error.response?.status >= 500) {
+        toast.error('Server error. Please try again later.', { id: `pdf-export-${chat.id}` })
+      } else {
+        toast.error('Failed to export PDF. Please try again.', { id: `pdf-export-${chat.id}` })
+      }
+    }
+    
     setShowOptionsMenu(null)
   }
 
@@ -160,15 +196,12 @@ const InterviewChatsListPage = () => {
               <button
                 onClick={(e) => {
                   e.stopPropagation()
-                  handleShareChat(chat)
+                  handleOpenChat(chat)
                 }}
-                className={`w-full px-4 py-2 text-left text-sm hover:bg-gray-700 flex items-center space-x-2 ${
-                  !isPremium ? 'text-gray-500' : 'text-white-primary'
-                }`}
-                disabled={!isPremium}
+                className="w-full px-4 py-2 text-left text-sm hover:bg-gray-700 flex items-center space-x-2 text-white-primary"
               >
-                <Share className="w-4 h-4" />
-                <span>Share</span>
+                <ExternalLink className="w-4 h-4" />
+                <span>Open</span>
               </button>
               <button
                 onClick={(e) => {
