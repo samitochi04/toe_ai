@@ -389,4 +389,26 @@ export const chatService = {
       throw error
     }
   },
+
+  // Export chat to PDF
+  exportChatToPDF: async (chatId, chatType = 'interview', options = {}) => {
+    try {
+      const {
+        includeMetadata = true,
+        includeAudioLinks = false
+      } = options
+
+      const response = await api.post('/chats/export-pdf', {
+        chat_id: chatId,
+        chat_type: chatType,
+        include_metadata: includeMetadata,
+        include_audio_links: includeAudioLinks
+      })
+
+      return response.data
+    } catch (error) {
+      console.error('Error exporting chat to PDF:', error)
+      throw error
+    }
+  },
 }

@@ -63,6 +63,7 @@ const InterviewPage = () => {
   const [showUpgradeModal, setShowUpgradeModal] = useState(false)
   const [showConversation, setShowConversation] = useState(false)
   const [isVideoTransitioning, setIsVideoTransitioning] = useState(false)
+  const [isExportingPDF, setIsExportingPDF] = useState(false)
 
   // Refs
   const mediaRecorderRef = useRef(null)
@@ -496,12 +497,64 @@ const InterviewPage = () => {
     setAttachedFiles(prev => prev.filter((_, index) => index !== fileIndex))
   }
 
-  const handleExportPDF = () => {
+  const handleExportPDF = async () => {
     if (!isPremium) {
       setShowUpgradeModal(true)
       return
     }
-    toast.info('PDF export feature coming soon')
+
+    if (!currentChatId || messages.length === 0) {
+      toast.error('No conversation to export')
+      return
+    }
+
+    setIsExportingPDF(true)
+    
+    try {
+      toast.loading('Generating PDF...', { id: 'pdf-export' })
+      
+      const pdfData = await chatService.exportChatToPDF(currentChatId, 'interview', {
+        includeMetadata: true,
+        includeAudioLinks: false
+      })
+
+      // Create a download URL for the PDF
+      // Remove /api/v1 from base URL for static files
+      const baseUrl = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api/v1').replace('/api/v1', '')
+      const pdfUrl = `${baseUrl}${pdfData.pdf_url}`
+      
+      // Open PDF in a new tab for viewing and downloading
+      const newWindow = window.open(pdfUrl, '_blank')
+      
+      if (newWindow) {
+        toast.success('PDF generated successfully! Check your new tab.', { id: 'pdf-export' })
+      } else {
+        // Fallback if popup is blocked - create download link
+        const link = document.createElement('a')
+        link.href = pdfUrl
+        link.download = pdfData.filename
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+        toast.success('PDF downloaded successfully!', { id: 'pdf-export' })
+      }
+      
+    } catch (error) {
+      console.error('Error exporting PDF:', error)
+      
+      // More specific error messages
+      if (error.response?.status === 404) {
+        toast.error('Chat not found. Please refresh and try again.', { id: 'pdf-export' })
+      } else if (error.response?.status === 403) {
+        toast.error('You need a premium subscription to export PDFs.', { id: 'pdf-export' })
+      } else if (error.response?.status >= 500) {
+        toast.error('Server error. Please try again later.', { id: 'pdf-export' })
+      } else {
+        toast.error('Failed to export PDF. Please try again.', { id: 'pdf-export' })
+      }
+    } finally {
+      setIsExportingPDF(false)
+    }
   }
 
   const handleGoBack = () => {
@@ -654,9 +707,23 @@ const InterviewPage = () => {
             variant="ghost"
             size="sm"
             onClick={handleExportPDF}
-            className="text-white-secondary hover:text-white-primary"
+            disabled={isExportingPDF || !currentChatId || messages.length === 0}
+            className={`text-white-secondary hover:text-white-primary transition-colors ${
+              isExportingPDF ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
+            title={
+              !currentChatId || messages.length === 0 
+                ? 'No conversation to export' 
+                : isExportingPDF 
+                  ? 'Generating PDF...' 
+                  : 'Download conversation as PDF'
+            }
           >
-            <Download className="w-4 h-4" />
+            {isExportingPDF ? (
+              <div className="w-4 h-4 border-2 border-white-secondary border-t-transparent rounded-full animate-spin"></div>
+            ) : (
+              <Download className="w-4 h-4" />
+            )}
           </Button>
         </div>
       </div>
