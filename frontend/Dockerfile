@@ -4,20 +4,30 @@ FROM node:18-alpine AS builder
 # Set working directory
 WORKDIR /app
 
-# Copy package files
+# Install git (required for some npm packages)
+RUN apk add --no-cache git
+
+# Copy package files first for better caching
 COPY package*.json ./
 
-# Install dependencies
-RUN npm ci --only=production
+# Install ALL dependencies (including devDependencies needed for build)
+RUN npm ci
 
 # Copy source code
 COPY . .
+
+# Set build-time environment variables
+ARG VITE_API_URL
+ENV VITE_API_URL=$VITE_API_URL
 
 # Build the application
 RUN npm run build
 
 # Production stage
 FROM nginx:alpine
+
+# Install wget for health checks
+RUN apk add --no-cache wget
 
 # Copy custom nginx config
 COPY nginx.conf /etc/nginx/nginx.conf
@@ -34,7 +44,7 @@ EXPOSE 80
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
-    CMD wget --no-verbose --tries=1 --spider http://localhost:80/ || exit 1
+    CMD wget --no-verbose --tries=1 --spider http://localhost:80/health || exit 1
 
 # Start nginx
 CMD ["nginx", "-g", "daemon off;"]
