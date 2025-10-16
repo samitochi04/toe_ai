@@ -251,34 +251,50 @@ async def interview_chat(
 
 @router.post("/speech-to-text")
 async def speech_to_text(
-    audio_file: UploadFile = File(...),
+    audio: UploadFile = File(...),
     current_user: User = Depends(get_current_user)
 ):
     """Convert speech to text using Whisper API"""
     db = DatabaseManager()
     
+    logger.info(f"Speech-to-text request - filename: {audio.filename}, content_type: {audio.content_type}")
+    
     # Validate file type
-    if not audio_file.content_type or not audio_file.content_type.startswith("audio/"):
+    if not audio.content_type or not audio.content_type.startswith("audio/"):
+        logger.warning(f"Invalid content type: {audio.content_type}")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="File must be an audio file"
         )
     
     # Check file extension
-    file_extension = audio_file.filename.split(".")[-1].lower()
-    if file_extension not in settings.ALLOWED_AUDIO_EXTENSIONS:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Audio format not supported. Allowed formats: {', '.join(settings.ALLOWED_AUDIO_EXTENSIONS)}"
-        )
+    if not audio.filename or "." not in audio.filename:
+        logger.warning(f"No filename or extension found: {audio.filename}")
+        # Default to wav for audio recordings
+        file_extension = "wav"
+    else:
+        file_extension = audio.filename.split(".")[-1].lower()
+        if file_extension not in settings.ALLOWED_AUDIO_EXTENSIONS:
+            logger.warning(f"Unsupported file extension: {file_extension}")
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Audio format not supported. Allowed formats: {', '.join(settings.ALLOWED_AUDIO_EXTENSIONS)}"
+            )
     
+    temp_path = None
     try:
         # Save uploaded file temporarily
         temp_filename = f"temp_{uuid.uuid4()}.{file_extension}"
-        temp_path = os.path.join(settings.UPLOAD_DIR, "temp", temp_filename)
+        
+        # Use static uploads directory (same as main.py setup)
+        static_dir = "static"
+        temp_path = os.path.join(static_dir, "uploads", "temp", temp_filename)
+        
+        # Ensure temp directory exists
+        os.makedirs(os.path.dirname(temp_path), exist_ok=True)
         
         with open(temp_path, "wb") as buffer:
-            content = await audio_file.read()
+            content = await audio.read()
             buffer.write(content)
         
         # Check file size
@@ -301,6 +317,8 @@ async def speech_to_text(
         # Clean up temp file
         os.remove(temp_path)
         
+        logger.info(f"Whisper transcription successful. Text length: {len(response.text)}")
+        
         # Log API usage
         await db.log_api_usage(
             user_id=str(current_user.id),
@@ -312,14 +330,17 @@ async def speech_to_text(
         
         return {
             "text": response.text,
-            "duration": response.get("duration"),
-            "language": response.get("language", "en")
+            "duration": getattr(response, 'duration', None),
+            "language": getattr(response, 'language', 'en')
         }
         
     except Exception as e:
         # Clean up temp file on error
-        if os.path.exists(temp_path):
-            os.remove(temp_path)
+        if temp_path and os.path.exists(temp_path):
+            try:
+                os.remove(temp_path)
+            except Exception as cleanup_error:
+                logger.warning(f"Failed to clean up temp file: {cleanup_error}")
         
         logger.error(f"Speech-to-text error: {e}")
         raise HTTPException(

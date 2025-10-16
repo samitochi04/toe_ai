@@ -51,6 +51,8 @@ const InterviewPage = () => {
   const [messages, setMessages] = useState([])
   const [inputMessage, setInputMessage] = useState('')
   const [isRecording, setIsRecording] = useState(false)
+  const [recordingTime, setRecordingTime] = useState(0)
+  const [isTranscribing, setIsTranscribing] = useState(false)
   const [isMuted, setIsMuted] = useState(false)
   const [isAISpeaking, setIsAISpeaking] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -65,6 +67,8 @@ const InterviewPage = () => {
   // Refs
   const mediaRecorderRef = useRef(null)
   const audioChunksRef = useRef([])
+  const recordingTimerRef = useRef(null)
+  const autoSendTimerRef = useRef(null)
   const audioRef = useRef(null)
   const messagesEndRef = useRef(null)
   const videoRef = useRef(null)
@@ -143,6 +147,18 @@ const InterviewPage = () => {
     }
   }, [messages, showConversation])
 
+  // Cleanup effect for timers
+  useEffect(() => {
+    return () => {
+      if (recordingTimerRef.current) {
+        clearInterval(recordingTimerRef.current)
+      }
+      if (autoSendTimerRef.current) {
+        clearTimeout(autoSendTimerRef.current)
+      }
+    }
+  }, [])
+
   // Auto-resize textarea when input changes
   useEffect(() => {
     const textarea = document.querySelector('textarea[placeholder="Type your response..."]')
@@ -155,6 +171,12 @@ const InterviewPage = () => {
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }
+
+  const formatRecordingTime = (seconds) => {
+    const minutes = Math.floor(seconds / 60)
+    const remainingSeconds = seconds % 60
+    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`
   }
 
   const handleStartInterview = async () => {
@@ -337,6 +359,16 @@ const InterviewPage = () => {
       if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
         mediaRecorderRef.current.stop()
         setIsRecording(false)
+        
+        // Clear recording timer
+        if (recordingTimerRef.current) {
+          clearInterval(recordingTimerRef.current)
+          recordingTimerRef.current = null
+        }
+        setRecordingTime(0)
+        
+        // Show transcribing state
+        setIsTranscribing(true)
       }
     } else {
       // Start recording
@@ -358,11 +390,32 @@ const InterviewPage = () => {
           try {
             const response = await chatService.speechToText(formData)
             if (response.text) {
-              setInputMessage(response.text)
-              // Store transcription for potential use
+              const transcribedText = response.text
+              setInputMessage(transcribedText)
+              setIsTranscribing(false)
+              
+              // Auto-send after 2 seconds
+              toast.success('Speech transcribed! Sending in 2 seconds... (Edit to cancel auto-send)', {
+                duration: 2000,
+                action: {
+                  label: 'Cancel',
+                  onClick: () => {
+                    if (autoSendTimerRef.current) {
+                      clearTimeout(autoSendTimerRef.current)
+                      autoSendTimerRef.current = null
+                      toast.success('Auto-send cancelled')
+                    }
+                  }
+                }
+              })
+              autoSendTimerRef.current = setTimeout(() => {
+                // Send the transcribed text directly
+                handleSendMessage(transcribedText)
+              }, 2000)
             }
           } catch (error) {
             console.error('Speech to text error:', error)
+            setIsTranscribing(false)
             toast.error('Failed to convert speech to text')
           }
 
@@ -371,6 +424,14 @@ const InterviewPage = () => {
 
         mediaRecorder.start()
         setIsRecording(true)
+        
+        // Start recording timer
+        setRecordingTime(0)
+        recordingTimerRef.current = setInterval(() => {
+          setRecordingTime(prev => prev + 1)
+        }, 1000)
+        
+        toast.success('Recording started... Click again to stop')
       } catch (error) {
         console.error('Error accessing microphone:', error)
         toast.error('Failed to access microphone')
@@ -646,7 +707,7 @@ const InterviewPage = () => {
               {/* AI Speaking Indicator */}
               {isAISpeaking && !isVideoTransitioning && (
                 <div className="absolute bottom-4 left-4 flex items-center gap-2 bg-black bg-opacity-50 px-3 py-2 rounded-full">
-                  <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse"></div>
+                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
                   <span className="text-white text-sm">Speaking...</span>
                 </div>
               )}
@@ -655,9 +716,9 @@ const InterviewPage = () => {
               {isLoading && !isAISpeaking && !isVideoTransitioning && (
                 <div className="absolute bottom-4 left-4 flex items-center gap-2 bg-black bg-opacity-50 px-3 py-2 rounded-full">
                   <div className="flex space-x-1">
-                    <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
-                    <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse delay-100"></div>
-                    <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse delay-200"></div>
+                    <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse"></div>
+                    {/* <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse delay-100"></div>
+                    <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse delay-200"></div> */}
                   </div>
                   <span className="text-white text-sm">Loading...</span>
                 </div>
@@ -701,20 +762,56 @@ const InterviewPage = () => {
                 </div>
               )}
               
+              {/* Recording/Transcribing Indicator */}
+              {(isRecording || isTranscribing) && (
+                <div className={`mb-3 p-3 rounded-xl border ${
+                  isRecording 
+                    ? 'bg-red-500/10 border-red-500/30' 
+                    : 'bg-blue-500/10 border-blue-500/30'
+                }`}>
+                  <div className="flex items-center gap-3">
+                    {isRecording ? (
+                      <>
+                        <div className="flex items-center gap-2">
+                          <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+                          <span className="text-red-400 font-medium">Recording</span>
+                          <span className="text-red-300 text-sm">{formatRecordingTime(recordingTime)}</span>
+                        </div>
+                        <span className="text-gray-400 text-sm">Click the microphone again to stop</span>
+                      </>
+                    ) : (
+                      <>
+                        <div className="flex items-center gap-2">
+                          <div className="w-3 h-3 bg-blue-500 rounded-full animate-spin border-2 border-blue-200 border-t-transparent"></div>
+                          <span className="text-blue-400 font-medium">Transcribing speech...</span>
+                        </div>
+                        <span className="text-gray-400 text-sm">Please wait</span>
+                      </>
+                    )}
+                  </div>
+                </div>
+              )}
+
               <div className="flex items-end gap-3 bg-light-dark-secondary rounded-2xl border border-gray-600 focus-within:border-brand-primary/60 focus-within:shadow-lg focus-within:shadow-brand-primary/20 transition-all duration-200 p-3">
                 <div className="flex-1 relative min-h-[24px]">
                   <textarea
                     value={inputMessage}
                     onChange={(e) => {
                       setInputMessage(e.target.value)
+                      // Clear auto-send timer if user types
+                      if (autoSendTimerRef.current) {
+                        clearTimeout(autoSendTimerRef.current)
+                        autoSendTimerRef.current = null
+                      }
                       // Auto-resize textarea
                       e.target.style.height = 'auto'
                       const newHeight = Math.min(Math.max(e.target.scrollHeight, 40), 200)
                       e.target.style.height = newHeight + 'px'
                     }}
-                    placeholder="Type your response..."
+                    placeholder={isRecording ? "Recording..." : isTranscribing ? "Transcribing..." : "Type your response..."}
                     rows={1}
-                    className="w-full px-2 py-2 pr-10 bg-transparent text-white-primary placeholder-gray-400 focus:outline-none resize-none scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-700 scrollbar-corner-transparent"
+                    disabled={isRecording || isTranscribing}
+                    className="w-full px-2 py-2 pr-10 bg-transparent text-white-primary placeholder-gray-400 focus:outline-none resize-none scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-700 scrollbar-corner-transparent disabled:opacity-50"
                     style={{ 
                       minHeight: '40px', 
                       maxHeight: '200px',
@@ -732,7 +829,8 @@ const InterviewPage = () => {
                     variant="ghost"
                     size="sm"
                     onClick={handleFileUpload}
-                    className="absolute right-1 top-1 text-gray-400 hover:text-white-primary rounded-lg p-1.5 h-auto"
+                    disabled={isRecording || isTranscribing}
+                    className="absolute right-1 top-1 text-gray-400 hover:text-white-primary rounded-lg p-1.5 h-auto disabled:opacity-50"
                   >
                     <Paperclip className="w-4 h-4" />
                   </Button>
@@ -743,25 +841,50 @@ const InterviewPage = () => {
                     variant="ghost"
                     size="sm"
                     onClick={handleVoiceRecord}
-                    className={`p-2.5 rounded-lg transition-all duration-200 ${
+                    disabled={isTranscribing}
+                    className={`relative p-2.5 rounded-lg transition-all duration-200 ${
                       isRecording 
-                        ? 'text-red-400 bg-red-500/20 hover:bg-red-500/30' 
+                        ? 'text-red-400 bg-red-500/20 hover:bg-red-500/30 animate-pulse' 
+                        : isTranscribing
+                        ? 'text-blue-400 bg-blue-500/20 cursor-not-allowed'
                         : 'text-gray-400 hover:text-white-primary hover:bg-gray-700'
                     }`}
+                    title={isRecording ? 'Stop Recording' : isTranscribing ? 'Transcribing...' : 'Start Recording'}
                   >
-                    {isRecording ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+                    {isRecording ? (
+                      <MicOff className="w-4 h-4" />
+                    ) : isTranscribing ? (
+                      <div className="w-4 h-4 border-2 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
+                    ) : (
+                      <Mic className="w-4 h-4" />
+                    )}
+                    {isRecording && (
+                      <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                    )}
                   </Button>
                   
                   <Button
-                    onClick={() => handleSendMessage()}
-                    disabled={(!inputMessage.trim() && attachedFiles.length === 0) || isLoading}
+                    onClick={() => {
+                      // Clear auto-send timer if user manually sends
+                      if (autoSendTimerRef.current) {
+                        clearTimeout(autoSendTimerRef.current)
+                        autoSendTimerRef.current = null
+                      }
+                      handleSendMessage()
+                    }}
+                    disabled={(!inputMessage.trim() && attachedFiles.length === 0) || isLoading || isRecording || isTranscribing}
                     className={`p-2.5 rounded-lg transition-all duration-200 ${
-                      (inputMessage.trim() || attachedFiles.length > 0) && !isLoading
+                      (inputMessage.trim() || attachedFiles.length > 0) && !isLoading && !isRecording && !isTranscribing
                         ? 'bg-brand-primary hover:bg-brand-primary/90 text-white'
                         : 'bg-gray-600 text-gray-400 cursor-not-allowed'
                     }`}
+                    title={isRecording ? 'Finish recording first' : isTranscribing ? 'Transcribing...' : 'Send message'}
                   >
-                    <Send className="w-4 h-4" />
+                    {isLoading ? (
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    ) : (
+                      <Send className="w-4 h-4" />
+                    )}
                   </Button>
                 </div>
               </div>
