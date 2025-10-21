@@ -1,4 +1,5 @@
 import { api } from './api'
+import paymentMethodsService from './paymentMethods'
 
 export const profileService = {
   // Get user profile
@@ -25,57 +26,19 @@ export const profileService = {
     return response.data.subscription
   },
 
-  // Add payment method (mock for now - to be implemented in backend)
-  addPaymentMethod: async (paymentData) => {
-    // TODO: Implement payment methods endpoint in backend
-    // For now, simulate successful payment method addition
-    const mockPaymentMethod = {
-      id: `pm_${Date.now()}`,
-      number: paymentData.number,
-      last4: paymentData.number.slice(-4),
-      brand: paymentData.number.startsWith('4') ? 'visa' : 'mastercard',
-      expiry: paymentData.expiry,
-      name: paymentData.name,
-      isDefault: false
-    }
-    
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    
-    return mockPaymentMethod
+  // Add payment method using Stripe Elements
+  addPaymentMethod: async (paymentMethodId) => {
+    return await paymentMethodsService.addPaymentMethod(paymentMethodId)
   },
 
-  // Get payment methods (mock for now - to be implemented in backend)
+  // Get payment methods
   getPaymentMethods: async () => {
-    // TODO: Implement payment methods endpoint in backend
-    // For now, return mock data for premium users
-    const profileData = await api.get('/users/profile')
-    const user = profileData.data
-    
-    if (user?.subscription?.status === 'active' && user?.subscription?.tier?.toLowerCase() === 'premium') {
-      return [
-        {
-          id: 'pm_1',
-          number: '4242424242424242',
-          last4: '4242',
-          brand: 'visa',
-          expiry: '12/25',
-          name: 'John Doe',
-          isDefault: true
-        }
-      ]
-    }
-    
-    return []
+    return await paymentMethodsService.getPaymentMethods()
   },
 
-  // Remove payment method (mock for now - to be implemented in backend)
+  // Remove payment method
   removePaymentMethod: async (paymentMethodId) => {
-    // TODO: Implement payment methods endpoint in backend
-    return {
-      success: true,
-      message: 'Payment method functionality will be available soon'
-    }
+    return await paymentMethodsService.deletePaymentMethod(paymentMethodId)
   },
 
   // Update language preference (store in localStorage for now)

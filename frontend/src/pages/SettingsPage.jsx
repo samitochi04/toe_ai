@@ -80,7 +80,7 @@ const SettingsPage = () => {
         const profileData = await profileService.getProfile()
         const userSubscription = profileData.subscription || user?.subscription
         
-        if (userSubscription && userSubscription.status === 'active' && userSubscription.tier?.toLowerCase() === 'premium') {
+        if (userSubscription.status === 'active') {
           setSubscription({
             tier: 'Premium',
             status: 'active',

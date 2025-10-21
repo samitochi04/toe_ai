@@ -170,10 +170,17 @@ class SharedChat(BaseModel):
         from_attributes = True
 
 
+class OwnerInfo(BaseModel):
+    """Owner information for shared chat"""
+    alias: str
+    full_name: str
+    profile_picture_url: Optional[str] = None  # Make it optional
+
+
 class SharedChatAccess(BaseModel):
-    """Shared chat access model"""
+    """Shared chat access response"""
     chat: Optional[Dict[str, Any]] = None
-    owner_info: Optional[Dict[str, str]] = None
+    owner_info: Optional[OwnerInfo] = None
     is_expired: bool = False
     view_count: int = 0
 

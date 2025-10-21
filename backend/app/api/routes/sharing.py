@@ -162,15 +162,31 @@ async def get_my_shared_chats(
             table = "normal_chat" if share_data["chat_type"] == "normal" else "interview_chat"
             chat_response = (
                 db.client.table(table)
-                .select("title, created_at")
+                .select("title, conversation, created_at")
                 .eq("id", share_data["chat_id"])
                 .execute()
             )
             
-            share_info = SharedChat(**share_data).dict()
+            share_info = {
+                "id": share_data["id"],
+                "chat_id": share_data["chat_id"],
+                "chat_type": share_data["chat_type"],
+                "title": "Untitled",
+                "description": None,
+                "share_token": share_data["share_token"],
+                "is_public": share_data["is_public"],
+                "view_count": share_data["view_count"],
+                "expires_at": share_data.get("expires_at"),
+                "created_at": share_data["created_at"]
+            }
+            
             if chat_response.data:
-                share_info["chat_title"] = chat_response.data[0]["title"]
-                share_info["chat_created_at"] = chat_response.data[0]["created_at"]
+                chat = chat_response.data[0]
+                share_info["title"] = chat.get("title", "Untitled")
+                # Count messages from conversation array
+                conversation = chat.get("conversation", [])
+                share_info["message_count"] = len(conversation) if conversation else 0
+                share_info["chat_created_at"] = chat.get("created_at")
             
             shares.append(share_info)
         
@@ -259,6 +275,8 @@ async def access_shared_chat(
                 detail="Original chat not found"
             )
         
+        chat_data = chat_response.data[0]
+        
         # Get owner info
         owner_response = (
             db.client.table("user_profile")
@@ -285,8 +303,25 @@ async def access_shared_chat(
                 .execute()
             )
         
+        # Format the response with proper structure
+        formatted_chat = {
+            "id": chat_data["id"],
+            "title": chat_data.get("title", "Untitled"),
+            "conversation": chat_data.get("conversation", []),
+            "created_at": chat_data.get("created_at"),
+            "updated_at": chat_data.get("updated_at"),
+            "chat_type": share_info["chat_type"],
+            "shared_at": share_info["created_at"],
+            "shared_by_alias": owner_info["alias"] if owner_info else "Anonymous"
+        }
+        
+        # Add interview-specific fields if applicable
+        if share_info["chat_type"] == "interview":
+            formatted_chat["job_position"] = chat_data.get("job_position")
+            formatted_chat["company_name"] = chat_data.get("company_name")
+        
         return SharedChatAccess(
-            chat=chat_response.data[0],
+            chat=formatted_chat,
             owner_info=owner_info,
             is_expired=False,
             view_count=share_info["view_count"] + 1

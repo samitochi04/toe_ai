@@ -20,7 +20,8 @@ const SharedChatPage = () => {
     try {
       setIsLoading(true)
       const data = await shareService.getSharedChatByToken(shareToken)
-      setSharedChat(data)
+      console.log('Loaded shared chat data:', data) // Debug log
+      setSharedChat(data.chat)
     } catch (error) {
       console.error('Error loading shared chat:', error)
       setError('This shared chat could not be found or has expired.')
@@ -49,6 +50,9 @@ const SharedChatPage = () => {
     )
   }
 
+  // Get conversation array from chat
+  const conversation = sharedChat?.conversation || []
+
   return (
     <div className="min-h-screen bg-dark-primary">
       <div className="container mx-auto px-4 py-8 max-w-4xl">
@@ -69,11 +73,11 @@ const SharedChatPage = () => {
                 </div>
                 <div className="flex items-center gap-1">
                   <Calendar className="w-4 h-4" />
-                  <span>{formatDateTime(sharedChat?.shared_at)}</span>
+                  <span>{formatDateTime(sharedChat?.shared_at || sharedChat?.created_at)}</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <MessageCircle className="w-4 h-4" />
-                  <span>{sharedChat?.conversation?.length || 0} messages</span>
+                  <span>{conversation.length} messages</span>
                 </div>
               </div>
             </div>
@@ -93,13 +97,13 @@ const SharedChatPage = () => {
             Conversation
           </h2>
 
-          {sharedChat?.conversation?.length === 0 ? (
+          {conversation.length === 0 ? (
             <div className="text-center py-8 text-white-secondary">
               No messages in this conversation.
             </div>
           ) : (
-            <div className="space-y-4 max-h-96 overflow-y-auto">
-              {sharedChat?.conversation?.map((message, index) => (
+            <div className="space-y-4 max-h-[600px] overflow-y-auto">
+              {conversation.map((message, index) => (
                 <div
                   key={message.id || index}
                   className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
