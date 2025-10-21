@@ -1,7 +1,9 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom'
 import useAuthStore from './store/authStore'
 import { useEffect } from 'react'
 import { Toaster } from 'react-hot-toast'
+import { storage } from '@/utils/storage'
+import { useTranslation } from 'react-i18next'
 
 // Pages
 import LandingPage from './pages/LandingPage'
@@ -27,17 +29,41 @@ import WorkspaceLayout from './components/layout/WorkspaceLayout'
 
 function App() {
   const { initializeAuth, isAuthenticated, isLoading } = useAuthStore()
+  const navigate = useNavigate()
+  const location = useLocation()
+  const { t } = useTranslation()
 
   useEffect(() => {
     initializeAuth()
   }, [initializeAuth])
+
+  // Save last path on location change
+  useEffect(() => {
+    if (isAuthenticated) {
+      storage.setItem('toe_ai_last_path', location.pathname)
+    }
+  }, [location.pathname, isAuthenticated])
+
+  // After auth initialization, redirect to last path
+  useEffect(() => {
+    if (!isLoading && isAuthenticated) {
+      const lastPath = storage.getItem('toe_ai_last_path') || '/workspace/dashboard'
+      if (location.pathname === '/' || location.pathname === '/workspace/dashboard') {
+        navigate(lastPath, { replace: true })
+      }
+    }
+  }, [isLoading, isAuthenticated])
+
+  console.log('Auth:', { isAuthenticated, isLoading })
+  console.log('Current path:', window.location.pathname)
+  console.log('Last path from storage:', storage.getLastPath())
 
   if (isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-dark-primary">
         <div className="flex flex-col items-center space-y-4">
           <div className="h-8 w-8 animate-spin rounded-full border-2 border-blue-2nd border-t-transparent"></div>
-          <p className="text-white-secondary">Loading...</p>
+          <p className="text-white-secondary">{t('loading')}</p>
         </div>
       </div>
     )

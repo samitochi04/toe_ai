@@ -151,6 +151,20 @@ class StorageManager {
     return this.getItem(STORAGE_KEYS.LANGUAGE, 'en')
   }
 
+  // Remember last visited workspace path
+  setLastPath(path) {
+    return this.setItem('toe_ai_last_path', path)
+  }
+
+  getLastPath() {
+    console.log(`Getting last path from storage ######################## ${this.getItem('toe_ai_last_path', null)}`)
+    return this.getItem('toe_ai_last_path', null)
+  }
+
+  clearLastPath() {
+    return this.removeItem('toe_ai_last_path')
+  }
+
   // Chat drafts (for auto-save functionality)
   setChatDraft(chatId, content) {
     const drafts = this.getChatDrafts()

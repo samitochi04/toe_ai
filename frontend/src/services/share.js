@@ -3,13 +3,13 @@ import { api } from './api'
 export const shareService = {
   // Get user's shared chats
   getSharedChats: async () => {
-    const response = await api.get('/sharing/my-shares')
+    const response = await api.get('/share/my-shares')
     return response.data
   },
 
   // Share a chat
   shareChat: async (chatId, chatType, shareData) => {
-    const response = await api.post('/sharing/create', {
+    const response = await api.post('/share/create', {
       chat_id: chatId,
       chat_type: chatType,
       ...shareData
@@ -19,19 +19,19 @@ export const shareService = {
 
   // Get shared chat by token
   getSharedChatByToken: async (shareToken) => {
-    const response = await api.get(`/sharing/token/${shareToken}`)
+    const response = await api.get(`/share/token/${shareToken}`)
     return response.data
   },
 
   // Update shared chat
   updateSharedChat: async (shareId, updates) => {
-    const response = await api.put(`/sharing/${shareId}`, updates)
+    const response = await api.put(`/share/${shareId}`, updates)
     return response.data
   },
 
   // Delete shared chat
   deleteSharedChat: async (shareId) => {
-    const response = await api.delete(`/sharing/${shareId}`)
+    const response = await api.delete(`/share/${shareId}`)
     return response.data
   },
 
