@@ -7,10 +7,12 @@ import {
   CreditCard, 
   AlertTriangle,
   Download,
-  ExternalLink
+  ExternalLink,
+  Check
 } from 'lucide-react'
 import useAuthStore from '../store/authStore'
 import { profileService } from '../services/profile'
+import { paymentApi } from '../services/payments'
 import Button from '../components/common/Button'
 import { toast } from 'react-hot-toast'
 
@@ -18,6 +20,8 @@ export default function SubscriptionManagementPage() {
   const navigate = useNavigate()
   const { user } = useAuthStore()
   const [subscription, setSubscription] = useState(null)
+  const [paymentMethods, setPaymentMethods] = useState([])
+  const [billingHistory, setBillingHistory] = useState([])
   const [loading, setLoading] = useState(true)
   const [cancelling, setCancelling] = useState(false)
 
@@ -27,54 +31,109 @@ export default function SubscriptionManagementPage() {
 
   const loadSubscriptionData = async () => {
     try {
+      // Load profile data with subscription
       const profileData = await profileService.getProfile()
-      const userSubscription = profileData.subscription || user?.subscription
-      
-      if (userSubscription.status === 'active' ) {
-        setSubscription({
-          tier: 'Premium',
-          status: 'active',
-          expires_at: userSubscription.expires_at || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-          billing_cycle: userSubscription.billing_cycle || 'monthly',
-          amount: userSubscription.amount || 9.99,
-          currency: userSubscription.currency || 'USD',
-          next_billing_date: userSubscription.next_billing_date || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-          payment_method: userSubscription.payment_method || { last4: '4242', brand: 'visa' }
-        })
-      } else {
-        // Redirect to premium page if not premium
+      const userSubscription = profileData.subscription
+
+      // Check if user has active premium subscription
+      if (!userSubscription || userSubscription.status !== 'active') {
+        toast.info('No active premium subscription found')
         navigate('/workspace/premium')
         return
       }
+
+      // Get tier info
+      const tier = userSubscription.subscription_tiers || {}
+      
+      setSubscription({
+        id: userSubscription.id,
+        tier: tier.name || 'Premium',
+        tier_id: userSubscription.tier_id,
+        status: userSubscription.status,
+        stripe_customer_id: userSubscription.stripe_customer_id,
+        stripe_subscription_id: userSubscription.stripe_subscription_id,
+        current_period_start: userSubscription.current_period_start,
+        current_period_end: userSubscription.current_period_end,
+        amount: tier.price_monthly || 9.99,
+        currency: 'USD',
+        billing_cycle: 'monthly',
+        features: tier.features || {}
+      })
+
+      // Load payment methods
+      try {
+        const methods = await profileService.getPaymentMethods()
+        setPaymentMethods(methods || [])
+      } catch (error) {
+        console.error('Error loading payment methods:', error)
+        setPaymentMethods([])
+      }
+
+      // Load billing history
+      try {
+        const history = await paymentApi.getPaymentHistory()
+        // API returns { payments: [], subscription: {} }
+        setBillingHistory(history.payments || [])
+      } catch (error) {
+        console.error('Error loading billing history:', error)
+        setBillingHistory([])
+      }
+
     } catch (error) {
       console.error('Error loading subscription:', error)
       toast.error('Failed to load subscription data')
+      navigate('/workspace/settings')
     } finally {
       setLoading(false)
     }
   }
 
   const handleCancelSubscription = async () => {
+    if (!window.confirm('Are you sure you want to cancel your subscription? You will continue to have access until the end of your current billing period.')) {
+      return
+    }
+
     try {
       setCancelling(true)
-      // TODO: Implement cancel subscription API call
-      toast.success('Subscription cancellation request submitted. You will continue to have access until your current billing period ends.')
+      await paymentApi.cancelSubscription()
+      toast.success('Subscription cancelled successfully. You will have access until the end of your current billing period.')
+      
+      // Reload subscription data
+      await loadSubscriptionData()
     } catch (error) {
       console.error('Error cancelling subscription:', error)
-      toast.error('Failed to cancel subscription')
+      toast.error(error.response?.data?.detail || 'Failed to cancel subscription')
     } finally {
       setCancelling(false)
     }
   }
 
-  const handleDownloadInvoice = () => {
-    // TODO: Implement invoice download
-    toast.success('Invoice download functionality will be available soon')
+  const handleDownloadInvoice = async (invoiceId) => {
+    try {
+      // TODO: Implement invoice download when Stripe invoice URL is available
+      toast.info('Invoice download will be available soon')
+    } catch (error) {
+      console.error('Error downloading invoice:', error)
+      toast.error('Failed to download invoice')
+    }
   }
 
   const handleUpdatePaymentMethod = () => {
-    // Navigate to payment method update
     navigate('/workspace/settings?tab=payment')
+  }
+
+  const handleOpenBillingPortal = async () => {
+    try {
+      const returnUrl = `${window.location.origin}/workspace/subscription-management`
+      const response = await paymentApi.createBillingPortalSession(returnUrl)
+      
+      if (response.url) {
+        window.location.href = response.url
+      }
+    } catch (error) {
+      console.error('Error opening billing portal:', error)
+      toast.error('Failed to open billing portal')
+    }
   }
 
   if (loading) {
@@ -84,6 +143,12 @@ export default function SubscriptionManagementPage() {
       </div>
     )
   }
+
+  if (!subscription) {
+    return null
+  }
+
+  const defaultPaymentMethod = paymentMethods.find(pm => pm.is_default) || paymentMethods[0]
 
   return (
     <div className="min-h-screen bg-dark-primary">
@@ -118,32 +183,36 @@ export default function SubscriptionManagementPage() {
                   <div className="flex items-center gap-3">
                     <Crown className="w-6 h-6 text-yellow-500" />
                     <div>
-                      <h3 className="text-lg font-semibold text-white-primary">Premium Plan</h3>
+                      <h3 className="text-lg font-semibold text-white-primary">{subscription.tier} Plan</h3>
                       <p className="text-white-secondary">Full access to all features</p>
                     </div>
                   </div>
                   <div className="text-right">
                     <div className="text-2xl font-bold text-white-primary">
-                      ${subscription?.amount}
+                      ${subscription.amount.toFixed(2)}
                       <span className="text-sm font-normal text-white-secondary">
-                        /{subscription?.billing_cycle}
+                        /{subscription.billing_cycle}
                       </span>
                     </div>
-                    <div className="text-green-400 text-sm">Active</div>
+                    <div className="text-green-400 text-sm capitalize">{subscription.status}</div>
                   </div>
                 </div>
                 
                 <div className="grid grid-cols-2 gap-4 mt-4">
                   <div>
-                    <div className="text-white-secondary text-sm mb-1">Next Billing Date</div>
+                    <div className="text-white-secondary text-sm mb-1">Current Period Ends</div>
                     <div className="text-white-primary font-medium">
-                      {new Date(subscription?.next_billing_date).toLocaleDateString()}
+                      {subscription.current_period_end 
+                        ? new Date(subscription.current_period_end).toLocaleDateString()
+                        : 'N/A'}
                     </div>
                   </div>
                   <div>
                     <div className="text-white-secondary text-sm mb-1">Payment Method</div>
                     <div className="text-white-primary font-medium">
-                      •••• •••• •••• {subscription?.payment_method?.last4}
+                      {defaultPaymentMethod 
+                        ? `•••• •••• •••• ${defaultPaymentMethod.card_last4}`
+                        : 'No payment method'}
                     </div>
                   </div>
                 </div>
@@ -165,7 +234,7 @@ export default function SubscriptionManagementPage() {
                   'Export chats to PDF'
                 ].map((feature, index) => (
                   <div key={index} className="flex items-center gap-3 p-3 bg-gray-800 rounded-lg">
-                    <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                    <Check className="w-5 h-5 text-green-400" />
                     <span className="text-white-primary">{feature}</span>
                   </div>
                 ))}
@@ -175,37 +244,53 @@ export default function SubscriptionManagementPage() {
             {/* Billing History */}
             <div className="bg-light-dark-secondary rounded-xl p-6">
               <h2 className="text-xl font-semibold text-white-primary mb-4">Billing History</h2>
-              <div className="space-y-3">
-                {/* Mock billing history - replace with real data */}
-                {[
-                  { date: new Date().toISOString(), amount: subscription?.amount, status: 'paid' },
-                  { date: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(), amount: subscription?.amount, status: 'paid' },
-                  { date: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString(), amount: subscription?.amount, status: 'paid' }
-                ].map((invoice, index) => (
-                  <div key={index} className="flex items-center justify-between p-4 bg-gray-800 rounded-lg">
-                    <div className="flex items-center gap-4">
-                      <Calendar className="w-5 h-5 text-white-secondary" />
-                      <div>
-                        <div className="text-white-primary font-medium">
-                          {new Date(invoice.date).toLocaleDateString()}
+              {billingHistory.length === 0 ? (
+                <div className="text-center py-8">
+                  <Calendar className="w-12 h-12 text-gray-600 mx-auto mb-4" />
+                  <p className="text-white-secondary">No billing history available yet</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {billingHistory.map((invoice, index) => (
+                    <div key={invoice.id || index} className="flex items-center justify-between p-4 bg-gray-800 rounded-lg">
+                      <div className="flex items-center gap-4">
+                        <Calendar className="w-5 h-5 text-white-secondary" />
+                        <div>
+                          <div className="text-white-primary font-medium">
+                            {new Date(invoice.created_at || invoice.date).toLocaleDateString()}
+                          </div>
+                          <div className="text-white-secondary text-sm">
+                            {invoice.description || 'Premium Subscription'}
+                          </div>
                         </div>
-                        <div className="text-white-secondary text-sm">Premium Subscription</div>
+                      </div>
+                      <div className="flex items-center gap-4">
+                        <div className="text-white-primary font-medium">
+                          ${(invoice.amount_paid || invoice.amount || 0).toFixed(2)}
+                        </div>
+                        <span className={`text-sm capitalize ${
+                          invoice.status === 'paid' || invoice.status === 'succeeded' 
+                            ? 'text-green-400' 
+                            : invoice.status === 'pending' 
+                            ? 'text-yellow-400' 
+                            : 'text-red-400'
+                        }`}>
+                          {invoice.status}
+                        </span>
+                        {invoice.invoice_url && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => window.open(invoice.invoice_url, '_blank')}
+                          >
+                            <Download className="w-4 h-4" />
+                          </Button>
+                        )}
                       </div>
                     </div>
-                    <div className="flex items-center gap-4">
-                      <div className="text-white-primary font-medium">${invoice.amount}</div>
-                      <span className="text-green-400 text-sm capitalize">{invoice.status}</span>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={handleDownloadInvoice}
-                      >
-                        <Download className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
 
@@ -224,12 +309,12 @@ export default function SubscriptionManagementPage() {
                   Update Payment Method
                 </Button>
                 <Button
-                  onClick={handleDownloadInvoice}
+                  onClick={handleOpenBillingPortal}
                   variant="outline"
                   className="w-full justify-start"
                 >
-                  <Download className="w-4 h-4 mr-3" />
-                  Download Invoice
+                  <ExternalLink className="w-4 h-4 mr-3" />
+                  Manage Billing
                 </Button>
                 <Button
                   onClick={() => window.open('mailto:support@toeai.com', '_blank')}
@@ -248,45 +333,75 @@ export default function SubscriptionManagementPage() {
               <div className="space-y-3">
                 <div>
                   <div className="text-white-secondary text-sm">Plan</div>
-                  <div className="text-white-primary font-medium">Premium</div>
+                  <div className="text-white-primary font-medium">{subscription.tier}</div>
                 </div>
                 <div>
                   <div className="text-white-secondary text-sm">Status</div>
-                  <div className="text-green-400 font-medium">Active</div>
+                  <div className={`font-medium capitalize ${
+                    subscription.status === 'active' ? 'text-green-400' :
+                    subscription.status === 'cancelled' ? 'text-yellow-400' :
+                    'text-red-400'
+                  }`}>
+                    {subscription.status}
+                  </div>
+                </div>
+                <div>
+                  <div className="text-white-secondary text-sm">Started</div>
+                  <div className="text-white-primary font-medium">
+                    {subscription.current_period_start 
+                      ? new Date(subscription.current_period_start).toLocaleDateString()
+                      : 'N/A'}
+                  </div>
                 </div>
                 <div>
                   <div className="text-white-secondary text-sm">Renewal Date</div>
                   <div className="text-white-primary font-medium">
-                    {new Date(subscription?.next_billing_date).toLocaleDateString()}
+                    {subscription.current_period_end 
+                      ? new Date(subscription.current_period_end).toLocaleDateString()
+                      : 'N/A'}
                   </div>
                 </div>
                 <div>
                   <div className="text-white-secondary text-sm">Amount</div>
                   <div className="text-white-primary font-medium">
-                    ${subscription?.amount} {subscription?.currency}
+                    ${subscription.amount.toFixed(2)} {subscription.currency}
                   </div>
                 </div>
+                {subscription.stripe_subscription_id && (
+                  <div>
+                    <div className="text-white-secondary text-sm">Subscription ID</div>
+                    <div className="text-white-primary font-medium text-xs">
+                      {subscription.stripe_subscription_id.substring(0, 20)}...
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
             {/* Cancel Subscription */}
-            <div className="bg-light-dark-secondary rounded-xl p-6">
-              <div className="flex items-center gap-2 mb-3">
-                <AlertTriangle className="w-5 h-5 text-yellow-500" />
-                <h3 className="text-lg font-semibold text-white-primary">Cancel Subscription</h3>
+            {subscription.status === 'active' && (
+              <div className="bg-light-dark-secondary rounded-xl p-6">
+                <div className="flex items-center gap-2 mb-3">
+                  <AlertTriangle className="w-5 h-5 text-yellow-500" />
+                  <h3 className="text-lg font-semibold text-white-primary">Cancel Subscription</h3>
+                </div>
+                <p className="text-white-secondary text-sm mb-4">
+                  You can cancel your subscription at any time. You'll continue to have access to premium features until {
+                    subscription.current_period_end 
+                      ? new Date(subscription.current_period_end).toLocaleDateString()
+                      : 'the end of your billing period'
+                  }.
+                </p>
+                <Button
+                  onClick={handleCancelSubscription}
+                  variant="destructive"
+                  disabled={cancelling}
+                  className="w-full"
+                >
+                  {cancelling ? 'Processing...' : 'Cancel Subscription'}
+                </Button>
               </div>
-              <p className="text-white-secondary text-sm mb-4">
-                You can cancel your subscription at any time. You'll continue to have access to premium features until your current billing period ends.
-              </p>
-              <Button
-                onClick={handleCancelSubscription}
-                variant="destructive"
-                disabled={cancelling}
-                className="w-full"
-              >
-                {cancelling ? 'Processing...' : 'Cancel Subscription'}
-              </Button>
-            </div>
+            )}
           </div>
         </div>
       </div>

@@ -26,6 +26,12 @@ export const profileService = {
     return response.data.subscription
   },
 
+  // Create setup intent for adding payment method
+  createSetupIntent: async () => {
+    const response = await api.post('/payment-methods/setup-intent')
+    return response.data
+  },
+
   // Add payment method using Stripe Elements
   addPaymentMethod: async (paymentMethodId) => {
     return await paymentMethodsService.addPaymentMethod(paymentMethodId)

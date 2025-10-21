@@ -16,6 +16,14 @@ class UserBase(BaseModel):
     bio: Optional[str] = Field(None, max_length=500)
     profile_picture_url: Optional[str] = None
     phone: Optional[str] = Field(None, max_length=20)
+    alias: str = Field(..., min_length=3, max_length=255)
+    
+    @validator('phone', 'bio', 'profile_picture_url', pre=True)
+    def empty_str_to_none(cls, v):
+        """Convert empty strings to None for optional fields"""
+        if v == "":
+            return None
+        return v
 
 
 class UserCreate(UserBase):
@@ -34,11 +42,25 @@ class UserCreate(UserBase):
 
 
 class UserUpdate(BaseModel):
-    """User update model"""
+    """User profile update model"""
     full_name: Optional[str] = Field(None, min_length=1, max_length=255)
-    bio: Optional[str] = Field(None, max_length=500)
+    bio: Optional[str] = Field(None, max_length=1000)
+    phone: Optional[str] = Field(None, max_length=20)  # Added phone field
     profile_picture_url: Optional[str] = None
-    phone: Optional[str] = Field(None, max_length=20)
+    
+    @validator('phone', 'bio', 'profile_picture_url', pre=True)
+    def empty_str_to_none(cls, v):
+        """Convert empty strings to None for optional fields"""
+        if v == "":
+            return None
+        return v
+    
+    @validator('full_name', pre=True)
+    def validate_full_name(cls, v):
+        """Validate full_name is not empty if provided"""
+        if v is not None and v.strip() == "":
+            raise ValueError('Full name cannot be empty')
+        return v
 
 
 class UserPasswordUpdate(BaseModel):
@@ -58,10 +80,12 @@ class UserPasswordUpdate(BaseModel):
 
 
 class User(UserBase):
-    """User response model"""
+    """User model with all fields"""
     id: UUID
     auth_user_id: UUID
-    alias: str
+    profile_picture_url: Optional[str] = None
+    bio: Optional[str] = None
+    phone: Optional[str] = None  # Added phone field
     created_at: datetime
     updated_at: datetime
     is_active: bool = True
@@ -71,7 +95,7 @@ class User(UserBase):
 
 
 class UserProfile(User):
-    """Extended user profile model"""
+    """Extended user profile with usage and subscription"""
     usage: Optional[Dict[str, Any]] = None
     subscription: Optional[Dict[str, Any]] = None
 
@@ -168,8 +192,8 @@ class UserStats(BaseModel):
     total_normal_chats: int
     total_interview_chats: int
     total_shared_chats: int
-    current_month_usage: UsageTracking
-    subscription_info: UserSubscription
+    current_month_usage: Optional[Dict[str, Any]]
+    subscription_info: Optional[Dict[str, Any]]
     api_usage_summary: Dict[str, Any]
 
 
@@ -180,3 +204,6 @@ class UserSearchResult(BaseModel):
     full_name: str
     profile_picture_url: Optional[str] = None
     created_at: datetime
+    
+    class Config:
+        from_attributes = True

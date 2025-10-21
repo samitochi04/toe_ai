@@ -16,11 +16,158 @@ import {
   Settings
 } from 'lucide-react'
 import toast from 'react-hot-toast'
+import { loadStripe } from '@stripe/stripe-js'
+import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js'
 import useAuthStore from '../store/authStore'
 import profileService from '../services/profile'
 import Button from '../components/common/Button'
 import Input from '../components/common/Input'
 import Modal from '../components/common/Modal'
+
+// Initialize Stripe with your publishable key from environment
+const STRIPE_KEY = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY
+console.log('Stripe Key loaded:', STRIPE_KEY ? `${STRIPE_KEY.substring(0, 20)}...` : 'NOT FOUND')
+
+if (!STRIPE_KEY) {
+  console.error('VITE_STRIPE_PUBLISHABLE_KEY is not set in environment variables!')
+}
+
+const stripePromise = loadStripe(STRIPE_KEY)
+
+// Card Element styling
+const CARD_ELEMENT_OPTIONS = {
+  style: {
+    base: {
+      color: '#ffffff',
+      fontFamily: '"Inter", system-ui, sans-serif',
+      fontSmoothing: 'antialiased',
+      fontSize: '16px',
+      '::placeholder': {
+        color: '#6b7280'
+      }
+    },
+    invalid: {
+      color: '#ef4444',
+      iconColor: '#ef4444'
+    }
+  },
+  hidePostalCode: true
+}
+
+// Add Card Form Component using Stripe Elements
+const AddCardForm = ({ onSuccess, onCancel, t, isPremium }) => {
+  const stripe = useStripe()
+  const elements = useElements()
+  const [cardholderName, setCardholderName] = useState('')
+  const [isProcessing, setIsProcessing] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+
+    if (!isPremium) {
+      toast.error(t('settings.paymentMethods.premiumRequired'))
+      return
+    }
+
+    if (!stripe || !elements) {
+      return
+    }
+
+    if (!cardholderName.trim()) {
+      setErrorMessage('Cardholder name is required')
+      return
+    }
+
+    setIsProcessing(true)
+    setErrorMessage('')
+
+    try {
+      // Step 1: Create Setup Intent
+      const setupIntentResponse = await profileService.createSetupIntent()
+      const { client_secret } = setupIntentResponse
+
+      // Step 2: Confirm card setup with Stripe
+      const cardElement = elements.getElement(CardElement)
+      const { error, setupIntent } = await stripe.confirmCardSetup(client_secret, {
+        payment_method: {
+          card: cardElement,
+          billing_details: {
+            name: cardholderName
+          }
+        }
+      })
+
+      if (error) {
+        setErrorMessage(error.message)
+        setIsProcessing(false)
+        return
+      }
+
+      // Step 3: Save payment method to backend (Supabase + Stripe)
+      const paymentMethod = await profileService.addPaymentMethod(setupIntent.payment_method)
+      
+      // Success!
+      onSuccess(paymentMethod)
+      
+    } catch (error) {
+      console.error('Error adding payment method:', error)
+      setErrorMessage(error.response?.data?.detail || 'Failed to add payment method')
+      setIsProcessing(false)
+    }
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div>
+        <label className="block text-sm font-medium text-white-secondary mb-2">
+          {t('settings.paymentMethods.cardInformation') || 'Card Information'}
+        </label>
+        <div className="p-3 bg-dark-secondary rounded-lg border border-dark-border">
+          <CardElement options={CARD_ELEMENT_OPTIONS} />
+        </div>
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-white-secondary mb-2">
+          {t('settings.paymentMethods.cardholderName') || 'Cardholder Name'}
+        </label>
+        <Input
+          value={cardholderName}
+          onChange={(e) => setCardholderName(e.target.value)}
+          placeholder={t('settings.paymentMethods.enterName') || 'Enter cardholder name'}
+          disabled={isProcessing}
+          required
+        />
+      </div>
+
+      {errorMessage && (
+        <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
+          <p className="text-sm text-red-400">{errorMessage}</p>
+        </div>
+      )}
+
+      <div className="flex gap-3 mt-6">
+        <Button
+          type="button"
+          variant="ghost"
+          onClick={onCancel}
+          className="flex-1"
+          disabled={isProcessing}
+        >
+          {t('settings.profile.cancel') || 'Cancel'}
+        </Button>
+        <Button
+          type="submit"
+          className="flex-1"
+          disabled={isProcessing || !stripe || !cardholderName.trim()}
+        >
+          {isProcessing ? 'Processing...' : (t('settings.paymentMethods.addCardButton') || 'Add Card')}
+        </Button>
+      </div>
+    </form>
+  )
+}
 
 const SettingsPage = () => {
   const { t, i18n } = useTranslation()
@@ -33,6 +180,7 @@ const SettingsPage = () => {
     email: '',
     alias: '',
     phone: '',
+    profile_picture_url: '',
     bio: ''
   })
   const [isEditingProfile, setIsEditingProfile] = useState(false)
@@ -44,13 +192,8 @@ const SettingsPage = () => {
   // Payment states
   const [paymentMethods, setPaymentMethods] = useState([])
   const [showAddCard, setShowAddCard] = useState(false)
-  const [cardForm, setCardForm] = useState({
-    number: '',
-    expiry: '',
-    cvv: '',
-    name: ''
-  })
-  const [showCvv, setShowCvv] = useState(false)
+  const [cardholderName, setCardholderName] = useState('')
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false)
   
   // Subscription states
   const [subscription, setSubscription] = useState(null)
@@ -118,9 +261,10 @@ const SettingsPage = () => {
       if (isPremium) {
         try {
           const payments = await profileService.getPaymentMethods()
-          setPaymentMethods(payments.payment_methods || [])
+          setPaymentMethods(payments || [])
         } catch (error) {
           console.error('Error loading payment methods:', error)
+          setPaymentMethods([])
         }
       }
 
@@ -139,6 +283,7 @@ const SettingsPage = () => {
       const updateData = {
         full_name: profile.full_name,
         bio: profile.bio,
+        profile_picture_url: profile.profile_picture_url,
         phone: profile.phone
       }
       
@@ -171,24 +316,6 @@ const SettingsPage = () => {
     }
   }
 
-  const handleAddCard = async () => {
-    if (!isPremium) {
-      toast.error(t('settings.paymentMethods.premiumRequired'))
-      return
-    }
-
-    try {
-      const newCard = await profileService.addPaymentMethod(cardForm)
-      setPaymentMethods([...paymentMethods, newCard])
-      setCardForm({ number: '', expiry: '', cvv: '', name: '' })
-      setShowAddCard(false)
-      toast.success('Payment method added successfully!')
-    } catch (error) {
-      console.error('Error adding payment method:', error)
-      toast.error('Failed to add payment method')
-    }
-  }
-
   const handleRemoveCard = async (cardId) => {
     try {
       await profileService.removePaymentMethod(cardId)
@@ -200,14 +327,15 @@ const SettingsPage = () => {
     }
   }
 
-  const formatCardNumber = (number) => {
-    return number.replace(/(.{4})/g, '$1 ').trim()
+  const handleAddCardSuccess = (newCard) => {
+    setPaymentMethods([...paymentMethods, newCard])
+    setShowAddCard(false)
+    setCardholderName('')
+    toast.success('Payment method added successfully!')
   }
 
-  const maskCardNumber = (number) => {
-    if (!number) return '**** **** **** ****'
-    const cleaned = number.replace(/\s/g, '')
-    return `**** **** **** ${cleaned.slice(-4)}`
+  const maskCardNumber = (last4) => {
+    return `**** **** **** ${last4}`
   }
 
   if (subscriptionLoading) {
@@ -509,22 +637,31 @@ const SettingsPage = () => {
                         <CreditCard className="w-5 h-5 text-white" />
                       </div>
                       <div>
-                        <div className="text-white-primary font-medium">
-                          {maskCardNumber(card.number)}
+                        <div className="text-white-primary font-medium flex items-center gap-2">
+                          {maskCardNumber(card.card_last4)}
+                          <span className="text-xs uppercase text-white-secondary">{card.card_brand}</span>
                         </div>
                         <div className="text-white-secondary text-sm">
-                          {t('settings.paymentMethods.expires')} {card.expiry} • {card.name}
+                          {t('settings.paymentMethods.expires')} {card.card_exp_month}/{card.card_exp_year}
+                          {card.cardholder_name && ` • ${card.cardholder_name}`}
                         </div>
                       </div>
                     </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleRemoveCard(card.id)}
-                      className="text-red-400 hover:text-red-300"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
+                    <div className="flex items-center gap-2">
+                      {card.is_default && (
+                        <span className="text-xs bg-brand-primary/20 text-brand-primary px-2 py-1 rounded">
+                          Default
+                        </span>
+                      )}
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleRemoveCard(card.id)}
+                        className="text-red-400 hover:text-red-300"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -535,85 +672,18 @@ const SettingsPage = () => {
         {/* Add Card Modal */}
         <Modal isOpen={showAddCard} onClose={() => setShowAddCard(false)} size="lg">
           <div className="p-6">
-            <h3 className="text-xl font-semibold text-white-primary mb-6">{t('settings.paymentMethods.title')}</h3>
+            <h3 className="text-xl font-semibold text-white-primary mb-6">
+              {t('settings.paymentMethods.addCard') || 'Add Payment Method'}
+            </h3>
             
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-white-secondary mb-2">
-                  {t('settings.paymentMethods.cardNumber')}
-                </label>
-                <Input
-                  value={formatCardNumber(cardForm.number)}
-                  onChange={(e) => setCardForm({ ...cardForm, number: e.target.value.replace(/\s/g, '') })}
-                  placeholder={t('settings.paymentMethods.enterCardNumber')}
-                  maxLength={19}
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-white-secondary mb-2">
-                    {t('settings.paymentMethods.expiryDate')}
-                  </label>
-                  <Input
-                    value={cardForm.expiry}
-                    onChange={(e) => setCardForm({ ...cardForm, expiry: e.target.value })}
-                    placeholder={t('settings.paymentMethods.enterExpiry')}
-                    maxLength={5}
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-white-secondary mb-2">
-                    {t('settings.paymentMethods.cvv')}
-                  </label>
-                  <div className="relative">
-                    <Input
-                      type={showCvv ? "text" : "password"}
-                      value={cardForm.cvv}
-                      onChange={(e) => setCardForm({ ...cardForm, cvv: e.target.value })}
-                      placeholder={t('settings.paymentMethods.enterCVV')}
-                      maxLength={4}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowCvv(!showCvv)}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white-secondary hover:text-white-primary"
-                    >
-                      {showCvv ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-white-secondary mb-2">
-                  {t('settings.paymentMethods.cardholderName')}
-                </label>
-                <Input
-                  value={cardForm.name}
-                  onChange={(e) => setCardForm({ ...cardForm, name: e.target.value })}
-                  placeholder={t('settings.paymentMethods.enterName')}
-                />
-              </div>
-            </div>
-
-            <div className="flex gap-3 mt-6">
-              <Button
-                variant="ghost"
-                onClick={() => setShowAddCard(false)}
-                className="flex-1"
-              >
-                {t('settings.profile.cancel')}
-              </Button>
-              <Button
-                onClick={handleAddCard}
-                className="flex-1"
-                disabled={!cardForm.number || !cardForm.expiry || !cardForm.cvv || !cardForm.name}
-              >
-                {t('settings.paymentMethods.addCardButton')}
-              </Button>
-            </div>
+            <Elements stripe={stripePromise}>
+              <AddCardForm
+                onSuccess={handleAddCardSuccess}
+                onCancel={() => setShowAddCard(false)}
+                t={t}
+                isPremium={isPremium}
+              />
+            </Elements>
           </div>
         </Modal>
       </div>
