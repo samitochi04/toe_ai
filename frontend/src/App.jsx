@@ -48,8 +48,12 @@ function App() {
   useEffect(() => {
     if (!isLoading && isAuthenticated) {
       const lastPath = storage.getItem('toe_ai_last_path') || '/workspace/dashboard'
-      if (location.pathname === '/' || location.pathname === '/workspace/dashboard') {
-        navigate(lastPath, { replace: true })
+
+      // Only redirect if we're still on a public route
+      if (location.pathname === '/' || location.pathname.startsWith('/login')) {
+        if (lastPath !== location.pathname) {
+          navigate(lastPath, { replace: true })
+        }
       }
     }
   }, [isLoading, isAuthenticated])
