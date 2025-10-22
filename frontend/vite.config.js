@@ -22,11 +22,20 @@ export default defineConfig({
   },
   server: {
     port: 3000,
-    host: true,
-    allowedHosts: 'all', // Allow all hosts for development
+    host: '0.0.0.0', // Changed from 'true' to '0.0.0.0' for better compatibility
+    hmr: {
+      clientPort: 443, // Use HTTPS port for HMR through cloudflared
+      protocol: 'wss', // Use secure WebSocket for HMR
+    },
+    allowedHosts: [
+      '.trycloudflare.com', // Allow all cloudflared domains
+      'localhost',
+      '127.0.0.1',
+      '.sslip.io', // Allow sslip.io domains if you use them
+    ],
     proxy: {
       '/api': {
-        target: 'http://localhost:8000',
+        target: 'http://localhost:8000', 
         changeOrigin: true,
         secure: false,
       },

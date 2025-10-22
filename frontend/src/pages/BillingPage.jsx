@@ -115,8 +115,8 @@ const BillingPage = () => {
   const handlePayment = async () => {
     try {
       setIsLoading(true)
-      // Use the hook function directly instead of calling usePayments inside
-      await createCheckoutSession()
+      // Pass the selected plan type (monthly or yearly) to the checkout session
+      await createCheckoutSession(selectedPlan)
     } catch (error) {
       toast.error('Payment failed. Please try again.')
       console.error('Payment error:', error)

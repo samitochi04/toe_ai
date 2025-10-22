@@ -2,8 +2,10 @@ import api from './api'
 
 export const paymentApi = {
   // Create checkout session for premium subscription
-  createCheckoutSession: async () => {
-    const response = await api.post('/payments/create-checkout-session')
+  createCheckoutSession: async (planType = 'monthly') => {
+    const response = await api.post('/payments/create-checkout-session', {
+      plan_type: planType
+    })
     console.log('Payment API response:', response.data) // Debug log
     return response.data
   },

@@ -9,10 +9,10 @@ export const usePayments = () => {
   const [subscriptionStatus, setSubscriptionStatus] = useState(null)
   const [paymentHistory, setPaymentHistory] = useState([])
 
-  const createCheckoutSession = async () => {
+  const createCheckoutSession = async (planType = 'monthly') => {
     setIsLoading(true)
     try {
-      const response = await paymentApi.createCheckoutSession()
+      const response = await paymentApi.createCheckoutSession(planType)
       console.log('Checkout session response:', response) // Debug log
       
       // The response structure should be: response.checkout_url (not response.data.checkout_url)

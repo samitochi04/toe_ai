@@ -26,9 +26,41 @@ class UserBase(BaseModel):
         return v
 
 
-class UserCreate(UserBase):
+class UserCreate(BaseModel):
     """User creation model"""
+    email: EmailStr
     password: str = Field(..., min_length=8, max_length=128)
+    full_name: str = Field(..., min_length=1, max_length=255)
+    alias: Optional[str] = Field(None, min_length=3, max_length=255)
+    bio: Optional[str] = Field(None, max_length=500)
+    profile_picture_url: Optional[str] = None
+    phone: Optional[str] = Field(None, max_length=20)
+    
+    @validator('alias', pre=True, always=True)
+    def generate_alias_if_missing(cls, v, values):
+        """Auto-generate alias from full_name if not provided"""
+        if v is None or v == "":
+            # Generate alias from full_name (remove spaces, lowercase)
+            full_name = values.get('full_name', '')
+            if full_name:
+                # Create alias from full_name: remove spaces, special chars, lowercase
+                import re
+                alias = re.sub(r'[^a-zA-Z0-9]', '', full_name).lower()
+                # If alias is too short, use email prefix
+                if len(alias) < 3:
+                    email = values.get('email', '')
+                    if email:
+                        alias = email.split('@')[0].lower()
+                return alias[:255]  # Limit to max length
+            return "user"  # Fallback
+        return v
+    
+    @validator('phone', 'bio', 'profile_picture_url', pre=True)
+    def empty_str_to_none(cls, v):
+        """Convert empty strings to None for optional fields"""
+        if v == "":
+            return None
+        return v
     
     @validator('password')
     def validate_password(cls, v):

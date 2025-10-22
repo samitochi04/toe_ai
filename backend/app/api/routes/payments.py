@@ -3,8 +3,9 @@ Payment routes for TOE AI Backend
 Stripe integration for premium subscriptions
 """
 
-from fastapi import APIRouter, HTTPException, Depends, status, Request
-from typing import Optional
+from fastapi import APIRouter, HTTPException, Depends, status, Request, Body
+from typing import Optional, Literal
+from pydantic import BaseModel
 import logging
 import stripe
 import json
@@ -18,6 +19,16 @@ from app.models.user import User
 logger = logging.getLogger(__name__)
 
 router = APIRouter()
+
+# Request models
+class CheckoutSessionRequest(BaseModel):
+    """Request model for creating checkout session"""
+    plan_type: Literal["monthly", "yearly"] = "monthly"
+
+# Helper function to check if exception is from Stripe
+def is_stripe_error(e: Exception) -> bool:
+    """Check if an exception is a Stripe error"""
+    return 'stripe' in str(type(e).__module__).lower() or e.__class__.__name__.endswith('Error')
 
 # Configure Stripe with proper error handling
 try:
@@ -37,14 +48,16 @@ try:
             # Try to list payment methods (safer test for restricted keys)
             test_response = stripe.PaymentMethod.list(limit=1, type="card")
             logger.info("Stripe connection test successful")
-        except stripe.error.AuthenticationError as auth_error:
-            logger.error(f"Stripe authentication failed: {auth_error}")
-        except stripe.error.PermissionError as perm_error:
-            logger.warning(f"Stripe permission limited (this is normal for restricted keys): {perm_error}")
-            logger.info("Stripe API key is valid but has limited permissions")
         except Exception as stripe_test_error:
-            logger.error(f"Stripe connection test failed: {stripe_test_error}")
-            logger.error(f"Error type: {type(stripe_test_error)}")
+            error_name = stripe_test_error.__class__.__name__
+            if 'Authentication' in error_name:
+                logger.error(f"Stripe authentication failed: {stripe_test_error}")
+            elif 'Permission' in error_name:
+                logger.warning(f"Stripe permission limited (this is normal for restricted keys): {stripe_test_error}")
+                logger.info("Stripe API key is valid but has limited permissions")
+            else:
+                logger.error(f"Stripe connection test failed: {stripe_test_error}")
+                logger.error(f"Error type: {type(stripe_test_error)}")
             # Don't fail the startup for connection test failures
             pass
             
@@ -59,6 +72,7 @@ except Exception as e:
 
 @router.post("/create-checkout-session")
 async def create_checkout_session(
+    request: CheckoutSessionRequest = Body(default=CheckoutSessionRequest()),
     current_user: User = Depends(get_current_user)
 ):
     """Create Stripe checkout session for premium subscription"""
@@ -67,6 +81,7 @@ async def create_checkout_session(
     try:
         # Debug: Check Stripe configuration
         logger.info(f"Creating checkout session for user: {current_user.email}")
+        logger.info(f"Plan type: {request.plan_type}")
         logger.info(f"Stripe secret key available: {'Yes' if stripe.api_key else 'No'}")
         
         if not stripe.api_key:
@@ -76,12 +91,25 @@ async def create_checkout_session(
                 detail="Payment system not configured properly. Please check Stripe configuration."
             )
         
-        if not settings.STRIPE_PRICE_ID_PREMIUM:
-            logger.error("Stripe Price ID is not configured!")
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Premium subscription price not configured"
-            )
+        # Select the appropriate price ID based on plan type
+        if request.plan_type == "yearly":
+            price_id = settings.STRIPE_PRICE_ID_PREMIUM_YEARLY
+            if not price_id:
+                logger.error("Stripe Yearly Price ID is not configured!")
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail="Yearly subscription price not configured"
+                )
+        else:  # monthly
+            price_id = settings.STRIPE_PRICE_ID_PREMIUM
+            if not price_id:
+                logger.error("Stripe Monthly Price ID is not configured!")
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail="Monthly subscription price not configured"
+                )
+        
+        logger.info(f"Using price ID: {price_id}")
         # Check if user already has an active subscription
         subscription = await db.get_user_subscription(str(current_user.id))
         if subscription and subscription.get("status") == "active":
@@ -107,12 +135,14 @@ async def create_checkout_session(
                 )
                 stripe_customer_id = customer.id
                 logger.info(f"Created Stripe customer: {stripe_customer_id}")
-            except stripe.error.StripeError as e:
-                logger.error(f"Stripe customer creation error: {e}")
-                raise HTTPException(
-                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                    detail=f"Failed to create customer: {str(e)}"
-                )
+            except Exception as e:
+                if is_stripe_error(e):
+                    logger.error(f"Stripe customer creation error: {e}")
+                    raise HTTPException(
+                        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                        detail=f"Failed to create customer: {str(e)}"
+                    )
+                raise
             
             # Update user subscription with customer ID
             if subscription:
@@ -129,36 +159,41 @@ async def create_checkout_session(
                 customer=stripe_customer_id,
                 payment_method_types=['card'],
                 line_items=[{
-                    'price': settings.STRIPE_PRICE_ID_PREMIUM,
+                    'price': price_id,  # Use the selected price_id (monthly or yearly)
                     'quantity': 1,
                 }],
                 mode='subscription',
-                success_url=f"{settings.ALLOWED_ORIGINS[0]}/payment/success?session_id={{CHECKOUT_SESSION_ID}}",
-                cancel_url=f"{settings.ALLOWED_ORIGINS[0]}/payment/cancel",
+                success_url=f"{settings.cors_origins[0]}/payment/success?session_id={{CHECKOUT_SESSION_ID}}",
+                cancel_url=f"{settings.cors_origins[0]}/payment/cancel",
                 metadata={
                     "user_id": str(current_user.id),
                     "alias": current_user.alias
                 }
             )
             logger.info(f"Created checkout session: {checkout_session.id}")
-        except stripe.error.StripeError as e:
-            logger.error(f"Stripe checkout session creation error: {e}")
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=f"Failed to create checkout session: {str(e)}"
-            )
+        except Exception as e:
+            if is_stripe_error(e):
+                logger.error(f"Stripe checkout session creation error: {e}")
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail=f"Failed to create checkout session: {str(e)}"
+                )
+            raise
         
         return {
             "checkout_url": checkout_session.url,
             "session_id": checkout_session.id
         }
         
-    except stripe.error.StripeError as e:
-        logger.error(f"Stripe error: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Stripe error: {str(e)}"
-        )
+    except Exception as e:
+        if is_stripe_error(e):
+            logger.error(f"Stripe error: {e}")
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Stripe error: {str(e)}"
+            )
+        elif isinstance(e, HTTPException):
+            raise
     except Exception as e:
         logger.error(f"Error creating checkout session: {e}")
         logger.error(f"Error type: {type(e)}")
@@ -201,8 +236,9 @@ async def get_subscription_status(
                     "current_period_end": stripe_subscription.current_period_end,
                     "cancel_at_period_end": stripe_subscription.cancel_at_period_end
                 }
-            except stripe.error.StripeError as e:
-                logger.warning(f"Could not retrieve Stripe subscription: {e}")
+            except Exception as e:
+                if is_stripe_error(e):
+                    logger.warning(f"Could not retrieve Stripe subscription: {e}")
         
         return {
             "subscription": subscription,
@@ -251,15 +287,15 @@ async def cancel_subscription(
         
         return {"message": "Subscription will be cancelled at the end of the current billing period"}
         
-    except stripe.error.StripeError as e:
-        logger.error(f"Stripe error: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Stripe error: {str(e)}"
-        )
     except HTTPException:
         raise
     except Exception as e:
+        if is_stripe_error(e):
+            logger.error(f"Stripe error: {e}")
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Stripe error: {str(e)}"
+            )
         logger.error(f"Error cancelling subscription: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -298,15 +334,15 @@ async def reactivate_subscription(
         
         return {"message": "Subscription reactivated successfully"}
         
-    except stripe.error.StripeError as e:
-        logger.error(f"Stripe error: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Stripe error: {str(e)}"
-        )
     except HTTPException:
         raise
     except Exception as e:
+        if is_stripe_error(e):
+            logger.error(f"Stripe error: {e}")
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Stripe error: {str(e)}"
+            )
         logger.error(f"Error reactivating subscription: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -367,13 +403,13 @@ async def get_checkout_session(
             "cancel_url": session.cancel_url
         }
         
-    except stripe.error.StripeError as e:
-        logger.error(f"Stripe error: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Stripe error: {str(e)}"
-        )
     except Exception as e:
+        if is_stripe_error(e):
+            logger.error(f"Stripe error: {e}")
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Stripe error: {str(e)}"
+            )
         logger.error(f"Error getting checkout session: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -386,7 +422,18 @@ async def create_billing_portal_session(
     return_url: str = "http://localhost:3000/billing",
     current_user: User = Depends(get_current_user)
 ):
-    """Create Stripe billing portal session"""
+    """
+    Create Stripe billing portal session.
+    
+    The billing portal allows customers to:
+    - Update payment methods
+    - View billing history and invoices
+    - Update billing information
+    - Cancel or reactivate subscriptions
+    - Download invoices
+    
+    Returns a URL that redirects the user to Stripe's hosted billing portal.
+    """
     db = DatabaseManager()
     
     try:
@@ -395,7 +442,7 @@ async def create_billing_portal_session(
         if not subscription or not subscription.get("stripe_customer_id"):
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="No Stripe customer found"
+                detail="No Stripe customer found. Please ensure you have an active subscription."
             )
         
         # Create billing portal session
@@ -406,20 +453,22 @@ async def create_billing_portal_session(
         
         return {"url": portal_session.url}
         
-    except stripe.error.StripeError as e:
-        logger.error(f"Stripe error: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Stripe error: {str(e)}"
-        )
-    except HTTPException:
-        raise
     except Exception as e:
-        logger.error(f"Error creating billing portal session: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to create billing portal session"
-        )
+        # Check if it's a Stripe error by checking the class name
+        if 'stripe' in str(type(e).__module__):
+            logger.error(f"Stripe error creating billing portal: {e}")
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Stripe error: {str(e)}"
+            )
+        elif isinstance(e, HTTPException):
+            raise
+        else:
+            logger.error(f"Error creating billing portal session: {e}")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Failed to create billing portal session"
+            )
 
 
 # ================================================
@@ -451,11 +500,13 @@ async def stripe_webhook(request: Request):
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Invalid payload"
             )
-        except stripe.error.SignatureVerificationError:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Invalid signature"
-            )
+        except Exception as e:
+            if 'Signature' in e.__class__.__name__ or is_stripe_error(e):
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Invalid signature"
+                )
+            raise
         
         # Handle different event types
         if event['type'] == 'checkout.session.completed':

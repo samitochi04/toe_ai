@@ -118,8 +118,10 @@ export default function SubscriptionManagementPage() {
     }
   }
 
-  const handleUpdatePaymentMethod = () => {
-    navigate('/workspace/settings?tab=payment')
+  const handleUpdatePaymentMethod = async () => {
+    // Use the same billing portal as "Manage Billing" since it provides
+    // a secure, PCI-compliant way to update payment methods
+    await handleOpenBillingPortal()
   }
 
   const handleOpenBillingPortal = async () => {

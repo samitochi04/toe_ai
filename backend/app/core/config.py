@@ -64,7 +64,8 @@ class Settings(BaseSettings):
     STRIPE_PUBLISHABLE_KEY: str = ""
     STRIPE_SECRET_KEY: str = ""
     STRIPE_WEBHOOK_SECRET: str = ""
-    STRIPE_PRICE_ID_PREMIUM: str = ""
+    STRIPE_PRICE_ID_PREMIUM: str = ""  # Monthly subscription price ID
+    STRIPE_PRICE_ID_PREMIUM_YEARLY: str = ""  # Yearly subscription price ID
     
     # File Storage
     UPLOAD_DIR: str = "uploads"
