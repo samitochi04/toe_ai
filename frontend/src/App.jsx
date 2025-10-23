@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next'
 
 // Pages
 import LandingPage from './pages/LandingPage'
+import AboutPage from './pages/AboutPage'
 import DashboardPage from './pages/DashboardPage'
 import ChatPage from './pages/ChatPage'
 import ChatsListPage from './pages/ChatsListPage'
@@ -85,6 +86,7 @@ function App() {
               isAuthenticated ? <Navigate to="/workspace/dashboard" replace /> : <LandingPage />
             } 
           />
+          <Route path="/about" element={<AboutPage />} />
           <Route path="/shared/:shareToken" element={<SharedChatPage />} />
           <Route path="/auth/callback/google" element={<OAuthCallbackPage />} />
           <Route path="/auth/callback" element={<OAuthCallbackPage />} />

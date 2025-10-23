@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Globe } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import SignInModal from '../components/auth/SignInModal'
 import SignUpModal from '../components/auth/SignUpModal'
 import LanguageSelector from '../components/navigation/LanguageSelector'
@@ -213,9 +214,9 @@ const LandingPage = () => {
         <footer className="border-t border-gray-800 bg-dark-primary mt-8 lg:mt-0">
           <div className="container mx-auto px-4 py-6">
             <div className="flex flex-wrap items-center justify-center gap-4 lg:gap-6 text-sm text-gray-400">
-              <a href="#" className="hover:text-white-primary transition-colors">
+              <Link to="/about" className="hover:text-white-primary transition-colors">
                 {t('landing.footer.aboutUs')}
-              </a>
+              </Link>
               <a href="#" className="hover:text-white-primary transition-colors">
                 {t('landing.footer.helpCenter')}
               </a>

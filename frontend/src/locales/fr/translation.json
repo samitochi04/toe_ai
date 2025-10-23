@@ -471,5 +471,154 @@
     "notFound": "Chat partagé non trouvé",
     "expired": "Ce chat partagé a expiré",
     "error": "Échec du chargement du chat partagé"
+  },
+  "about": {
+    "meta": {
+      "title": "À propos de TOE AI - Plateforme d'entraînement aux entretiens alimentée par l'IA",
+      "description": "Découvrez comment TOE AI aide les candidats à maîtriser les entretiens d'embauche avec des simulations alimentées par l'IA, des interactions vocales et des commentaires personnalisés. Commencez votre parcours pour décrocher votre emploi de rêve aujourd'hui."
+    },
+    "hero": {
+      "title": "Aider les candidats",
+      "subtitle": "à obtenir l'emploi de leurs rêves.",
+      "description": "TOE AI est le meilleur ami de chaque chercheur d'emploi. Grâce à notre formation d'entretien alimentée par l'IA aux standards de l'industrie, nous vous aidons à pratiquer des scénarios d'entretien réalistes, à recevoir des commentaires instantanés et à maîtriser les questions techniques et comportementales avec confiance."
+    },
+    "features": {
+      "title": "Affinez les outils IA pour surmonter toute anxiété d'entretien,",
+      "subtitle": "Du texte-vers-voix au parole-vers-parole",
+      "description": "Notre plateforme complète combine une technologie IA de pointe avec des techniques d'entretien éprouvées pour offrir une formation personnalisée qui s'adapte à vos besoins spécifiques et objectifs de carrière.",
+      "list": [
+        {
+          "title": "Simulation d'entretien alimentée par l'IA",
+          "description": "Pratiquez avec des scénarios d'entretien réalistes alimentés par une IA avancée qui s'adapte à vos réponses et fournit des commentaires personnalisés."
+        },
+        {
+          "title": "Formation d'interaction vocale",
+          "description": "Améliorez vos compétences de communication verbale avec une formation parole-vers-parole qui analyse votre ton, rythme et clarté."
+        },
+        {
+          "title": "Questions spécifiques à l'industrie",
+          "description": "Accédez à une vaste base de données de questions d'entretien adaptées à votre industrie et rôle spécifiques."
+        },
+        {
+          "title": "Commentaires en temps réel",
+          "description": "Obtenez une analyse instantanée de vos réponses avec des suggestions d'amélioration et des conseils pour renforcer la confiance."
+        },
+        {
+          "title": "Suivi des progrès",
+          "description": "Surveillez votre amélioration au fil du temps avec des analyses détaillées et des métriques de performance."
+        },
+        {
+          "title": "Support multilingue",
+          "description": "Pratiquez les entretiens en plusieurs langues pour vous préparer aux opportunités mondiales."
+        }
+      ]
+    },
+    "partners": {
+      "title": "Fait confiance par les leaders de l'industrie",
+      "subtitle": "Alimenté par une technologie de pointe"
+    },
+    "pricing": {
+      "title": "Choisissez votre plan",
+      "subtitle": "Commencez gratuitement, passez à la version supérieure quand vous êtes prêt à accélérer votre carrière",
+      "free": {
+        "title": "Gratuit",
+        "price": "0€",
+        "period": "pour toujours",
+        "description": "Parfait pour commencer avec la pratique d'entretien",
+        "features": [
+          "10 conversations de chat normal",
+          "5 sessions de pratique d'entretien",
+          "Commentaires IA de base",
+          "Interactions basées sur le texte",
+          "Bibliothèque de questions standard"
+        ],
+        "cta": "Commencer gratuitement"
+      },
+      "premium": {
+        "title": "Premium",
+        "price": "5€",
+        "period": "par mois",
+        "description": "Débloquez votre plein potentiel avec un accès illimité",
+        "features": [
+          "Conversations illimitées",
+          "Sessions d'entretien illimitées",
+          "Commentaires IA avancés",
+          "Interactions vocales",
+          "Questions spécifiques à l'industrie",
+          "Analyses de progrès",
+          "Support prioritaire",
+          "Exporter les rapports d'entretien"
+        ],
+        "cta": "Commencer l'essai Premium",
+        "popular": "Le plus populaire"
+      }
+    },
+    "faq": {
+      "title": "Questions fréquemment posées",
+      "subtitle": "Tout ce que vous devez savoir sur TOE AI",
+      "items": [
+        {
+          "question": "Comment fonctionne TOE AI ?",
+          "answer": "TOE AI utilise l'intelligence artificielle avancée pour simuler des scénarios d'entretien réalistes. Vous pouvez pratiquer par des interactions textuelles ou vocales, recevoir des commentaires instantanés et suivre vos progrès au fil du temps."
+        },
+        {
+          "question": "Mes données sont-elles sécurisées et privées ?",
+          "answer": "Oui, nous prenons votre vie privée au sérieux. Toutes vos sessions de pratique d'entretien et données personnelles sont cryptées et stockées en sécurité. Nous ne partageons jamais vos informations avec des tiers."
+        },
+        {
+          "question": "Puis-je pratiquer pour des rôles professionnels spécifiques ?",
+          "answer": "Absolument ! Notre IA peut être personnalisée pour diverses industries et postes. Spécifiez simplement votre rôle cible, et nous fournirons des questions et scénarios pertinents."
+        },
+        {
+          "question": "À quel point les commentaires de l'IA sont-ils précis ?",
+          "answer": "Notre IA est entraînée sur des milliers d'entretiens réussis et apprend continuellement des interactions des utilisateurs. Bien qu'elle fournisse des insights précieux, nous recommandons de la combiner avec des commentaires humains pour de meilleurs résultats."
+        },
+        {
+          "question": "Puis-je annuler mon abonnement à tout moment ?",
+          "answer": "Oui, vous pouvez annuler votre abonnement premium à tout moment. Vous continuerez à avoir accès aux fonctionnalités premium jusqu'à la fin de votre période de facturation."
+        },
+        {
+          "question": "Offrez-vous un support client ?",
+          "answer": "Oui, nous offrons un support par email pour tous les utilisateurs et un support prioritaire pour les abonnés premium. Notre équipe répond généralement dans les 24 heures."
+        }
+      ]
+    },
+    "newsletter": {
+      "title": "Restez informé",
+      "subtitle": "Recevez les derniers conseils d'entretien et mises à jour de la plateforme",
+      "description": "Rejoignez des milliers de chercheurs d'emploi qui reçoivent des insights hebdomadaires, des histoires de succès et des annonces de nouvelles fonctionnalités.",
+      "placeholder": {
+        "name": "Votre nom",
+        "email": "Votre adresse email"
+      },
+      "cta": "S'abonner maintenant",
+      "success": "Merci de vous être abonné !",
+      "error": "Quelque chose s'est mal passé. Veuillez réessayer.",
+      "alreadySubscribed": "Vous êtes déjà abonné !"
+    },
+    "contact": {
+      "title": "Contactez-nous",
+      "subtitle": "Vous avez des questions ? Nous aimerions avoir de vos nouvelles",
+      "description": "Envoyez-nous un message et nous vous répondrons dès que possible.",
+      "form": {
+        "name": "Nom",
+        "email": "Email",
+        "subject": "Sujet",
+        "message": "Message",
+        "send": "Envoyer le message"
+      },
+      "success": "Message envoyé avec succès ! Nous vous répondrons bientôt.",
+      "error": "Échec de l'envoi du message. Veuillez réessayer."
+    },
+    "cta": {
+      "title": "Prêt à réussir votre prochain entretien ?",
+      "subtitle": "Rejoignez des milliers de candidats qui ont amélioré leurs compétences d'entretien avec TOE AI",
+      "button": "Commencer l'entraînement maintenant",
+      "stats": {
+        "users": "10 000+ utilisateurs actifs",
+        "success": "85% de taux de réussite",
+        "interviews": "50 000+ sessions de pratique"
+      }
+    }
   }
 }

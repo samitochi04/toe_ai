@@ -548,5 +548,154 @@
     "notFound": "Shared chat not found",
     "expired": "This shared chat has expired",
     "error": "Failed to load shared chat"
+  },
+  "about": {
+    "meta": {
+      "title": "About TOE AI - AI-Powered Interview Training Platform",
+      "description": "Discover how TOE AI helps candidates master job interviews with AI-powered simulations, voice interactions, and personalized feedback. Start your journey to landing your dream job today."
+    },
+    "hero": {
+      "title": "Helping candidates",
+      "subtitle": "to get their dream job.",
+      "description": "TOE AI is every job-seeker's best friend. Using our industry-standard AI-powered interview training, we help you practice realistic interview scenarios, get instant feedback, and master both technical and behavioral questions with confidence."
+    },
+    "features": {
+      "title": "Sharpen AI tools to tackle any interview anxiety,",
+      "subtitle": "From Text-To-Voice to Speech-To-Speech",
+      "description": "Our comprehensive platform combines cutting-edge AI technology with proven interview techniques to deliver personalized training that adapts to your specific needs and career goals.",
+      "list": [
+        {
+          "title": "AI-Powered Interview Simulation",
+          "description": "Practice with realistic interview scenarios powered by advanced AI that adapts to your responses and provides personalized feedback."
+        },
+        {
+          "title": "Voice Interaction Training",
+          "description": "Improve your verbal communication skills with speech-to-speech training that analyzes your tone, pace, and clarity."
+        },
+        {
+          "title": "Industry-Specific Questions",
+          "description": "Access a vast database of interview questions tailored to your specific industry and job role."
+        },
+        {
+          "title": "Real-time Feedback",
+          "description": "Get instant analysis of your responses with suggestions for improvement and confidence-building tips."
+        },
+        {
+          "title": "Progress Tracking",
+          "description": "Monitor your improvement over time with detailed analytics and performance metrics."
+        },
+        {
+          "title": "Multilingual Support",
+          "description": "Practice interviews in multiple languages to prepare for global opportunities."
+        }
+      ]
+    },
+    "partners": {
+      "title": "Trusted by industry leaders",
+      "subtitle": "Powered by cutting-edge technology"
+    },
+    "pricing": {
+      "title": "Choose Your Plan",
+      "subtitle": "Start free, upgrade when you're ready to accelerate your career",
+      "free": {
+        "title": "Free",
+        "price": "$0",
+        "period": "forever",
+        "description": "Perfect for getting started with interview practice",
+        "features": [
+          "10 normal chat conversations",
+          "5 interview practice sessions",
+          "Basic AI feedback",
+          "Text-based interactions",
+          "Standard question library"
+        ],
+        "cta": "Get Started Free"
+      },
+      "premium": {
+        "title": "Premium",
+        "price": "$5",
+        "period": "per month",
+        "description": "Unlock your full potential with unlimited access",
+        "features": [
+          "Unlimited conversations",
+          "Unlimited interview sessions",
+          "Advanced AI feedback",
+          "Voice interactions",
+          "Industry-specific questions",
+          "Progress analytics",
+          "Priority support",
+          "Export interview reports"
+        ],
+        "cta": "Start Premium Trial",
+        "popular": "Most Popular"
+      }
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "subtitle": "Everything you need to know about TOE AI",
+      "items": [
+        {
+          "question": "How does TOE AI work?",
+          "answer": "TOE AI uses advanced artificial intelligence to simulate realistic interview scenarios. You can practice through text or voice interactions, receive instant feedback, and track your progress over time."
+        },
+        {
+          "question": "Is my data secure and private?",
+          "answer": "Yes, we take your privacy seriously. All your interview practice sessions and personal data are encrypted and stored securely. We never share your information with third parties."
+        },
+        {
+          "question": "Can I practice for specific job roles?",
+          "answer": "Absolutely! Our AI can be customized for various industries and job positions. Simply specify your target role, and we'll provide relevant questions and scenarios."
+        },
+        {
+          "question": "How accurate is the AI feedback?",
+          "answer": "Our AI is trained on thousands of successful interviews and continuously learns from user interactions. While it provides valuable insights, we recommend combining it with human feedback for best results."
+        },
+        {
+          "question": "Can I cancel my subscription anytime?",
+          "answer": "Yes, you can cancel your premium subscription at any time. You'll continue to have access to premium features until the end of your billing period."
+        },
+        {
+          "question": "Do you offer customer support?",
+          "answer": "Yes, we offer email support for all users and priority support for premium subscribers. Our team typically responds within 24 hours."
+        }
+      ]
+    },
+    "newsletter": {
+      "title": "Stay Updated",
+      "subtitle": "Get the latest interview tips and platform updates",
+      "description": "Join thousands of job seekers who receive weekly insights, success stories, and new feature announcements.",
+      "placeholder": {
+        "name": "Your name",
+        "email": "Your email address"
+      },
+      "cta": "Subscribe Now",
+      "success": "Thank you for subscribing!",
+      "error": "Something went wrong. Please try again.",
+      "alreadySubscribed": "You're already subscribed!"
+    },
+    "contact": {
+      "title": "Get in Touch",
+      "subtitle": "Have questions? We'd love to hear from you",
+      "description": "Send us a message and we'll respond as soon as possible.",
+      "form": {
+        "name": "Name",
+        "email": "Email",
+        "subject": "Subject",
+        "message": "Message",
+        "send": "Send Message"
+      },
+      "success": "Message sent successfully! We'll get back to you soon.",
+      "error": "Failed to send message. Please try again."
+    },
+    "cta": {
+      "title": "Ready to ace your next interview?",
+      "subtitle": "Join thousands of successful candidates who improved their interview skills with TOE AI",
+      "button": "Start Training Now",
+      "stats": {
+        "users": "10,000+ Active Users",
+        "success": "85% Success Rate",
+        "interviews": "50,000+ Practice Sessions"
+      }
+    }
   }
 }
