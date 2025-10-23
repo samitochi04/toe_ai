@@ -3,7 +3,7 @@ AI integration routes for TOE AI Backend
 OpenAI, Whisper, and Coqui TTS integration
 """
 
-from fastapi import APIRouter, HTTPException, Depends, status, File, UploadFile, Request
+from fastapi import APIRouter, HTTPException, Depends, status, File, UploadFile
 from typing import Optional
 import logging
 from openai import OpenAI
@@ -137,8 +137,7 @@ async def chat_completion(
 
 @router.post("/interview/chat", response_model=ChatResponse)
 async def interview_chat(
-    request_data: ChatMessageRequest,
-    fastapi_request: Request,
+    request: ChatMessageRequest,
     job_position: Optional[str] = None,
     company_name: Optional[str] = None,
     difficulty: str = "medium",
@@ -158,9 +157,9 @@ async def interview_chat(
         ]
         
         # Add conversation history if provided
-        if hasattr(request_data, 'conversation_history') and request_data.conversation_history:
+        if hasattr(request, 'conversation_history') and request.conversation_history:
             # Add last 10 messages for context
-            for msg in request_data.conversation_history[-10:]:
+            for msg in request.conversation_history[-10:]:
                 if isinstance(msg, dict):
                     role = "user" if msg.get("role") == "user" else "assistant"
                     content = msg.get("content", "")
@@ -169,16 +168,16 @@ async def interview_chat(
         
         # Process files if any are attached
         file_content = ""
-        if hasattr(request_data, 'files') and request_data.files and len(request_data.files) > 0:
+        if hasattr(request, 'files') and request.files and len(request.files) > 0:
             try:
-                file_content = await process_attached_files(request_data.files)
-                logger.info(f"Processed {len(request_data.files)} files for interview chat, content length: {len(file_content)}")
+                file_content = await process_attached_files(request.files)
+                logger.info(f"Processed {len(request.files)} files for interview chat, content length: {len(file_content)}")
             except Exception as file_error:
                 logger.error(f"Error processing files in interview chat: {file_error}")
-                file_content = f"[Error processing {len(request_data.files)} attached file(s): {str(file_error)}]"
+                file_content = f"[Error processing {len(request.files)} attached file(s): {str(file_error)}]"
         
         # Combine user message with file content
-        user_content = request_data.content
+        user_content = request.content
         if file_content:
             if user_content and user_content.strip():
                 user_content += f"\n\nAttached file content:\n{file_content}"
@@ -207,9 +206,7 @@ async def interview_chat(
         # Always generate audio for interview responses
         audio_url = None
         try:
-            # Get base URL from request
-            base_url = f"{fastapi_request.url.scheme}://{fastapi_request.url.netloc}"
-            audio_url = await generate_tts_audio(ai_message, str(current_user.id), base_url)
+            audio_url = await generate_tts_audio(ai_message, str(current_user.id))
         except Exception as tts_error:
             logger.error(f"TTS generation failed: {tts_error}")
             # Don't fail the whole request if TTS fails
@@ -603,7 +600,7 @@ def calculate_openai_cost(usage_data, model: str) -> float:
     return input_cost + output_cost
 
 
-async def generate_tts_audio(text: str, user_id: str, base_url: Optional[str] = None) -> Optional[str]:
+async def generate_tts_audio(text: str, user_id: str) -> Optional[str]:
     """Generate TTS audio and return URL"""
     try:
         # Ensure audio directory exists
@@ -627,12 +624,9 @@ async def generate_tts_audio(text: str, user_id: str, base_url: Optional[str] = 
         with open(audio_path, "wb") as audio_file:
             audio_file.write(response.content)
         
-        # Return appropriate URL based on context
-        if base_url:
-            return f"{base_url}/static/uploads/audio/{audio_filename}"
-        else:
-            # Return relative URL for local development
-            return f"/static/uploads/audio/{audio_filename}"
+        # Use environment variable for backend URL, fallback to localhost for development
+        backend_url = os.getenv('BACKEND_URL', 'http://localhost:8000')
+        return f"{backend_url}/static/uploads/audio/{audio_filename}"
         
     except Exception as e:
         logger.error(f"TTS generation error: {e}")
