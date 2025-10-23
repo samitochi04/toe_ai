@@ -374,6 +374,11 @@ const InterviewPage = () => {
     } else {
       // Start recording
       try {
+        // Check if mediaDevices is supported
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          throw new Error('MediaDevices API not supported in this browser or context')
+        }
+
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
         const mediaRecorder = new MediaRecorder(stream)
         mediaRecorderRef.current = mediaRecorder
@@ -435,7 +440,23 @@ const InterviewPage = () => {
         toast.success('Recording started... Click again to stop')
       } catch (error) {
         console.error('Error accessing microphone:', error)
-        toast.error('Failed to access microphone')
+        
+        // Provide specific error messages based on the error type
+        if (error.name === 'NotAllowedError') {
+          toast.error('Microphone access denied. Please allow microphone permissions in your browser.')
+        } else if (error.name === 'NotFoundError') {
+          toast.error('No microphone found. Please connect a microphone and try again.')
+        } else if (error.name === 'NotSupportedError') {
+          toast.error('Audio recording not supported in this browser.')
+        } else if (error.name === 'NotReadableError') {
+          toast.error('Microphone is already in use by another application.')
+        } else if (error.name === 'SecurityError') {
+          toast.error('Microphone access blocked for security reasons. Please ensure you\'re using HTTPS.')
+        } else if (error.message.includes('MediaDevices API not supported')) {
+          toast.error('Microphone access not available. Please use a modern browser with microphone support.')
+        } else {
+          toast.error('Failed to access microphone. Please check your browser settings and try again.')
+        }
       }
     }
   }
