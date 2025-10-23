@@ -403,7 +403,9 @@ async def text_to_speech(
         
         # Get file size and generate URL
         file_size = os.path.getsize(audio_path)
-        audio_url = f"/static/uploads/audio/{audio_filename}"
+        # Use environment variable for backend URL, fallback to localhost for development
+        backend_url = os.getenv('BACKEND_URL', 'http://localhost:8000')
+        audio_url = f"{backend_url}/static/uploads/audio/{audio_filename}"
         
         # Log API usage
         await db.log_api_usage(
