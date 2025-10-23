@@ -66,13 +66,20 @@ async def create_setup_intent(
             "setup_intent_id": setup_intent.id
         }
         
-    except stripe.error.StripeError as e:
-        logger.error(f"Stripe error creating setup intent: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Failed to create setup intent: {str(e)}"
-        )
     except Exception as e:
+        # Handle all Stripe errors and other exceptions
+        if "stripe" in str(type(e)).lower():
+            logger.error(f"Stripe error creating setup intent: {e}")
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Failed to create setup intent: {str(e)}"
+            )
+        else:
+            logger.error(f"Unexpected error creating setup intent: {e}")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Internal server error"
+            )
         logger.error(f"Error creating setup intent: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -141,12 +148,15 @@ async def add_payment_method(
         
         return response.data[0]
         
-    except stripe.error.StripeError as e:
-        logger.error(f"Stripe error adding payment method: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Failed to add payment method: {str(e)}"
-        )
+    except Exception as e:
+        # Handle all Stripe errors and other exceptions
+        if "stripe" in str(type(e)).lower():
+            logger.error(f"Stripe error adding payment method: {e}")
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Failed to add payment method: {str(e)}"
+            )
+        # HTTPException should be re-raised as is
     except HTTPException:
         raise
     except Exception as e:
@@ -263,7 +273,8 @@ async def delete_payment_method(
         # Detach from Stripe
         try:
             stripe.PaymentMethod.detach(pm["stripe_payment_method_id"])
-        except stripe.error.StripeError as e:
+        except Exception as e:
+            # Handle Stripe errors gracefully
             logger.warning(f"Failed to detach from Stripe: {e}")
         
         # Soft delete in database
