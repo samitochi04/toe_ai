@@ -356,21 +356,21 @@ const DashboardPage = () => {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <GetStartedCard
-              icon="/src/assets/images/main_workspace_new_chat_icon.png"
+              icon="/assets/images/main_workspace_new_chat_icon.png"
               title="New Chat"
               description="Start a conversation with AI to practice general questions"
               onClick={() => navigate('/workspace/chat/new')}
               bgColor="bg-blue-2nd"
             />
             <GetStartedCard
-              icon="/src/assets/images/main_workspace_new_interview_icon.png"
+              icon="/assets/images/main_workspace_new_interview_icon.png"
               title="New Interview"
               description="Begin a mock interview session with voice interaction"
               onClick={() => navigate('/workspace/interview/new')}
               bgColor="bg-success"
             />
             <GetStartedCard
-              icon="/src/assets/images/main_workspace_share_chat_icon.png"
+              icon="/assets/images/main_workspace_share_chat_icon.png"
               title="Share Chat"
               description="Share your interview practice with others (Premium feature)"
               onClick={() => navigate('/workspace/shares')}
