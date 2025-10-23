@@ -11,7 +11,7 @@ import logging
 from app.core.auth import AuthManager, get_current_user, security
 from app.core.config import settings
 from app.models.user import (
-    UserCreate, LoginRequest, LoginResponse, GoogleAuthRequest,
+    UserCreate, LoginRequest, LoginResponse, OAuthCallbackRequest,
     RefreshTokenRequest, UserPasswordUpdate, User
 )
 
@@ -119,42 +119,79 @@ async def login(request: LoginRequest):
     }
 
 
-@router.post("/google", response_model=LoginResponse)
-async def google_auth(google_data: GoogleAuthRequest):
-    """Login/Register with Google OAuth"""
+@router.post("/oauth/callback", response_model=LoginResponse)
+async def oauth_callback(session_data: OAuthCallbackRequest):
+    """Handle OAuth callback from Supabase"""
     auth_manager = AuthManager()
     
     try:
-        result = await auth_manager.sign_in_with_google(google_data.token)
+        # Extract session data from Supabase OAuth callback
+        access_token = session_data.access_token
+        refresh_token = session_data.refresh_token
+        user_data = session_data.user
         
-        if not result:
+        if not access_token or not user_data:
             raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Google authentication failed"
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid session data from OAuth provider"
             )
         
-        # Create access token
+        # Get or create user profile in our database
+        auth_user_id = user_data.get("id")
+        email = user_data.get("email")
+        full_name = user_data.get("user_metadata", {}).get("full_name") or user_data.get("user_metadata", {}).get("name")
+        
+        if not auth_user_id or not email:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Missing required user data from OAuth provider"
+            )
+        
+        # Check if user profile exists in our database
+        user_profile = await auth_manager.db.get_user_by_auth_id(auth_user_id)
+        
+        if not user_profile:
+            # Create new user profile
+            result = await auth_manager.create_user_profile_from_oauth(
+                auth_user_id=auth_user_id,
+                email=email,
+                full_name=full_name,
+                avatar_url=user_data.get("user_metadata", {}).get("avatar_url")
+            )
+            if not result:
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail="Failed to create user profile"
+                )
+            user_profile = result
+        
+        # Create our own access token for the API
         access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
-        access_token = auth_manager.create_access_token(
-            data={"sub": result["auth_user"]["sub"]},
+        api_access_token = auth_manager.create_access_token(
+            data={"sub": auth_user_id},
             expires_delta=access_token_expires
         )
         
+        # Create refresh token
+        api_refresh_token = auth_manager.create_refresh_token(
+            data={"sub": auth_user_id}
+        )
+        
         return LoginResponse(
-            access_token=access_token,
-            refresh_token="",  # Google OAuth doesn't provide refresh token
+            access_token=api_access_token,
+            refresh_token=api_refresh_token,
             token_type="bearer",
             expires_in=settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
-            user=User(**result["profile"])
+            user=User(**user_profile)
         )
         
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Google auth error: {e}")
+        logger.error(f"OAuth callback error: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Google authentication failed"
+            detail="OAuth authentication failed"
         )
 
 

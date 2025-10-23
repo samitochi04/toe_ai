@@ -13,9 +13,9 @@ export const authService = {
     return response.data
   },
 
-  // Google OAuth authentication
-  googleAuth: async (token) => {
-    const response = await api.post('/auth/google', { token })
+  // Google OAuth authentication with Supabase
+  googleAuth: async (sessionData) => {
+    const response = await api.post('/auth/oauth/callback', sessionData)
     return response.data
   },
 

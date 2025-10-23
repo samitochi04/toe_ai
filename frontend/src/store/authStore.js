@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { authService } from '../services/auth'
 import { storage } from '../utils/storage'
+import { supabase } from '../services/supabase'
 
 const useAuthStore = create((set, get) => ({
   // State
@@ -124,104 +125,74 @@ const useAuthStore = create((set, get) => ({
     set({ isLoading: true, error: null })
 
     try {
-      // Initialize Google Identity Services
-      if (!window.google) {
-        throw new Error('Google OAuth library not loaded')
-      }
-
-      // Get Google OAuth client ID from environment
-      const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID
-      if (!clientId) {
-        throw new Error('Google Client ID not configured')
-      }
-
-      return new Promise((resolve, reject) => {
-        // Initialize Google Identity Services with ID token callback
-        window.google.accounts.id.initialize({
-          client_id: clientId,
-          callback: async response => {
-            try {
-              if (response.credential) {
-                // Send ID token to backend
-                const authResponse = await authService.googleAuth(
-                  response.credential
-                )
-                const { access_token, refresh_token, user } = authResponse
-
-                // Store tokens and user data
-                storage.setAccessToken(access_token)
-                storage.setRefreshToken(refresh_token)
-                storage.setUserData(user)
-
-                set({
-                  user,
-                  isAuthenticated: true,
-                  isLoading: false,
-                  error: null,
-                })
-
-                // Fetch complete user profile including subscription data
-                await get().refreshUserProfile()
-
-                resolve(authResponse)
-              } else {
-                throw new Error(
-                  'Google authentication failed - no credential received'
-                )
-              }
-            } catch (error) {
-              set({
-                isLoading: false,
-                error: error.message || 'Google sign in failed',
-              })
-              reject(error)
-            }
-          },
-        })
-
-        // Prompt for Google sign-in
-        window.google.accounts.id.prompt(notification => {
-          if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-            // Fallback to popup if prompt is blocked
-            try {
-              window.google.accounts.id.renderButton(
-                document.createElement('div'),
-                {
-                  theme: 'outline',
-                  size: 'large',
-                  width: 300,
-                  click_listener: () => {
-                    // This triggers the popup
-                  },
-                }
-              )
-
-              // Trigger the popup manually
-              const popup = window.open(
-                `https://accounts.google.com/oauth/authorize?client_id=${clientId}&response_type=token&scope=openid email profile&redirect_uri=${window.location.origin}`,
-                'googleSignIn',
-                'width=500,height=600'
-              )
-
-              // Handle popup response (fallback - not ideal)
-              const checkClosed = setInterval(() => {
-                if (popup.closed) {
-                  clearInterval(checkClosed)
-                  set({ isLoading: false })
-                  reject(new Error('Google sign-in was cancelled'))
-                }
-              }, 1000)
-            } catch (fallbackError) {
-              set({ isLoading: false })
-              reject(new Error('Google sign-in is not available'))
-            }
-          }
-        })
+      // Use Supabase OAuth flow for Google
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`
+        }
       })
+
+      if (error) {
+        throw new Error(error.message)
+      }
+
+      // The redirect will happen automatically
+      // Session handling will be done in the callback page
+      
     } catch (error) {
       set({
         isLoading: false,
         error: error.message || 'Google sign in failed',
+      })
+      throw error
+    }
+  },
+
+  handleOAuthCallback: async () => {
+    set({ isLoading: true, error: null })
+
+    try {
+      // Get session from URL after OAuth redirect
+      const { data: { session }, error } = await supabase.auth.getSession()
+
+      if (error) {
+        throw new Error(error.message)
+      }
+
+      if (session) {
+        // Send session data to our backend for processing
+        const authResponse = await authService.googleAuth({
+          access_token: session.access_token,
+          refresh_token: session.refresh_token,
+          user: session.user
+        })
+
+        const { access_token, refresh_token, user } = authResponse
+
+        // Store tokens and user data
+        storage.setAccessToken(access_token)
+        storage.setRefreshToken(refresh_token)
+        storage.setUserData(user)
+
+        set({
+          user,
+          isAuthenticated: true,
+          isLoading: false,
+          error: null,
+        })
+
+        // Fetch complete user profile including subscription data
+        await get().refreshUserProfile()
+
+        return authResponse
+      } else {
+        throw new Error('No session found in OAuth callback')
+      }
+    } catch (error) {
+      set({
+        isLoading: false,
+        error: error.message || 'OAuth callback failed',
       })
       throw error
     }

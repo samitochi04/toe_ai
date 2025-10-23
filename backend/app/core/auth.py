@@ -448,6 +448,94 @@ class AuthManager:
             logger.error(f"Sign out error: {e}")
             return False
 
+    async def create_user_profile_from_oauth(
+        self, 
+        auth_user_id: str, 
+        email: str, 
+        full_name: str = None, 
+        avatar_url: str = None
+    ) -> Optional[Dict[str, Any]]:
+        """Create user profile from OAuth data"""
+        try:
+            # Generate alias
+            async def generate_alias(email: str) -> str:
+                username_part = email.split('@')[0].lower()
+                # Clean username: remove special characters
+                import re
+                username_part = re.sub(r'[^a-zA-Z0-9_]', '', username_part)
+                username_part = username_part[:20]  # Limit length
+                
+                from datetime import datetime
+                year_part = str(datetime.now().year)
+                base_alias = f"{username_part}@{year_part}"
+                
+                # Check if alias exists and add counter if needed
+                counter = 0
+                final_alias = base_alias
+                while True:
+                    existing = await self.db.get_user_by_alias(final_alias)
+                    if not existing:
+                        break
+                    counter += 1
+                    final_alias = f"{base_alias}_{counter}"
+                
+                return final_alias
+            
+            alias = await generate_alias(email)
+            
+            # Create user profile directly using service role
+            service_db = DatabaseManager(use_service_role=True)
+            from datetime import datetime
+            now = datetime.utcnow().isoformat()
+            
+            profile_data = {
+                "auth_user_id": auth_user_id,
+                "email": email,
+                "full_name": full_name or email.split('@')[0],
+                "alias": alias,
+                "avatar_url": avatar_url,
+                "created_at": now,
+                "updated_at": now
+            }
+            
+            # Insert user profile
+            response = service_db.client.table("user_profile").insert(profile_data).execute()
+            if not response.data:
+                raise Exception("Failed to create user profile")
+            
+            user_profile = response.data[0]
+            
+            # Initialize usage tracking
+            usage_data = {
+                "user_profile_id": user_profile["id"],
+                "interview_chats_used": 0,
+                "normal_chats_used": 0,
+                "reset_date": now,
+                "created_at": now,
+                "updated_at": now
+            }
+            service_db.client.table("usage_tracking").insert(usage_data).execute()
+            
+            # Create free subscription
+            # Get free tier ID
+            tier_response = service_db.client.table("subscription_tiers").select("id").eq("name", "Free").limit(1).execute()
+            if tier_response.data:
+                tier_id = tier_response.data[0]["id"]
+                subscription_data = {
+                    "user_profile_id": user_profile["id"],
+                    "tier_id": tier_id,
+                    "status": "free",
+                    "created_at": now,
+                    "updated_at": now
+                }
+                service_db.client.table("user_subscriptions").insert(subscription_data).execute()
+            
+            return user_profile
+            
+        except Exception as e:
+            logger.error(f"Failed to create OAuth user profile: {e}")
+            return None
+
     async def update_password(self, user_id: str, new_password: str) -> bool:
         """Update user password"""
         try:

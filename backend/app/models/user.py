@@ -132,9 +132,11 @@ class UserProfile(User):
     subscription: Optional[Dict[str, Any]] = None
 
 
-class GoogleAuthRequest(BaseModel):
-    """Google OAuth authentication request"""
-    token: str
+class OAuthCallbackRequest(BaseModel):
+    """OAuth callback request model"""
+    access_token: str
+    refresh_token: Optional[str] = None
+    user: Dict[str, Any]
 
 
 class LoginRequest(BaseModel):

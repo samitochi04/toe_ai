@@ -21,6 +21,7 @@ import NotFoundPage from './pages/NotFoundPage'
 import InterviewChatsListPage from './pages/InterviewChatsListPage'
 import PaymentSuccessPage from './pages/PaymentSuccessPage'
 import PaymentCancelPage from './pages/PaymentCancelPage'
+import OAuthCallbackPage from './pages/OAuthCallbackPage'
 
 // Components
 import ProtectedRoute from './components/auth/ProtectedRoute'
@@ -85,6 +86,7 @@ function App() {
             } 
           />
           <Route path="/shared/:shareToken" element={<SharedChatPage />} />
+          <Route path="/auth/callback" element={<OAuthCallbackPage />} />
           
           {/* Protected Workspace Routes - FIXED: Removed nested WorkspaceLayout */}
           <Route 
