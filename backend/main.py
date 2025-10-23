@@ -67,12 +67,14 @@ if not os.path.exists("static"):
     os.makedirs("static/uploads/pdfs", exist_ok=True)
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
+# Also mount uploads directory directly for backward compatibility
+app.mount("/uploads", StaticFiles(directory="static/uploads"), name="uploads")
 
 # Add middleware for CORS on static files
 @app.middleware("http")
 async def add_cors_header(request, call_next):
     response = await call_next(request)
-    if request.url.path.startswith("/static"):
+    if request.url.path.startswith("/static") or request.url.path.startswith("/uploads"):
         response.headers["Access-Control-Allow-Origin"] = "*"
         response.headers["Access-Control-Allow-Methods"] = "GET, OPTIONS"
         response.headers["Access-Control-Allow-Headers"] = "*"

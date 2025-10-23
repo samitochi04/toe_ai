@@ -93,7 +93,7 @@ async def add_payment_method(
     current_user: User = Depends(get_current_user)
 ):
     """Add a new payment method"""
-    db = DatabaseManager()
+    db = DatabaseManager(use_service_role=True)  # Use service role for payment operations
     
     try:
         # Retrieve payment method from Stripe
@@ -148,23 +148,23 @@ async def add_payment_method(
         
         return response.data[0]
         
+    except HTTPException:
+        # Re-raise HTTPException as is
+        raise
     except Exception as e:
-        # Handle all Stripe errors and other exceptions
+        # Handle all other errors (including Stripe errors)
         if "stripe" in str(type(e)).lower():
             logger.error(f"Stripe error adding payment method: {e}")
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail=f"Failed to add payment method: {str(e)}"
             )
-        # HTTPException should be re-raised as is
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"Error adding payment method: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to add payment method"
-        )
+        else:
+            logger.error(f"Error adding payment method: {e}")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Failed to add payment method"
+            )
 
 
 @router.get("/", response_model=List[PaymentMethod])
@@ -196,7 +196,7 @@ async def update_payment_method(
     current_user: User = Depends(get_current_user)
 ):
     """Update a payment method"""
-    db = DatabaseManager()
+    db = DatabaseManager(use_service_role=True)  # Use service role for update operations
     
     try:
         # Verify ownership
@@ -254,7 +254,7 @@ async def delete_payment_method(
     current_user: User = Depends(get_current_user)
 ):
     """Delete a payment method"""
-    db = DatabaseManager()
+    db = DatabaseManager(use_service_role=True)  # Use service role for delete operations
     
     try:
         # Verify ownership
