@@ -68,7 +68,7 @@ class Settings(BaseSettings):
     STRIPE_PRICE_ID_PREMIUM_YEARLY: str = ""  # Yearly subscription price ID
     
     # File Storage
-    UPLOAD_DIR: str = "uploads"
+    UPLOAD_DIR: str = "static/uploads"
     MAX_FILE_SIZE: int = 10 * 1024 * 1024  # 10MB
     ALLOWED_AUDIO_EXTENSIONS: List[str] = ["mp3", "wav", "m4a", "ogg"]
     ALLOWED_IMAGE_EXTENSIONS: List[str] = ["jpg", "jpeg", "png", "gif", "webp"]

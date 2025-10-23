@@ -21,6 +21,12 @@ async def lifespan(app: FastAPI):
     """Application lifespan events"""
     # Startup
     print("🚀 Starting TOE AI Backend...")
+    
+    # Debug: Print environment variables
+    backend_url = os.getenv('BACKEND_URL', 'NOT SET')
+    print(f"🔧 BACKEND_URL: {backend_url}")
+    print(f"🔧 ENVIRONMENT: {settings.ENVIRONMENT}")
+    
     await init_db()
     print("✅ Database initialized")
     
@@ -65,6 +71,14 @@ if not os.path.exists("static"):
     os.makedirs("static/uploads/audio", exist_ok=True)
     os.makedirs("static/uploads/images", exist_ok=True)
     os.makedirs("static/uploads/pdfs", exist_ok=True)
+
+# Debug: Check static directory setup
+static_audio_dir = "static/uploads/audio"
+print(f"🔧 Static audio directory exists: {os.path.exists(static_audio_dir)}")
+print(f"🔧 Static audio directory path: {os.path.abspath(static_audio_dir)}")
+if os.path.exists(static_audio_dir):
+    audio_files = os.listdir(static_audio_dir)
+    print(f"🔧 Audio files in directory: {len(audio_files)} files")
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 

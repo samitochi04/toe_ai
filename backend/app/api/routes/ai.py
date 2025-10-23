@@ -407,6 +407,12 @@ async def text_to_speech(
         backend_url = os.getenv('BACKEND_URL', 'http://localhost:8000')
         audio_url = f"{backend_url}/static/uploads/audio/{audio_filename}"
         
+        # Debug logging
+        logger.info(f"TTS: Generated audio URL: {audio_url}")
+        logger.info(f"TTS: BACKEND_URL env var: {backend_url}")
+        logger.info(f"TTS: Audio file path: {audio_path}")
+        logger.info(f"TTS: Audio file exists: {os.path.exists(audio_path)}")
+        
         # Log API usage
         await db.log_api_usage(
             user_id=str(current_user.id),
@@ -628,7 +634,15 @@ async def generate_tts_audio(text: str, user_id: str) -> Optional[str]:
         
         # Use environment variable for backend URL, fallback to localhost for development
         backend_url = os.getenv('BACKEND_URL', 'http://localhost:8000')
-        return f"{backend_url}/static/uploads/audio/{audio_filename}"
+        audio_url = f"{backend_url}/static/uploads/audio/{audio_filename}"
+        
+        # Debug logging
+        logger.info(f"Helper TTS: Generated audio URL: {audio_url}")
+        logger.info(f"Helper TTS: BACKEND_URL env var: {backend_url}")
+        logger.info(f"Helper TTS: Audio file path: {audio_path}")
+        logger.info(f"Helper TTS: Audio file exists: {os.path.exists(audio_path)}")
+        
+        return audio_url
         
     except Exception as e:
         logger.error(f"TTS generation error: {e}")
