@@ -86,6 +86,7 @@ function App() {
             } 
           />
           <Route path="/shared/:shareToken" element={<SharedChatPage />} />
+          <Route path="/auth/callback/google" element={<OAuthCallbackPage />} />
           <Route path="/auth/callback" element={<OAuthCallbackPage />} />
           
           {/* Protected Workspace Routes - FIXED: Removed nested WorkspaceLayout */}
