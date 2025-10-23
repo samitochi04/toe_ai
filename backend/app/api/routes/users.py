@@ -144,7 +144,8 @@ async def upload_profile_picture(
             buffer.write(file_content)
         
         # Generate URL
-        file_url = f"/static/uploads/images/{filename}"
+        backend_url = os.getenv('BACKEND_URL', 'http://localhost:8000')
+        file_url = f"{backend_url}/static/uploads/images/{filename}"
         
         # Update user profile with new picture URL
         db = DatabaseManager()
