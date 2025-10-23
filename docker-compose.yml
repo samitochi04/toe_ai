@@ -44,6 +44,9 @@ services:
       STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
       STRIPE_PREMIUM_PRICE_ID: ${STRIPE_PREMIUM_PRICE_ID}
       
+      # Backend URL for static file generation
+      BACKEND_URL: ${BACKEND_URL}
+      
       # Usage Limits
       FREE_NORMAL_CHAT_LIMIT: ${FREE_NORMAL_CHAT_LIMIT:-10}
       FREE_INTERVIEW_CHAT_LIMIT: ${FREE_INTERVIEW_CHAT_LIMIT:-5}
