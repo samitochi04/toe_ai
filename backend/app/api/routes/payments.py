@@ -42,6 +42,9 @@ try:
         stripe.api_key = settings.STRIPE_SECRET_KEY.strip()
         logger.info(f"Stripe API key configured successfully")
         logger.info(f"Stripe key type: {'Live' if 'sk_live_' in settings.STRIPE_SECRET_KEY else 'Test' if 'sk_test_' in settings.STRIPE_SECRET_KEY else 'Unknown'}")
+        logger.info(f"Stripe environment: {settings.stripe_environment}")
+        logger.info(f"Success URL: {settings.cors_origins[0]}/payment/success")
+        logger.info(f"Cancel URL: {settings.cors_origins[0]}/payment/cancel")
         
         # Test Stripe connection - use a simpler test
         try:

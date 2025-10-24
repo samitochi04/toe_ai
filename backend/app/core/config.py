@@ -67,6 +67,17 @@ class Settings(BaseSettings):
     STRIPE_PRICE_ID_PREMIUM: str = ""  # Monthly subscription price ID
     STRIPE_PRICE_ID_PREMIUM_YEARLY: str = ""  # Yearly subscription price ID
     
+    # Stripe Environment Detection
+    @property
+    def is_stripe_live_mode(self) -> bool:
+        """Check if Stripe is in live mode based on secret key"""
+        return self.STRIPE_SECRET_KEY.startswith('sk_live_')
+    
+    @property
+    def stripe_environment(self) -> str:
+        """Get Stripe environment (test/live)"""
+        return "live" if self.is_stripe_live_mode else "test"
+    
     # File Storage
     UPLOAD_DIR: str = "static/uploads"
     MAX_FILE_SIZE: int = 10 * 1024 * 1024  # 10MB
