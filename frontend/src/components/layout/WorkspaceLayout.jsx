@@ -33,14 +33,14 @@ const WorkspaceLayout = () => {
       <Sidebar isOpen={isSidebarOpen} onToggle={toggleSidebar} />
       
       {/* Main Content */}
-      <div className={`flex-1 transition-all duration-300 ${
+      <div className={`flex-1 transition-all duration-300 flex flex-col ${
         isMobile 
           ? 'ml-0' 
           : (isSidebarOpen ? 'ml-64' : 'ml-16')
       }`}>
         {/* Mobile Header */}
         {isMobile && (
-          <div className="lg:hidden bg-light-dark-secondary border-b border-gray-700 px-4 py-3 flex items-center justify-between">
+          <div className="lg:hidden bg-light-dark-secondary border-b border-gray-700 px-4 py-3 flex items-center justify-between flex-shrink-0">
             <button
               onClick={toggleSidebar}
               className="p-2 rounded-lg hover:bg-gray-700 transition-colors text-white-secondary hover:text-white-primary"
@@ -62,7 +62,7 @@ const WorkspaceLayout = () => {
         )}
         
         {/* Page Content */}
-        <main className="h-full overflow-auto">
+        <main className="flex-1 overflow-auto">
           <Outlet />
         </main>
       </div>

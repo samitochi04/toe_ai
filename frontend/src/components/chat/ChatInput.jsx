@@ -140,9 +140,9 @@ const ChatInput = ({
     <div className={`relative ${isDragOver ? 'bg-blue-500/10' : ''}`}>
       {renderAttachedFiles()}
       
-      <form onSubmit={handleSubmit} className="p-4">
+      <form onSubmit={handleSubmit} className="p-3 md:p-4">
         <div 
-          className={`relative flex items-end space-x-3 bg-light-dark-secondary rounded-xl border transition-all duration-200 ${
+          className={`relative flex items-end space-x-2 md:space-x-3 bg-light-dark-secondary rounded-xl border transition-all duration-200 ${
             isDragOver ? 'border-blue-500 bg-blue-500/5' : 'border-gray-600 hover:border-gray-500'
           }`}
           onDragOver={handleDragOver}
@@ -150,7 +150,7 @@ const ChatInput = ({
           onDrop={handleDrop}
         >
           {/* File attachment button */}
-          <div className="flex-shrink-0 p-3">
+          <div className="flex-shrink-0 p-2 md:p-3">
             <input
               ref={fileInputRef}
               type="file"
@@ -166,19 +166,19 @@ const ChatInput = ({
               size="sm"
               onClick={() => fileInputRef.current?.click()}
               disabled={!isPremium || disabled}
-              className={`p-2 transition-colors ${
+              className={`p-2 md:p-2 transition-colors touch-manipulation ${
                 isPremium 
                   ? 'text-gray-400 hover:text-white-primary hover:bg-gray-600' 
                   : 'text-gray-600 cursor-not-allowed'
               }`}
               title={isPremium ? t('chat.attachFile') : t('chat.premiumRequired')}
             >
-              <Paperclip className="w-5 h-5" />
+              <Paperclip className="w-4 h-4 md:w-5 md:h-5" />
             </Button>
           </div>
 
           {/* Text input */}
-          <div className="flex-1 py-3">
+          <div className="flex-1 py-2 md:py-3">
             <textarea
               ref={textareaRef}
               value={value}
@@ -186,29 +186,30 @@ const ChatInput = ({
               onKeyPress={handleKeyPress}
               placeholder={disabled ? t('chat.inputDisabled') : t('chat.inputPlaceholder')}
               disabled={disabled}
-              className="w-full bg-transparent text-white-primary placeholder-gray-400 resize-none border-0 outline-none focus:ring-0 max-h-32 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-transparent"
+              className="w-full bg-transparent text-white-primary placeholder-gray-400 resize-none border-0 outline-none focus:ring-0 max-h-32 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-transparent text-sm md:text-base"
               rows={1}
+              style={{ minHeight: '20px' }}
             />
           </div>
 
           {/* Send button */}
-          <div className="flex-shrink-0 p-3">
+          <div className="flex-shrink-0 p-2 md:p-3">
             <Button
               type="submit"
               variant={value.trim() || attachedFiles.length > 0 ? 'primary' : 'ghost'}
               size="sm"
               disabled={disabled || isLoading || (!value.trim() && attachedFiles.length === 0)}
-              className="p-2 transition-all duration-200"
+              className="p-2 md:p-2 transition-all duration-200 touch-manipulation"
               isLoading={isLoading}
             >
-              <Send className="w-5 h-5" />
+              <Send className="w-4 h-4 md:w-5 md:h-5" />
             </Button>
           </div>
         </div>
 
         {/* File upload hint for non-premium users */}
         {!isPremium && (
-          <div className="mt-2 text-xs text-gray-400 text-center">
+          <div className="mt-1 md:mt-2 text-xs text-gray-400 text-center">
             {t('chat.upgradeForFiles')}
           </div>
         )}

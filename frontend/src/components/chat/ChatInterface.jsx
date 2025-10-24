@@ -146,13 +146,13 @@ const ChatInterface = () => {
   return (
     <div className="flex flex-col h-full bg-dark-primary">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-light-dark-secondary">
-        <div className="flex items-center space-x-3">
-          <h1 className="text-xl font-semibold text-white-primary">
+      <div className="flex items-center justify-between p-3 md:p-4 border-b border-light-dark-secondary flex-shrink-0">
+        <div className="flex items-center space-x-2 md:space-x-3 min-w-0 flex-1">
+          <h1 className="text-lg md:text-xl font-semibold text-white-primary truncate">
             {currentChat?.title || t('chat.newChat')}
           </h1>
           {currentChat && (
-            <span className="text-sm text-gray-400">
+            <span className="text-xs md:text-sm text-gray-400 flex-shrink-0">
               {messages.length} {t('chat.messages')}
             </span>
           )}
@@ -160,8 +160,8 @@ const ChatInterface = () => {
         
         {/* Usage info and premium upgrade button for non-premium users */}
         {!isPremium && (
-          <div className="flex items-center space-x-4">
-            <div className="text-sm text-gray-400">
+          <div className="flex items-center space-x-2 md:space-x-4 flex-shrink-0">
+            <div className="text-xs md:text-sm text-gray-400 hidden sm:block">
               {usage.normalChats}/{usage.normalLimit} chats used
             </div>
             <PremiumUpgradeButton />
@@ -170,7 +170,7 @@ const ChatInterface = () => {
       </div>
 
       {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div className="flex-1 overflow-y-auto p-3 md:p-4 space-y-3 md:space-y-4 min-h-0">
         {/* Show loading state when switching chats */}
         {isLoading && (
           <div className="flex flex-col items-center justify-center h-full text-center">
@@ -250,10 +250,12 @@ const ChatInterface = () => {
         )}
 
         <div ref={messagesEndRef} />
+        {/* Add padding to prevent content from being hidden behind input */}
+        <div className="h-4"></div>
       </div>
 
       {/* Input Area */}
-      <div className="border-t border-light-dark-secondary">
+      <div className="border-t border-light-dark-secondary flex-shrink-0">
         <ChatInput
           value={inputMessage}
           onChange={setInputMessage}

@@ -695,32 +695,32 @@ const InterviewPage = () => {
   return (
     <div className="flex flex-col h-full bg-dark-primary">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-gray-600">
-        <div className="flex items-center gap-4">
+      <div className="flex items-center justify-between p-3 md:p-4 border-b border-gray-600 flex-shrink-0">
+        <div className="flex items-center gap-2 md:gap-4 min-w-0 flex-1">
           <Button
             variant="ghost"
             size="sm"
             onClick={handleGoBack}
-            className="text-white-secondary hover:text-white-primary"
+            className="text-white-secondary hover:text-white-primary flex-shrink-0"
           >
             <ArrowLeft className="w-4 h-4" />
           </Button>
-          <div>
-            <h1 className="text-lg font-semibold text-white-primary">
+          <div className="min-w-0 flex-1">
+            <h1 className="text-base md:text-lg font-semibold text-white-primary truncate">
               {jobPosition} Interview{companyName && ` at ${companyName}`}
             </h1>
-            <p className="text-sm text-white-secondary capitalize">
+            <p className="text-xs md:text-sm text-white-secondary capitalize">
               Difficulty: {difficulty}
             </p>
           </div>
         </div>
         
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1 md:gap-2 flex-shrink-0">
           <Button
             variant="ghost"
             size="sm"
             onClick={handleMuteToggle}
-            className="text-white-secondary hover:text-white-primary"
+            className="text-white-secondary hover:text-white-primary p-2 touch-manipulation"
           >
             {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
           </Button>
@@ -729,7 +729,7 @@ const InterviewPage = () => {
             size="sm"
             onClick={handleExportPDF}
             disabled={isExportingPDF || !currentChatId || messages.length === 0}
-            className={`text-white-secondary hover:text-white-primary transition-colors ${
+            className={`text-white-secondary hover:text-white-primary transition-colors p-2 touch-manipulation ${
               isExportingPDF ? 'opacity-50 cursor-not-allowed' : ''
             }`}
             title={
@@ -750,12 +750,12 @@ const InterviewPage = () => {
       </div>
 
       {/* Main Content Area with Scroll */}
-      <div className="flex-1 flex flex-col overflow-y-auto scroll-smooth">
+      <div className="flex-1 flex flex-col overflow-y-auto min-h-0">
         {/* Video/Image Section - Full Width */}
-        <div className="flex-1 flex flex-col" id="interview-video">
+        <div className="flex-1 flex flex-col min-h-0" id="interview-video">
           {/* Video/Image Container - Expanded */}
-          <div className="flex-1 flex items-center justify-center p-4 pb-2 min-h-[60vh]">
-            <div className="relative w-full max-w-5xl aspect-video rounded-2xl overflow-hidden bg-gray-800 shadow-2xl border border-gray-700">
+          <div className="flex-1 flex items-center justify-center p-2 md:p-4 pb-2 min-h-[30vh] md:min-h-[50vh]">
+            <div className="relative w-full max-w-sm md:max-w-5xl aspect-[4/3] md:aspect-video rounded-2xl overflow-hidden bg-gray-800 shadow-2xl border border-gray-700">
               {/* Static Image */}
               <img
                 src={staticInterviewImage}
@@ -815,7 +815,7 @@ const InterviewPage = () => {
           </div>
 
           {/* Input Area - Enhanced UX */}
-          <div className="p-4 bg-gray-900/80 border-t border-gray-700/50">
+          <div className="p-3 md:p-4 bg-gray-900/80 border-t border-gray-700/50 flex-shrink-0">
             <div className="max-w-4xl mx-auto">
               {/* File attachments area */}
               {attachedFiles.length > 0 && (
@@ -880,7 +880,7 @@ const InterviewPage = () => {
                 </div>
               )}
 
-              <div className="flex items-end gap-3 bg-light-dark-secondary rounded-2xl border border-gray-600 focus-within:border-brand-primary/60 focus-within:shadow-lg focus-within:shadow-brand-primary/20 transition-all duration-200 p-3">
+              <div className="flex items-end gap-2 md:gap-3 bg-light-dark-secondary rounded-2xl border border-gray-600 focus-within:border-brand-primary/60 focus-within:shadow-lg focus-within:shadow-brand-primary/20 transition-all duration-200 p-2 md:p-3">
                 <div className="flex-1 relative min-h-[24px]">
                   <textarea
                     value={inputMessage}
@@ -899,12 +899,11 @@ const InterviewPage = () => {
                     placeholder={isRecording ? "Recording..." : isTranscribing ? "Transcribing..." : "Type your response..."}
                     rows={1}
                     disabled={isRecording || isTranscribing}
-                    className="w-full px-2 py-2 pr-10 bg-transparent text-white-primary placeholder-gray-400 focus:outline-none resize-none scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-700 scrollbar-corner-transparent disabled:opacity-50"
+                    className="w-full px-2 py-2 pr-10 bg-transparent text-white-primary placeholder-gray-400 focus:outline-none resize-none scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-700 scrollbar-corner-transparent disabled:opacity-50 text-sm md:text-base"
                     style={{ 
-                      minHeight: '40px', 
+                      minHeight: '36px', 
                       maxHeight: '200px',
-                      lineHeight: '1.5',
-                      fontSize: '14px'
+                      lineHeight: '1.5'
                     }}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' && !e.shiftKey) {
@@ -918,19 +917,19 @@ const InterviewPage = () => {
                     size="sm"
                     onClick={handleFileUpload}
                     disabled={isRecording || isTranscribing}
-                    className="absolute right-1 top-1 text-gray-400 hover:text-white-primary rounded-lg p-1.5 h-auto disabled:opacity-50"
+                    className="absolute right-1 top-1 text-gray-400 hover:text-white-primary rounded-lg p-1 md:p-1.5 h-auto disabled:opacity-50 touch-manipulation"
                   >
-                    <Paperclip className="w-4 h-4" />
+                    <Paperclip className="w-3 h-3 md:w-4 md:h-4" />
                   </Button>
                 </div>
                 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1 md:gap-2">
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={handleVoiceRecord}
                     disabled={isTranscribing}
-                    className={`relative p-2.5 rounded-lg transition-all duration-200 ${
+                    className={`relative p-2 md:p-2.5 rounded-lg transition-all duration-200 touch-manipulation ${
                       isRecording 
                         ? 'text-red-400 bg-red-500/20 hover:bg-red-500/30 animate-pulse' 
                         : isTranscribing
@@ -961,7 +960,7 @@ const InterviewPage = () => {
                       handleSendMessage()
                     }}
                     disabled={(!inputMessage.trim() && attachedFiles.length === 0) || isLoading || isRecording || isTranscribing}
-                    className={`p-2.5 rounded-lg transition-all duration-200 ${
+                    className={`p-2 md:p-2.5 rounded-lg transition-all duration-200 touch-manipulation ${
                       (inputMessage.trim() || attachedFiles.length > 0) && !isLoading && !isRecording && !isTranscribing
                         ? 'bg-brand-primary hover:bg-brand-primary/90 text-white'
                         : 'bg-gray-600 text-gray-400 cursor-not-allowed'
@@ -980,14 +979,14 @@ const InterviewPage = () => {
           </div>
 
           {/* Conversation Section with Toggle */}
-          <div className="p-4 pt-2 bg-gray-900/30">
+          <div className="p-3 md:p-4 pt-2 bg-gray-900/30 flex-shrink-0">
             <div className="max-w-4xl mx-auto">
               <button
                 onClick={() => setShowConversation(!showConversation)}
-                className="w-full flex items-center justify-between p-4 bg-light-dark-secondary rounded-xl hover:bg-gray-700 transition-all duration-200 border border-gray-600 hover:border-brand-primary/50"
+                className="w-full flex items-center justify-between p-3 md:p-4 bg-light-dark-secondary rounded-xl hover:bg-gray-700 transition-all duration-200 border border-gray-600 hover:border-brand-primary/50 touch-manipulation"
               >
-                <div className="flex items-center gap-3">
-                  <span className="text-white-primary font-medium">Interview Conversation</span>
+                <div className="flex items-center gap-2 md:gap-3">
+                  <span className="text-white-primary font-medium text-sm md:text-base">Interview Conversation</span>
                   {messages.length > 0 && (
                     <span className="px-2 py-1 bg-brand-primary text-white text-xs rounded-full">
                       {messages.length}
@@ -1002,7 +1001,7 @@ const InterviewPage = () => {
               </button>
               
               {showConversation && (
-                <div className="mt-4 max-h-80 overflow-y-auto space-y-3 p-4 bg-gray-900 rounded-xl border border-gray-700 scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800">
+                <div className="mt-3 md:mt-4 max-h-60 md:max-h-80 overflow-y-auto space-y-2 md:space-y-3 p-3 md:p-4 bg-gray-900 rounded-xl border border-gray-700 scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800 mb-4">
                   {messages.length === 0 ? (
                     <div className="text-center text-white-secondary py-8">
                       <p className="text-sm">No messages yet. Start the conversation!</p>
@@ -1015,7 +1014,7 @@ const InterviewPage = () => {
                           className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
                         >
                           <div
-                            className={`max-w-[85%] rounded-lg p-3 text-sm ${
+                            className={`max-w-[85%] rounded-lg p-2 md:p-3 text-xs md:text-sm ${
                               message.role === 'user'
                                 ? 'bg-brand-primary text-white'
                                 : 'bg-gray-700 text-white-primary'
