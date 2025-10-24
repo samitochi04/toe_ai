@@ -142,35 +142,35 @@ const SharesPage = () => {
   if (!isPremium) {
     return (
       <div className="min-h-screen bg-dark-primary">
-        <div className="container mx-auto px-4 py-8 max-w-4xl">
-          <div className="text-center py-16">
-            <Crown className="w-16 h-16 text-yellow-500 mx-auto mb-6" />
-            <h1 className="text-3xl font-bold text-white-primary mb-4">
+        <div className="container mx-auto px-3 md:px-4 py-4 md:py-8 max-w-4xl">
+          <div className="text-center py-12 md:py-16">
+            <Crown className="w-12 h-12 md:w-16 md:h-16 text-yellow-500 mx-auto mb-4 md:mb-6" />
+            <h1 className="text-2xl md:text-3xl font-bold text-white-primary mb-3 md:mb-4">
               {t('shares.premiumRequired.title')}
             </h1>
-            <p className="text-white-secondary text-lg mb-8 max-w-2xl mx-auto">
+            <p className="text-white-secondary text-base md:text-lg mb-6 md:mb-8 max-w-2xl mx-auto">
               {t('shares.premiumRequired.description')}
             </p>
             
-            <div className="bg-light-dark-secondary rounded-xl p-8 max-w-md mx-auto mb-8">
-              <h3 className="text-xl font-semibold text-white-primary mb-4">
+            <div className="bg-light-dark-secondary rounded-xl p-4 md:p-8 max-w-md mx-auto mb-6 md:mb-8">
+              <h3 className="text-lg md:text-xl font-semibold text-white-primary mb-3 md:mb-4">
                 {t('shares.premiumRequired.whatYouCanShare')}
               </h3>
-              <ul className="space-y-3 text-left">
-                <li className="flex items-center gap-3 text-white-secondary">
-                  <MessageCircle className="w-5 h-5 text-brand-primary" />
+              <ul className="space-y-2 md:space-y-3 text-left">
+                <li className="flex items-center gap-2 md:gap-3 text-white-secondary text-sm md:text-base">
+                  <MessageCircle className="w-4 h-4 md:w-5 md:h-5 text-brand-primary flex-shrink-0" />
                   {t('shares.premiumRequired.features.0')}
                 </li>
-                <li className="flex items-center gap-3 text-white-secondary">
-                  <Video className="w-5 h-5 text-brand-primary" />
+                <li className="flex items-center gap-2 md:gap-3 text-white-secondary text-sm md:text-base">
+                  <Video className="w-4 h-4 md:w-5 md:h-5 text-brand-primary flex-shrink-0" />
                   {t('shares.premiumRequired.features.1')}
                 </li>
-                <li className="flex items-center gap-3 text-white-secondary">
-                  <Users className="w-5 h-5 text-brand-primary" />
+                <li className="flex items-center gap-2 md:gap-3 text-white-secondary text-sm md:text-base">
+                  <Users className="w-4 h-4 md:w-5 md:h-5 text-brand-primary flex-shrink-0" />
                   {t('shares.premiumRequired.features.2')}
                 </li>
-                <li className="flex items-center gap-3 text-white-secondary">
-                  <Eye className="w-5 h-5 text-brand-primary" />
+                <li className="flex items-center gap-2 md:gap-3 text-white-secondary text-sm md:text-base">
+                  <Eye className="w-4 h-4 md:w-5 md:h-5 text-brand-primary flex-shrink-0" />
                   {t('shares.premiumRequired.features.3')}
                 </li>
               </ul>
@@ -178,9 +178,9 @@ const SharesPage = () => {
 
             <Button
               onClick={() => navigate('/workspace/premium')}
-              className="px-8 py-3 text-lg"
+              className="px-6 md:px-8 py-2 md:py-3 text-base md:text-lg"
             >
-              <Crown className="w-5 h-5 mr-2" />
+              <Crown className="w-4 h-4 md:w-5 md:h-5 mr-2" />
               {t('shares.premiumRequired.upgradeButton')}
             </Button>
           </div>
@@ -199,22 +199,22 @@ const SharesPage = () => {
 
   return (
     <div className="min-h-screen bg-dark-primary">
-      <div className="container mx-auto px-4 py-8 max-w-6xl">
-        <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-bold text-white-primary">
+      <div className="container mx-auto px-3 md:px-4 py-4 md:py-8 max-w-6xl">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 md:mb-8 gap-4">
+          <h1 className="text-2xl md:text-3xl font-bold text-white-primary">
             {t('shares.title')}
           </h1>
           <div className="flex items-center gap-2">
-            <Crown className="w-5 h-5 text-yellow-500" />
-            <span className="text-white-secondary">{t('shares.premiumFeature')}</span>
+            <Crown className="w-4 h-4 md:w-5 md:h-5 text-yellow-500" />
+            <span className="text-sm md:text-base text-white-secondary">{t('shares.premiumFeature')}</span>
           </div>
         </div>
 
         {/* Tabs */}
-        <div className="flex border-b border-gray-600 mb-8">
+        <div className="flex border-b border-gray-600 mb-6 md:mb-8">
           <button
             onClick={() => setActiveTab('my-shares')}
-            className={`px-6 py-3 font-medium border-b-2 transition-colors ${
+            className={`px-3 md:px-6 py-2 md:py-3 font-medium border-b-2 transition-colors text-sm md:text-base ${
               activeTab === 'my-shares'
                 ? 'border-brand-primary text-brand-primary'
                 : 'border-transparent text-white-secondary hover:text-white-primary'
@@ -224,7 +224,7 @@ const SharesPage = () => {
           </button>
           <button
             onClick={() => setActiveTab('create-share')}
-            className={`px-6 py-3 font-medium border-b-2 transition-colors ${
+            className={`px-3 md:px-6 py-2 md:py-3 font-medium border-b-2 transition-colors text-sm md:text-base ${
               activeTab === 'create-share'
                 ? 'border-brand-primary text-brand-primary'
                 : 'border-transparent text-white-secondary hover:text-white-primary'
@@ -236,66 +236,67 @@ const SharesPage = () => {
 
         {activeTab === 'my-shares' ? (
           // My Shares Tab
-          <div className="space-y-6">
+          <div className="space-y-4 md:space-y-6">
             {shares.length === 0 ? (
-              <div className="text-center py-16">
-                <Share2 className="w-16 h-16 text-gray-600 mx-auto mb-6" />
-                <h3 className="text-xl font-semibold text-white-primary mb-2">
+              <div className="text-center py-12 md:py-16">
+                <Share2 className="w-12 h-12 md:w-16 md:h-16 text-gray-600 mx-auto mb-4 md:mb-6" />
+                <h3 className="text-lg md:text-xl font-semibold text-white-primary mb-2">
                   {t('shares.noShares')}
                 </h3>
-                <p className="text-white-secondary mb-6">
+                <p className="text-white-secondary mb-4 md:mb-6 text-sm md:text-base">
                   {t('shares.startSharing')}
                 </p>
-                <Button onClick={() => setActiveTab('create-share')}>
+                <Button onClick={() => setActiveTab('create-share')} className="text-sm md:text-base">
                   <Plus className="w-4 h-4 mr-2" />
                   {t('shares.shareFirstChat')}
                 </Button>
               </div>
             ) : (
-              <div className="grid grid-cols-1 gap-6">
+              <div className="grid grid-cols-1 gap-4 md:gap-6">
                 {shares.map((share) => (
-                  <div key={share.id} className="bg-light-dark-secondary rounded-xl p-6">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
-                          <div className="w-8 h-8 bg-brand-primary rounded-full flex items-center justify-center">
+                  <div key={share.id} className="bg-light-dark-secondary rounded-xl p-4 md:p-6">
+                    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 md:gap-3 mb-2">
+                          <div className="w-6 h-6 md:w-8 md:h-8 bg-brand-primary rounded-full flex items-center justify-center flex-shrink-0">
                             {share.chat_type === 'interview' ? (
-                              <Video className="w-4 h-4 text-white" />
+                              <Video className="w-3 h-3 md:w-4 md:h-4 text-white" />
                             ) : (
-                              <MessageCircle className="w-4 h-4 text-white" />
+                              <MessageCircle className="w-3 h-3 md:w-4 md:h-4 text-white" />
                             )}
                           </div>
-                          <h3 className="text-lg font-semibold text-white-primary">
+                          <h3 className="text-base md:text-lg font-semibold text-white-primary truncate">
                             {share.title}
                           </h3>
                         </div>
                         
                         {share.description && (
-                          <p className="text-white-secondary mb-3">{share.description}</p>
+                          <p className="text-white-secondary mb-3 text-sm md:text-base">{share.description}</p>
                         )}
                         
-                        <div className="flex items-center gap-6 text-sm text-white-secondary">
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-2 md:gap-6 text-xs md:text-sm text-white-secondary">
                           <div className="flex items-center gap-1">
-                            <Calendar className="w-4 h-4" />
-                            <span>{t('shares.sharedOn')} {formatDateTime(share.created_at)}</span>
+                            <Calendar className="w-3 h-3 md:w-4 md:h-4 flex-shrink-0" />
+                            <span className="truncate">{t('shares.sharedOn')} {formatDateTime(share.created_at)}</span>
                           </div>
                           <div className="flex items-center gap-1">
-                            <Eye className="w-4 h-4" />
+                            <Eye className="w-3 h-3 md:w-4 md:h-4 flex-shrink-0" />
                             <span>{share.view_count || 0} {t('shares.views')}</span>
                           </div>
                           {share.expires_at && (
                             <div className="flex items-center gap-1">
-                              <span>{t('shares.expires')} {formatDateTime(share.expires_at)}</span>
+                              <span className="truncate">{t('shares.expires')} {formatDateTime(share.expires_at)}</span>
                             </div>
                           )}
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1 md:gap-2 flex-shrink-0">
                         <Button
                           variant="ghost"
                           size="sm"
                           onClick={() => handleCopyShareLink(share.share_token)}
+                          className="p-2 md:p-2"
                         >
                           <Copy className="w-4 h-4" />
                         </Button>
@@ -303,6 +304,7 @@ const SharesPage = () => {
                           variant="ghost"
                           size="sm"
                           onClick={() => window.open(`/shared/${share.share_token}`, '_blank')}
+                          className="p-2 md:p-2"
                         >
                           <ExternalLink className="w-4 h-4" />
                         </Button>
@@ -310,7 +312,7 @@ const SharesPage = () => {
                           variant="ghost"
                           size="sm"
                           onClick={() => handleDeleteShare(share.id)}
-                          className="text-red-400 hover:text-red-300"
+                          className="text-red-400 hover:text-red-300 p-2 md:p-2"
                         >
                           <Trash2 className="w-4 h-4" />
                         </Button>
@@ -323,34 +325,34 @@ const SharesPage = () => {
           </div>
         ) : (
           // Create Share Tab
-          <div className="space-y-8">
+          <div className="space-y-6 md:space-y-8">
             {/* Normal Chats */}
             <div>
-              <h2 className="text-xl font-semibold text-white-primary mb-4 flex items-center gap-2">
-                <MessageCircle className="w-5 h-5" />
+              <h2 className="text-lg md:text-xl font-semibold text-white-primary mb-3 md:mb-4 flex items-center gap-2">
+                <MessageCircle className="w-4 h-4 md:w-5 md:h-5" />
                 {t('shares.normalChats')}
               </h2>
               
               {normalChats.length === 0 ? (
-                <div className="text-center py-8 bg-light-dark-secondary rounded-xl">
-                  <p className="text-white-secondary">{t('shares.noNormalChats')}</p>
+                <div className="text-center py-6 md:py-8 bg-light-dark-secondary rounded-xl">
+                  <p className="text-white-secondary text-sm md:text-base">{t('shares.noNormalChats')}</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-3 md:gap-4">
                   {normalChats.map((chat) => (
-                    <div key={chat.id} className="bg-light-dark-secondary rounded-xl p-4">
-                      <h3 className="font-medium text-white-primary mb-2">
+                    <div key={chat.id} className="bg-light-dark-secondary rounded-xl p-3 md:p-4">
+                      <h3 className="font-medium text-white-primary mb-2 text-sm md:text-base truncate">
                         {chat.title || t('chats.untitled')}
                       </h3>
-                      <div className="text-sm text-white-secondary mb-3">
-                        {chat.message_count || 0} {t('chat.messages')} • {formatDateTime(chat.updated_at)}
+                      <div className="text-xs md:text-sm text-white-secondary mb-3">
+                        {chat.message_count || chat.conversation?.length || 0} {t('chat.messages')} • {formatDateTime(chat.updated_at)}
                       </div>
                       <Button
                         size="sm"
                         onClick={() => openShareModal(chat, 'normal')}
-                        className="w-full"
+                        className="w-full text-xs md:text-sm"
                       >
-                        <Share2 className="w-4 h-4 mr-2" />
+                        <Share2 className="w-3 h-3 md:w-4 md:h-4 mr-2" />
                         {t('shares.shareChat')}
                       </Button>
                     </div>
@@ -361,37 +363,37 @@ const SharesPage = () => {
 
             {/* Interview Chats */}
             <div>
-              <h2 className="text-xl font-semibold text-white-primary mb-4 flex items-center gap-2">
-                <Video className="w-5 h-5" />
+              <h2 className="text-lg md:text-xl font-semibold text-white-primary mb-3 md:mb-4 flex items-center gap-2">
+                <Video className="w-4 h-4 md:w-5 md:h-5" />
                 {t('shares.interviewChats')}
               </h2>
               
               {interviewChats.length === 0 ? (
-                <div className="text-center py-8 bg-light-dark-secondary rounded-xl">
-                  <p className="text-white-secondary">{t('shares.noInterviewChats')}</p>
+                <div className="text-center py-6 md:py-8 bg-light-dark-secondary rounded-xl">
+                  <p className="text-white-secondary text-sm md:text-base">{t('shares.noInterviewChats')}</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-3 md:gap-4">
                   {interviewChats.map((chat) => (
-                    <div key={chat.id} className="bg-light-dark-secondary rounded-xl p-4">
-                      <h3 className="font-medium text-white-primary mb-1">
+                    <div key={chat.id} className="bg-light-dark-secondary rounded-xl p-3 md:p-4">
+                      <h3 className="font-medium text-white-primary mb-1 text-sm md:text-base truncate">
                         {chat.title || t('interview.interface.noInterviews')}
                       </h3>
                       {chat.job_position && (
-                        <div className="text-sm text-brand-primary mb-2">
+                        <div className="text-xs md:text-sm text-brand-primary mb-2 truncate">
                           {chat.job_position}
                           {chat.company_name && ` ${t('shares.at')} ${chat.company_name}`}
                         </div>
                       )}
-                      <div className="text-sm text-white-secondary mb-3">
-                        {formatDateTime(chat.updated_at)}
+                      <div className="text-xs md:text-sm text-white-secondary mb-3">
+                        {chat.message_count || chat.conversation?.length || 0} {t('chat.messages')} • {formatDateTime(chat.updated_at)}
                       </div>
                       <Button
                         size="sm"
                         onClick={() => openShareModal(chat, 'interview')}
-                        className="w-full"
+                        className="w-full text-xs md:text-sm"
                       >
-                        <Share2 className="w-4 h-4 mr-2" />
+                        <Share2 className="w-3 h-3 md:w-4 md:h-4 mr-2" />
                         {t('shares.shareInterview')}
                       </Button>
                     </div>
@@ -404,12 +406,12 @@ const SharesPage = () => {
 
         {/* Share Modal */}
         <Modal isOpen={showShareModal} onClose={() => setShowShareModal(false)} size="lg">
-          <div className="p-6">
-            <h3 className="text-xl font-semibold text-white-primary mb-6">
+          <div className="p-4 md:p-6">
+            <h3 className="text-lg md:text-xl font-semibold text-white-primary mb-4 md:mb-6 truncate">
               {t('shares.shareModal.title')} "{selectedChat?.title}"
             </h3>
             
-            <div className="space-y-4">
+            <div className="space-y-3 md:space-y-4">
               <div>
                 <label className="block text-sm font-medium text-white-secondary mb-2">
                   {t('shares.shareModal.chatTitle')}
@@ -430,7 +432,7 @@ const SharesPage = () => {
                   onChange={(e) => setShareForm({ ...shareForm, description: e.target.value })}
                   placeholder={t('shares.shareModal.descriptionPlaceholder')}
                   rows={3}
-                  className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-xl text-white-primary placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-primary resize-none"
+                  className="w-full px-3 md:px-4 py-2 md:py-3 bg-gray-800 border border-gray-600 rounded-xl text-white-primary placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-primary resize-none text-sm md:text-base"
                 />
               </div>
 
@@ -441,7 +443,7 @@ const SharesPage = () => {
                 <select
                   value={shareForm.expires_in_days}
                   onChange={(e) => setShareForm({ ...shareForm, expires_in_days: parseInt(e.target.value) })}
-                  className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-xl text-white-primary focus:outline-none focus:ring-2 focus:ring-brand-primary"
+                  className="w-full px-3 md:px-4 py-2 md:py-3 bg-gray-800 border border-gray-600 rounded-xl text-white-primary focus:outline-none focus:ring-2 focus:ring-brand-primary text-sm md:text-base"
                 >
                   <option value={1}>1 {t('shares.shareModal.day')}</option>
                   <option value={7}>1 {t('shares.shareModal.week')}</option>
@@ -465,20 +467,20 @@ const SharesPage = () => {
               </div>
             </div>
 
-            <div className="flex gap-3 mt-6">
+            <div className="flex flex-col sm:flex-row gap-3 mt-4 md:mt-6">
               <Button
                 variant="ghost"
                 onClick={() => setShowShareModal(false)}
-                className="flex-1"
+                className="flex-1 text-sm md:text-base"
               >
                 {t('common.cancel')}
               </Button>
               <Button
                 onClick={handleShareChat}
-                className="flex-1"
+                className="flex-1 text-sm md:text-base"
                 disabled={!shareForm.title}
               >
-                <Share2 className="w-4 h-4 mr-2" />
+                <Share2 className="w-3 h-3 md:w-4 md:h-4 mr-2" />
                 {t('shares.shareModal.shareButton')}
               </Button>
             </div>
