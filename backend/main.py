@@ -52,7 +52,7 @@ security = HTTPBearer()
 # CORS Middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.cors_origins,  # Changed from settings.ALLOWED_ORIGINS
+    allow_origins=settings.production_cors_origins if settings.ENVIRONMENT == "production" else settings.cors_origins,
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allow_headers=["*"],
@@ -63,6 +63,31 @@ app.add_middleware(
 # Add the custom CORS middleware for development mode only
 if settings.ENVIRONMENT == "development":
     app.add_middleware(AllowAllCORSMiddleware)
+
+# Add comprehensive CORS middleware for production
+@app.middleware("http")
+async def add_cors_headers(request, call_next):
+    """Add CORS headers to all responses"""
+    response = await call_next(request)
+    
+    # Get allowed origins
+    allowed_origins = settings.production_cors_origins if settings.ENVIRONMENT == "production" else settings.cors_origins
+    
+    # Add CORS headers
+    if "*" in allowed_origins:
+        response.headers["Access-Control-Allow-Origin"] = "*"
+    else:
+        origin = request.headers.get("origin")
+        if origin in allowed_origins:
+            response.headers["Access-Control-Allow-Origin"] = origin
+    
+    response.headers["Access-Control-Allow-Credentials"] = "true"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, PATCH, OPTIONS"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-Requested-With, Accept, Origin"
+    response.headers["Access-Control-Expose-Headers"] = "Content-Type, Authorization"
+    response.headers["Access-Control-Max-Age"] = "600"
+    
+    return response
 
 # Serve static files (for audio files, profile pictures, etc.)
 if not os.path.exists("static"):
