@@ -37,7 +37,9 @@
     "upgradeButton": "Passer à Premium",
     "perMonth": "/mois",
     "yearlyDiscount": "ou 50€/an (économie 17%)",
-    "securePayment": "Annulation à tout moment • Paiement sécurisé • Accès instantané"
+    "securePayment": "Annulation à tout moment • Paiement sécurisé • Accès instantané",
+    "user": "Utilisateur",
+    "open": "Ouvrir"
   },
   "landing": {
     "hero": {
@@ -121,30 +123,36 @@
   "dashboard": {
     "title": "Tableau de bord",
     "welcome": "Bon retour, {{name}} !",
+    "readyToPractice": "Prêt à pratiquer votre prochain entretien ?",
     "getStarted": {
       "title": "Commencer",
       "newChat": "Nouvelle discussion",
+      "newChatDescription": "Commencez une conversation avec l'IA pour pratiquer des questions générales",
       "newInterview": "Nouvel entretien",
-      "shareChat": "Partager discussion"
+      "newInterviewDescription": "Commencez une session d'entretien simulé avec interaction vocale",
+      "shareChat": "Partager discussion",
+      "shareChatDescription": "Partagez votre pratique d'entretien avec d'autres (Fonctionnalité Premium)"
     },
     "recentChats": {
       "title": "Discussions récentes",
       "viewAll": "Voir tout",
-      "noChats": "Aucune discussion"
+      "noChats": "Aucune discussion encore. Commencez une conversation pour la voir ici !"
     },
     "recentInterviews": {
       "title": "Entretiens récents",
       "viewAll": "Voir tout",
-      "noInterviews": "Aucun entretien"
+      "noInterviews": "Aucun entretien encore. Commencez votre premier entretien IA pour le voir ici !"
     },
     "recentShares": {
       "title": "Partages récents",
       "viewAll": "Voir tout",
-      "noShares": "Aucun partage"
+      "noShares": "Aucun chat partagé encore.",
+      "shareWithFriends": "Partagez vos conversations avec des amis depuis la page de chat !"
     },
     "stats": {
       "totalChats": "Total des discussions",
       "totalInterviews": "Total des entretiens",
+      "totalShares": "Total des partages",
       "totalMinutes": "Total des minutes",
       "thisMonth": "Ce mois-ci"
     },
@@ -225,6 +233,48 @@
     "newInterview": "Nouvel entretien",
     "startInterview": "Commencer l'entretien",
     "endInterview": "Terminer l'entretien",
+    "setup": {
+      "title": "Configuration du nouvel entretien",
+      "subtitle": "Configuration de l'entretien",
+      "description": "Configurons votre session d'entretien IA",
+      "jobPosition": "Poste",
+      "companyName": "Nom de l'entreprise",
+      "interviewLanguage": "Langue de l'entretien",
+      "difficultyLevel": "Niveau de difficulté",
+      "startButton": "Commencer l'entretien",
+      "jobPositionRequired": "Veuillez entrer un poste"
+    },
+    "interface": {
+      "title": "Pratique d'entretien",
+      "subtitle": "Pratiquez des entretiens pour votre emploi de rêve",
+      "newInterview": "Nouvel entretien",
+      "searchPlaceholder": "Rechercher des entretiens par poste, entreprise ou titre...",
+      "noInterviews": "Aucun chat d'entretien encore",
+      "getStarted": "Commencez à pratiquer des entretiens pour améliorer vos compétences",
+      "createFirst": "Commencez votre premier entretien",
+      "deleteConfirmTitle": "Supprimer le chat d'entretien",
+      "deleteConfirmMessage": "Êtes-vous sûr de vouloir supprimer \"{{title}}\" ? Cette action ne peut pas être annulée.",
+      "messages": "messages",
+      "created": "Créé",
+      "updated": "Mis à jour",
+      "previous": "Précédent",
+      "next": "Suivant",
+      "page": "Page",
+      "of": "de"
+    },
+    "errors": {
+      "loadError": "Échec du chargement des chats d'entretien",
+      "deleteSuccess": "Chat d'entretien supprimé avec succès",
+      "deleteError": "Échec de la suppression du chat d'entretien",
+      "exportPremiumOnly": "L'exportation PDF est disponible uniquement pour les utilisateurs Premium",
+      "generatingPdf": "Génération du PDF...",
+      "pdfGeneratedSuccess": "PDF généré avec succès ! Vérifiez votre nouvel onglet.",
+      "pdfDownloadedSuccess": "PDF téléchargé avec succès !",
+      "pdfNotFoundError": "Chat non trouvé. Veuillez actualiser et réessayer.",
+      "pdfPremiumRequiredError": "Vous avez besoin d'un abonnement premium pour exporter des PDF.",
+      "pdfServerError": "Erreur serveur. Veuillez réessayer plus tard.",
+      "pdfExportError": "Échec de l'exportation PDF. Veuillez réessayer."
+    },
     "settings": {
       "title": "Paramètres de l'entretien",
       "difficulty": "Difficulté",
@@ -238,6 +288,30 @@
       "stop": "Arrêter l'enregistrement",
       "listening": "Écoute...",
       "processing": "Traitement..."
+    },
+    "messages": {
+      "loadError": "Échec du chargement du chat d'entretien",
+      "sendError": "Échec de l'envoi du message",
+      "audioUnmuted": "Audio activé",
+      "audioMuted": "Audio désactivé",
+      "mediaDevicesNotSupported": "API MediaDevices non supportée dans ce navigateur ou contexte",
+      "cancel": "Annuler",
+      "speechToTextError": "Échec de la conversion de la parole en texte",
+      "microphoneAccessDenied": "Accès au microphone refusé. Veuillez autoriser les permissions du microphone dans votre navigateur.",
+      "noMicrophoneFound": "Aucun microphone trouvé. Veuillez connecter un microphone et réessayer.",
+      "audioRecordingNotSupported": "L'enregistrement audio n'est pas supporté dans ce navigateur.",
+      "microphoneInUse": "Le microphone est déjà utilisé par une autre application.",
+      "microphoneAccessBlocked": "Accès au microphone bloqué pour des raisons de sécurité. Veuillez vous assurer d'utiliser HTTPS.",
+      "microphoneAccessNotAvailable": "Accès au microphone non disponible. Veuillez utiliser un navigateur moderne avec support du microphone.",
+      "microphoneAccessFailed": "Échec de l'accès au microphone. Veuillez vérifier les paramètres de votre navigateur et réessayer.",
+      "noConversationToExport": "Aucune conversation à exporter",
+      "downloadConversationAsPDF": "Télécharger la conversation en PDF",
+      "stopRecording": "Arrêter l'enregistrement",
+      "transcribing": "Transcription en cours...",
+      "startRecording": "Commencer l'enregistrement",
+      "finishRecordingFirst": "Terminez d'abord l'enregistrement",
+      "sendMessage": "Envoyer le message",
+      "candidate": "Candidat"
     }
   },
   "profile": {
@@ -518,15 +592,15 @@
     "untitled": "Chat sans titre"
   },
   "interviewsList": {
-    "title": "Chats d'entretien",
-    "subtitle": "Pratiquez et révisez vos sessions d'entretien",
+    "title": "Pratique d'entretien",
+    "subtitle": "Pratiquez des entretiens pour votre emploi de rêve",
     "newInterview": "Nouvel entretien",
-    "searchPlaceholder": "Rechercher des entretiens...",
-    "noInterviews": "Aucun entretien encore",
+    "searchPlaceholder": "Rechercher des entretiens par poste, entreprise ou titre...",
+    "noInterviews": "Aucun chat d'entretien encore",
     "noSearchResults": "Aucun entretien trouvé",
     "tryDifferentSearch": "Essayez un terme de recherche différent",
-    "getStarted": "Commencez par créer votre premier entretien",
-    "createFirst": "Créer le premier entretien",
+    "getStarted": "Commencez à pratiquer des entretiens pour améliorer vos compétences",
+    "createFirst": "Commencez votre premier entretien",
     "difficulty": {
       "easy": "Facile",
       "medium": "Moyen",
@@ -545,7 +619,27 @@
     "exportError": "Échec de l'exportation de l'entretien",
     "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cet entretien ?",
     "deleteSuccess": "Entretien supprimé avec succès !",
-    "deleteError": "Échec de la suppression de l'entretien"
+    "deleteError": "Échec de la suppression de l'entretien",
+    "messages": "messages",
+    "created": "Créé",
+    "updated": "Mis à jour",
+    "previous": "Précédent",
+    "next": "Suivant",
+    "page": "Page",
+    "of": "de",
+    "deleteConfirmTitle": "Supprimer le chat d'entretien",
+    "deleteConfirmMessage": "Êtes-vous sûr de vouloir supprimer \"{{title}}\" ? Cette action ne peut pas être annulée.",
+    "loadError": "Échec du chargement des chats d'entretien",
+    "deleteSuccessMessage": "Chat d'entretien supprimé avec succès",
+    "deleteErrorMessage": "Échec de la suppression du chat d'entretien",
+    "exportPremiumOnly": "L'exportation PDF est disponible uniquement pour les utilisateurs Premium",
+    "generatingPdf": "Génération du PDF...",
+    "pdfGeneratedSuccess": "PDF généré avec succès ! Vérifiez votre nouvel onglet.",
+    "pdfDownloadedSuccess": "PDF téléchargé avec succès !",
+    "pdfNotFoundError": "Chat non trouvé. Veuillez actualiser et réessayer.",
+    "pdfPremiumRequiredError": "Vous avez besoin d'un abonnement premium pour exporter des PDF.",
+    "pdfServerError": "Erreur serveur. Veuillez réessayer plus tard.",
+    "pdfExportError": "Échec de l'exportation PDF. Veuillez réessayer."
   },
   "shares": {
     "title": "Partages",
@@ -553,24 +647,44 @@
     "myShares": "Mes partages",
     "shareChat": "Partager le chat",
     "shareInterview": "Partager l'entretien",
+    "shareNewChat": "Partager un nouveau chat",
     "noShares": "Aucun chat partagé encore",
+    "startSharing": "Commencez à partager vos conversations avec des amis et collègues",
+    "shareFirstChat": "Partagez votre premier chat",
+    "normalChats": "Chats normaux",
+    "interviewChats": "Chats d'entretien",
+    "noNormalChats": "Aucun chat normal à partager encore",
+    "noInterviewChats": "Aucun chat d'entretien à partager encore",
+    "at": "chez",
+    "sharedOn": "Partagé le",
+    "views": "vues",
+    "expires": "Expire le",
+    "premiumFeature": "Fonctionnalité Premium",
     "premiumRequired": {
       "title": "Fonctionnalité premium",
-      "description": "Le partage de chats est disponible uniquement pour les abonnés premium.",
+      "description": "La fonctionnalité de partage est exclusive aux abonnés Premium. Partagez vos sessions d'entretien et conversations de chat avec des amis, collègues et mentors pour obtenir des commentaires précieux.",
+      "whatYouCanShare": "Ce que vous pouvez partager :",
       "features": [
-        "Partager des chats illimités",
-        "Contrôler les permissions d'accès",
-        "Définir des dates d'expiration",
-        "Suivre les vues et l'engagement"
+        "Conversations de chat normales",
+        "Sessions de pratique d'entretien",
+        "Partager avec des alias personnalisés",
+        "Voir les analyses et l'engagement"
       ],
-      "upgradeButton": "Passer au premium"
+      "upgradeButton": "Passer au Premium"
     },
     "shareModal": {
-      "title": "Partager le chat",
-      "chatTitle": "Titre",
+      "title": "Partager",
+      "chatTitle": "Titre du partage",
+      "titlePlaceholder": "Donnez un titre à votre partage...",
       "description": "Description (Optionnel)",
-      "allowComments": "Autoriser les commentaires",
-      "expiresIn": "Expire dans",
+      "descriptionPlaceholder": "Ajoutez du contexte ou des notes sur cette conversation...",
+      "allowComments": "Autoriser les spectateurs à laisser des commentaires (bientôt disponible)",
+      "expiresIn": "Le lien expire dans",
+      "day": "jour",
+      "week": "semaine",
+      "month": "mois",
+      "months": "mois",
+      "never": "Jamais",
       "days": "jours",
       "shareButton": "Partager le chat",
       "cancel": "Annuler"
@@ -592,7 +706,17 @@
     "loading": "Chargement du chat partagé...",
     "notFound": "Chat partagé non trouvé",
     "expired": "Ce chat partagé a expiré",
-    "error": "Échec du chargement du chat partagé"
+    "error": "Échec du chargement du chat partagé",
+    "defaultTitle": "Chat partagé",
+    "sharedBy": "Partagé par",
+    "anonymous": "Anonyme",
+    "conversation": "Conversation",
+    "noMessages": "Aucun message dans cette conversation.",
+    "interviewDetails": "Détails de l'entretien",
+    "position": "Poste",
+    "company": "Entreprise",
+    "poweredBy": "Alimenté par TOE AI",
+    "createYourOwn": "Créez vos propres sessions d'entretien IA et partagez-les avec des amis !"
   },
   "about": {
     "meta": {

@@ -1,11 +1,13 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import useAuthStore from '../store/authStore'
 import { chatService } from '../services/chat'
 import shareService from '../services/share'
 import { MoreVertical, MessageCircle, Video, Share2 } from 'lucide-react'
 
 const DashboardPage = () => {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const { user, userProfile } = useAuthStore()
   
@@ -38,7 +40,7 @@ const DashboardPage = () => {
           .slice(0, 5) // Get 5 most recent
           .map(chat => ({
             id: chat.id,
-            title: chat.title || 'Untitled Chat',
+            title: chat.title || t('chats.untitled'),
             date: new Date(chat.updated_at || chat.created_at).toLocaleDateString(),
             messages: chat.message_count || 0,
             type: 'normal'
@@ -50,7 +52,7 @@ const DashboardPage = () => {
           .slice(0, 5) // Get 5 most recent
           .map(chat => ({
             id: chat.id,
-            title: chat.title || 'Untitled Interview',
+            title: chat.title || t('interview.interface.noInterviews'),
             date: new Date(chat.updated_at || chat.created_at).toLocaleDateString(),
             jobPosition: chat.job_position,
             companyName: chat.company_name,
@@ -211,7 +213,7 @@ const DashboardPage = () => {
                   }}
                   className="w-full px-3 py-2 text-left text-sm text-white-secondary hover:text-white-primary hover:bg-gray-700 transition-colors"
                 >
-                  Open {type}
+                  {t('common.open')} {type}
                 </button>
                 <button 
                   onClick={(e) => {
@@ -220,7 +222,7 @@ const DashboardPage = () => {
                   }}
                   className="w-full px-3 py-2 text-left text-sm text-white-secondary hover:text-white-primary hover:bg-gray-700 transition-colors"
                 >
-                  Share {type}
+                  {t('common.share')} {type}
                 </button>
                 {user?.is_premium && (
                   <button 
@@ -230,7 +232,7 @@ const DashboardPage = () => {
                     }}
                     className="w-full px-3 py-2 text-left text-sm text-white-secondary hover:text-white-primary hover:bg-gray-700 transition-colors"
                   >
-                    Export as PDF
+                    {t('common.export')} as PDF
                   </button>
                 )}
                 <div className="border-t border-gray-600 my-1"></div>
@@ -241,7 +243,7 @@ const DashboardPage = () => {
                   }}
                   className="w-full px-3 py-2 text-left text-sm text-red-400 hover:text-red-300 hover:bg-gray-700 transition-colors"
                 >
-                  Delete {type}
+                  {t('common.delete')} {type}
                 </button>
               </div>
             )}
@@ -273,23 +275,23 @@ const DashboardPage = () => {
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div className="bg-light-dark-secondary rounded-lg p-6 max-w-md w-full mx-4">
           <h3 className="text-lg font-semibold text-white-primary mb-4">
-            Delete {deleteModal.type}
+            {t('common.delete')} {deleteModal.type}
           </h3>
           <p className="text-white-secondary mb-6">
-            Are you sure you want to delete "{deleteModal.chat?.title}"? This action cannot be undone.
+            {t('chat.deleteConfirmMessage')}
           </p>
           <div className="flex justify-end space-x-3">
             <button
               onClick={cancelDelete}
               className="px-4 py-2 bg-gray-600 hover:bg-gray-500 text-white rounded-lg transition-colors"
             >
-              Cancel
+              {t('common.cancel')}
             </button>
             <button
               onClick={confirmDelete}
               className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg transition-colors"
             >
-              Delete
+              {t('common.delete')}
             </button>
           </div>
         </div>
@@ -303,10 +305,10 @@ const DashboardPage = () => {
         {/* Welcome Section */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-white-primary mb-2">
-            Welcome back, {user?.full_name?.split(' ')[0] || 'User'}!
+            {t('dashboard.welcome', { name: user?.full_name?.split(' ')[0] || t('common.user') })}
           </h1>
           <p className="text-white-secondary">
-            Ready to practice your next interview?
+            {t('dashboard.readyToPractice')}
           </p>
         </div>
 
@@ -315,7 +317,7 @@ const DashboardPage = () => {
           <div className="bg-light-dark-secondary rounded-xl p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-white-secondary text-sm">Total Chats</p>
+                <p className="text-white-secondary text-sm">{t('dashboard.stats.totalChats')}</p>
                 <p className="text-2xl font-bold text-white-primary">
                   {isLoading ? '...' : stats.totalChats}
                 </p>
@@ -327,7 +329,7 @@ const DashboardPage = () => {
           <div className="bg-light-dark-secondary rounded-xl p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-white-secondary text-sm">Total Interviews</p>
+                <p className="text-white-secondary text-sm">{t('dashboard.stats.totalInterviews')}</p>
                 <p className="text-2xl font-bold text-white-primary">
                   {isLoading ? '...' : stats.totalInterviews}
                 </p>
@@ -339,7 +341,7 @@ const DashboardPage = () => {
           <div className="bg-light-dark-secondary rounded-xl p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-white-secondary text-sm">Total Shares</p>
+                <p className="text-white-secondary text-sm">{t('dashboard.stats.totalShares')}</p>
                 <p className="text-2xl font-bold text-white-primary">
                   {isLoading ? '...' : stats.totalShares}
                 </p>
@@ -352,27 +354,27 @@ const DashboardPage = () => {
         {/* Get Started Section */}
         <div className="mb-8">
           <h2 className="text-xl font-semibold text-white-primary mb-4">
-            Get Started
+            {t('dashboard.getStarted.title')}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <GetStartedCard
               icon="/assets/images/main_workspace_new_chat_icon.png"
-              title="New Chat"
-              description="Start a conversation with AI to practice general questions"
+              title={t('dashboard.getStarted.newChat')}
+              description={t('dashboard.getStarted.newChatDescription')}
               onClick={() => navigate('/workspace/chat/new')}
               bgColor="bg-blue-2nd"
             />
             <GetStartedCard
               icon="/assets/images/main_workspace_new_interview_icon.png"
-              title="New Interview"
-              description="Begin a mock interview session with voice interaction"
+              title={t('dashboard.getStarted.newInterview')}
+              description={t('dashboard.getStarted.newInterviewDescription')}
               onClick={() => navigate('/workspace/interview/new')}
               bgColor="bg-success"
             />
             <GetStartedCard
               icon="/assets/images/main_workspace_share_chat_icon.png"
-              title="Share Chat"
-              description="Share your interview practice with others (Premium feature)"
+              title={t('dashboard.getStarted.shareChat')}
+              description={t('dashboard.getStarted.shareChatDescription')}
               onClick={() => navigate('/workspace/shares')}
               bgColor="bg-warning"
             />
@@ -385,20 +387,20 @@ const DashboardPage = () => {
           <div className="bg-light-dark-secondary rounded-xl p-6">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold text-white-primary">
-                Recent Interviews
+                {t('dashboard.recentInterviews.title')}
               </h3>
               <button 
                 onClick={() => navigate('/workspace/interviews')}
                 className="text-blue-2nd hover:text-blue-primary text-sm font-medium"
               >
-                View All
+                {t('dashboard.recentInterviews.viewAll')}
               </button>
             </div>
             
             <div className="space-y-3">
               {isLoading ? (
                 <div className="text-center py-8">
-                  <div className="text-white-secondary">Loading interviews...</div>
+                  <div className="text-white-secondary">{t('common.loading')}</div>
                 </div>
               ) : recentInterviews.length > 0 ? (
                 recentInterviews.map(interview => (
@@ -406,7 +408,7 @@ const DashboardPage = () => {
                 ))
               ) : (
                 <p className="text-white-secondary text-center py-8">
-                  No interviews yet. Start your first AI interview to see it here!
+                  {t('dashboard.recentInterviews.noInterviews')}
                 </p>
               )}
             </div>
@@ -416,20 +418,20 @@ const DashboardPage = () => {
           <div className="bg-light-dark-secondary rounded-xl p-6">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold text-white-primary">
-                Recent Chats
+                {t('dashboard.recentChats.title')}
               </h3>
               <button 
                 onClick={() => navigate('/workspace/chats')}
                 className="text-blue-2nd hover:text-blue-primary text-sm font-medium"
               >
-                View All
+                {t('dashboard.recentChats.viewAll')}
               </button>
             </div>
             
             <div className="space-y-3">
               {isLoading ? (
                 <div className="text-center py-8">
-                  <div className="text-white-secondary">Loading chats...</div>
+                  <div className="text-white-secondary">{t('common.loading')}</div>
                 </div>
               ) : recentChats.length > 0 ? (
                 recentChats.map(chat => (
@@ -437,7 +439,7 @@ const DashboardPage = () => {
                 ))
               ) : (
                 <p className="text-white-secondary text-center py-8">
-                  No chats yet. Start a conversation to see it here!
+                  {t('dashboard.recentChats.noChats')}
                 </p>
               )}
             </div>
@@ -447,20 +449,20 @@ const DashboardPage = () => {
           <div className="bg-light-dark-secondary rounded-xl p-6">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold text-white-primary">
-                Recent Shares
+                {t('dashboard.recentShares.title')}
               </h3>
               <button 
                 onClick={() => navigate('/workspace/shares')}
                 className="text-blue-2nd hover:text-blue-primary text-sm font-medium"
               >
-                View All
+                {t('dashboard.recentShares.viewAll')}
               </button>
             </div>
             
             <div className="space-y-3">
               {isLoading ? (
                 <div className="text-center py-8">
-                  <div className="text-white-secondary">Loading shares...</div>
+                  <div className="text-white-secondary">{t('common.loading')}</div>
                 </div>
               ) : recentShares.length > 0 ? (
                 recentShares.map(share => (
@@ -469,18 +471,18 @@ const DashboardPage = () => {
               ) : (
                 <div className="text-center py-8">
                   <p className="text-white-secondary mb-4">
-                    No shared chats yet.
+                    {t('dashboard.recentShares.noShares')}
                   </p>
                   {userProfile?.subscription === 'premium' ? (
                     <p className="text-white-secondary text-sm">
-                      Share your conversations with friends from the chat page!
+                      {t('dashboard.recentShares.shareWithFriends')}
                     </p>
                   ) : (
                     <button
                       onClick={() => navigate('/workspace/premium')}
                       className="bg-gradient-to-r from-blue-primary to-purple-secondary text-white px-4 py-2 rounded-lg hover:opacity-90 transition-opacity text-sm font-medium"
                     >
-                      Upgrade to Premium to Share
+                      {t('common.upgradeButton')}
                     </button>
                   )}
                 </div>

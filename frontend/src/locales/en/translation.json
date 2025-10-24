@@ -37,7 +37,9 @@
     "upgradeButton": "Upgrade to Premium",
     "perMonth": "/month",
     "yearlyDiscount": "or €50/year (save 17%)",
-    "securePayment": "Cancel anytime • Secure payment • Instant access"
+    "securePayment": "Cancel anytime • Secure payment • Instant access",
+    "user": "User",
+    "open": "Open"
   },
   "landing": {
     "hero": {
@@ -121,30 +123,36 @@
   "dashboard": {
     "title": "Dashboard",
     "welcome": "Welcome back, {{name}}!",
+    "readyToPractice": "Ready to practice your next interview?",
     "getStarted": {
       "title": "Get Started",
-      "newChat": "Start New Chat",
-      "newInterview": "Start New Interview",
-      "shareChat": "Share Chat"
+      "newChat": "New Chat",
+      "newChatDescription": "Start a conversation with AI to practice general questions",
+      "newInterview": "New Interview",
+      "newInterviewDescription": "Begin a mock interview session with voice interaction",
+      "shareChat": "Share Chat",
+      "shareChatDescription": "Share your interview practice with others (Premium feature)"
     },
     "recentChats": {
       "title": "Recent Chats",
       "viewAll": "View All",
-      "noChats": "No chats yet"
+      "noChats": "No chats yet. Start a conversation to see it here!"
     },
     "recentInterviews": {
-      "title": "Recent Interview Chats",
+      "title": "Recent Interviews",
       "viewAll": "View All",
-      "noInterviews": "No interviews yet"
+      "noInterviews": "No interviews yet. Start your first AI interview to see it here!"
     },
     "recentShares": {
       "title": "Recent Shares",
       "viewAll": "View All",
-      "noShares": "No shares yet"
+      "noShares": "No shared chats yet.",
+      "shareWithFriends": "Share your conversations with friends from the chat page!"
     },
     "stats": {
       "totalChats": "Total Chats",
       "totalInterviews": "Total Interviews",
+      "totalShares": "Total Shares",
       "totalMinutes": "Total Minutes",
       "thisMonth": "This Month"
     },
@@ -225,6 +233,48 @@
     "newInterview": "New Interview",
     "startInterview": "Start Interview",
     "endInterview": "End Interview",
+    "setup": {
+      "title": "New Interview Setup",
+      "subtitle": "Interview Setup",
+      "description": "Let's set up your AI interview session",
+      "jobPosition": "Job Position",
+      "companyName": "Company Name",
+      "interviewLanguage": "Interview Language",
+      "difficultyLevel": "Difficulty Level",
+      "startButton": "Start Interview",
+      "jobPositionRequired": "Please enter a job position"
+    },
+    "interface": {
+      "title": "Interview Practice",
+      "subtitle": "Practice interviews for your dream job",
+      "newInterview": "New Interview",
+      "searchPlaceholder": "Search interviews by position, company, or title...",
+      "noInterviews": "No Interview Chats Yet",
+      "getStarted": "Start practicing interviews to improve your skills",
+      "createFirst": "Start Your First Interview",
+      "deleteConfirmTitle": "Delete Interview Chat",
+      "deleteConfirmMessage": "Are you sure you want to delete \"{{title}}\"? This action cannot be undone.",
+      "messages": "messages",
+      "created": "Created",
+      "updated": "Updated",
+      "previous": "Previous",
+      "next": "Next",
+      "page": "Page",
+      "of": "of"
+    },
+    "errors": {
+      "loadError": "Failed to load interview chats",
+      "deleteSuccess": "Interview chat deleted successfully",
+      "deleteError": "Failed to delete interview chat",
+      "exportPremiumOnly": "PDF export is available for Premium users only",
+      "generatingPdf": "Generating PDF...",
+      "pdfGeneratedSuccess": "PDF generated successfully! Check your new tab.",
+      "pdfDownloadedSuccess": "PDF downloaded successfully!",
+      "pdfNotFoundError": "Chat not found. Please refresh and try again.",
+      "pdfPremiumRequiredError": "You need a premium subscription to export PDFs.",
+      "pdfServerError": "Server error. Please try again later.",
+      "pdfExportError": "Failed to export PDF. Please try again."
+    },
     "settings": {
       "title": "Interview Settings",
       "difficulty": "Difficulty",
@@ -238,6 +288,30 @@
       "stop": "Stop Recording",
       "listening": "Listening...",
       "processing": "Processing..."
+    },
+    "messages": {
+      "loadError": "Failed to load interview chat",
+      "sendError": "Failed to send message",
+      "audioUnmuted": "Audio unmuted",
+      "audioMuted": "Audio muted",
+      "mediaDevicesNotSupported": "MediaDevices API not supported in this browser or context",
+      "cancel": "Cancel",
+      "speechToTextError": "Failed to convert speech to text",
+      "microphoneAccessDenied": "Microphone access denied. Please allow microphone permissions in your browser.",
+      "noMicrophoneFound": "No microphone found. Please connect a microphone and try again.",
+      "audioRecordingNotSupported": "Audio recording not supported in this browser.",
+      "microphoneInUse": "Microphone is already in use by another application.",
+      "microphoneAccessBlocked": "Microphone access blocked for security reasons. Please ensure you're using HTTPS.",
+      "microphoneAccessNotAvailable": "Microphone access not available. Please use a modern browser with microphone support.",
+      "microphoneAccessFailed": "Failed to access microphone. Please check your browser settings and try again.",
+      "noConversationToExport": "No conversation to export",
+      "downloadConversationAsPDF": "Download conversation as PDF",
+      "stopRecording": "Stop Recording",
+      "transcribing": "Transcribing...",
+      "startRecording": "Start Recording",
+      "finishRecordingFirst": "Finish recording first",
+      "sendMessage": "Send message",
+      "candidate": "Candidate"
     }
   },
   "profile": {
@@ -600,15 +674,15 @@
     "untitled": "Untitled Chat"
   },
   "interviewsList": {
-    "title": "Interview Chats",
-    "subtitle": "Practice and review your interview sessions",
+    "title": "Interview Practice",
+    "subtitle": "Practice interviews for your dream job",
     "newInterview": "New Interview",
-    "searchPlaceholder": "Search interviews...",
-    "noInterviews": "No interviews yet",
+    "searchPlaceholder": "Search interviews by position, company, or title...",
+    "noInterviews": "No Interview Chats Yet",
     "noSearchResults": "No interviews found",
     "tryDifferentSearch": "Try a different search term",
-    "getStarted": "Get started by creating your first interview",
-    "createFirst": "Create First Interview",
+    "getStarted": "Start practicing interviews to improve your skills",
+    "createFirst": "Start Your First Interview",
     "difficulty": {
       "easy": "Easy",
       "medium": "Medium",
@@ -627,32 +701,72 @@
     "exportError": "Failed to export interview",
     "deleteConfirm": "Are you sure you want to delete this interview?",
     "deleteSuccess": "Interview deleted successfully!",
-    "deleteError": "Failed to delete interview"
+    "deleteError": "Failed to delete interview",
+    "messages": "messages",
+    "created": "Created",
+    "updated": "Updated",
+    "previous": "Previous",
+    "next": "Next",
+    "page": "Page",
+    "of": "of",
+    "deleteConfirmTitle": "Delete Interview Chat",
+    "deleteConfirmMessage": "Are you sure you want to delete \"{{title}}\"? This action cannot be undone.",
+    "loadError": "Failed to load interview chats",
+    "deleteSuccessMessage": "Interview chat deleted successfully",
+    "deleteErrorMessage": "Failed to delete interview chat",
+    "exportPremiumOnly": "PDF export is available for Premium users only",
+    "generatingPdf": "Generating PDF...",
+    "pdfGeneratedSuccess": "PDF generated successfully! Check your new tab.",
+    "pdfDownloadedSuccess": "PDF downloaded successfully!",
+    "pdfNotFoundError": "Chat not found. Please refresh and try again.",
+    "pdfPremiumRequiredError": "You need a premium subscription to export PDFs.",
+    "pdfServerError": "Server error. Please try again later.",
+    "pdfExportError": "Failed to export PDF. Please try again."
   },
   "shares": {
     "title": "Shares",
     "subtitle": "Manage your shared chats and interviews",
     "myShares": "My Shares",
     "shareChat": "Share Chat",
-    "shareInterview": "Share Interview", 
+    "shareInterview": "Share Interview",
+    "shareNewChat": "Share New Chat",
     "noShares": "No shared chats yet",
+    "startSharing": "Start sharing your conversations with friends and colleagues",
+    "shareFirstChat": "Share Your First Chat",
+    "normalChats": "Normal Chats",
+    "interviewChats": "Interview Chats",
+    "noNormalChats": "No normal chats to share yet",
+    "noInterviewChats": "No interview chats to share yet",
+    "at": "at",
+    "sharedOn": "Shared",
+    "views": "views",
+    "expires": "Expires",
+    "premiumFeature": "Premium Feature",
     "premiumRequired": {
       "title": "Premium Feature",
-      "description": "Chat sharing is available for Premium subscribers only.",
+      "description": "The sharing feature is exclusive to Premium subscribers. Share your interview sessions and chat conversations with friends, colleagues, and mentors to get valuable feedback.",
+      "whatYouCanShare": "What you can share:",
       "features": [
-        "Share unlimited chats",
-        "Control access permissions",
-        "Set expiration dates",
-        "Track views and engagement"
+        "Normal chat conversations",
+        "Interview practice sessions",
+        "Share with custom aliases",
+        "View analytics and engagement"
       ],
       "upgradeButton": "Upgrade to Premium"
     },
     "shareModal": {
-      "title": "Share Chat",
-      "chatTitle": "Title",
+      "title": "Share",
+      "chatTitle": "Share Title",
+      "titlePlaceholder": "Give your share a title...",
       "description": "Description (Optional)",
-      "allowComments": "Allow Comments",
-      "expiresIn": "Expires in",
+      "descriptionPlaceholder": "Add context or notes about this conversation...",
+      "allowComments": "Allow viewers to leave comments (coming soon)",
+      "expiresIn": "Link Expires In",
+      "day": "day",
+      "week": "week",
+      "month": "month",
+      "months": "months",
+      "never": "Never",
       "days": "days",
       "shareButton": "Share Chat",
       "cancel": "Cancel"
@@ -674,7 +788,17 @@
     "loading": "Loading shared chat...",
     "notFound": "Shared chat not found",
     "expired": "This shared chat has expired",
-    "error": "Failed to load shared chat"
+    "error": "Failed to load shared chat",
+    "defaultTitle": "Shared Chat",
+    "sharedBy": "Shared by",
+    "anonymous": "Anonymous",
+    "conversation": "Conversation",
+    "noMessages": "No messages in this conversation.",
+    "interviewDetails": "Interview Details",
+    "position": "Position",
+    "company": "Company",
+    "poweredBy": "Powered by TOE AI",
+    "createYourOwn": "Create your own AI interview sessions and share them with friends!"
   },
   "about": {
     "meta": {

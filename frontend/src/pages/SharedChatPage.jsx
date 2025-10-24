@@ -33,7 +33,7 @@ const SharedChatPage = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-dark-primary flex items-center justify-center">
-        <div className="text-white-primary">Loading shared chat...</div>
+        <div className="text-white-primary">{t('sharedChat.loading')}</div>
       </div>
     )
   }
@@ -43,7 +43,7 @@ const SharedChatPage = () => {
       <div className="min-h-screen bg-dark-primary flex items-center justify-center">
         <div className="text-center">
           <Share2 className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-          <h1 className="text-xl font-semibold text-white-primary mb-2">Chat Not Found</h1>
+          <h1 className="text-xl font-semibold text-white-primary mb-2">{t('sharedChat.notFound')}</h1>
           <p className="text-white-secondary">{error}</p>
         </div>
       </div>
@@ -64,12 +64,12 @@ const SharedChatPage = () => {
             </div>
             <div>
               <h1 className="text-2xl font-bold text-white-primary">
-                {sharedChat?.title || 'Shared Chat'}
+                {sharedChat?.title || t('sharedChat.defaultTitle')}
               </h1>
               <div className="flex items-center gap-4 text-white-secondary text-sm">
                 <div className="flex items-center gap-1">
                   <User className="w-4 h-4" />
-                  <span>Shared by {sharedChat?.shared_by_alias || 'Anonymous'}</span>
+                  <span>{t('sharedChat.sharedBy')} {sharedChat?.shared_by_alias || t('sharedChat.anonymous')}</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <Calendar className="w-4 h-4" />
@@ -77,7 +77,7 @@ const SharedChatPage = () => {
                 </div>
                 <div className="flex items-center gap-1">
                   <MessageCircle className="w-4 h-4" />
-                  <span>{conversation.length} messages</span>
+                  <span>{conversation.length} {t('chat.messages')}</span>
                 </div>
               </div>
             </div>
@@ -94,12 +94,12 @@ const SharedChatPage = () => {
         <div className="bg-light-dark-secondary rounded-xl p-6">
           <h2 className="text-lg font-semibold text-white-primary mb-6 flex items-center gap-2">
             <MessageCircle className="w-5 h-5" />
-            Conversation
+            {t('sharedChat.conversation')}
           </h2>
 
           {conversation.length === 0 ? (
             <div className="text-center py-8 text-white-secondary">
-              No messages in this conversation.
+              {t('sharedChat.noMessages')}
             </div>
           ) : (
             <div className="space-y-4 max-h-[600px] overflow-y-auto">
@@ -129,17 +129,17 @@ const SharedChatPage = () => {
         {/* Chat Info */}
         {(sharedChat?.chat_type === 'interview' || sharedChat?.job_position) && (
           <div className="bg-light-dark-secondary rounded-xl p-6 mt-8">
-            <h3 className="text-lg font-semibold text-white-primary mb-4">Interview Details</h3>
+            <h3 className="text-lg font-semibold text-white-primary mb-4">{t('sharedChat.interviewDetails')}</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {sharedChat?.job_position && (
                 <div>
-                  <label className="text-sm font-medium text-white-secondary">Position</label>
+                  <label className="text-sm font-medium text-white-secondary">{t('sharedChat.position')}</label>
                   <div className="text-white-primary">{sharedChat.job_position}</div>
                 </div>
               )}
               {sharedChat?.company_name && (
                 <div>
-                  <label className="text-sm font-medium text-white-secondary">Company</label>
+                  <label className="text-sm font-medium text-white-secondary">{t('sharedChat.company')}</label>
                   <div className="text-white-primary">{sharedChat.company_name}</div>
                 </div>
               )}
@@ -152,10 +152,10 @@ const SharedChatPage = () => {
           <div className="bg-light-dark-secondary rounded-xl p-6">
             <div className="flex items-center justify-center gap-2 mb-2">
               <Crown className="w-5 h-5 text-yellow-500" />
-              <span className="text-white-primary font-medium">Powered by TOE AI</span>
+              <span className="text-white-primary font-medium">{t('sharedChat.poweredBy')}</span>
             </div>
             <p className="text-white-secondary text-sm">
-              Create your own AI interview sessions and share them with friends!
+              {t('sharedChat.createYourOwn')}
             </p>
           </div>
         </div>

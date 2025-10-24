@@ -112,7 +112,7 @@ const InterviewPage = () => {
           }
         } catch (error) {
           console.error('Error loading interview chat:', error)
-          toast.error('Failed to load interview chat')
+          toast.error(t('interview.messages.loadError'))
           // Don't redirect on error, just show setup
           setIsSetupComplete(false)
         } finally {
@@ -182,7 +182,7 @@ const InterviewPage = () => {
 
   const handleStartInterview = async () => {
     if (!jobPosition.trim()) {
-      toast.error('Please enter a job position')
+      toast.error(t('interview.setup.jobPositionRequired'))
       return
     }
 
@@ -194,7 +194,7 @@ const InterviewPage = () => {
     
     // Start with introduction message
     setTimeout(async () => {
-      const userName = user?.full_name?.split(' ')[0] || 'Candidate'
+      const userName = user?.full_name?.split(' ')[0] || t('interview.messages.candidate')
       
       // Create language-appropriate introduction message
       let introMessage
@@ -284,7 +284,7 @@ const InterviewPage = () => {
           }
         }    } catch (error) {
       console.error('Error sending message:', error)
-      toast.error('Failed to send message')
+      toast.error(t('interview.messages.sendError'))
     } finally {
       setIsLoading(false)
     }
@@ -346,7 +346,7 @@ const InterviewPage = () => {
       videoRef.current.muted = !isMuted
     }
     
-    toast.success(isMuted ? 'Audio unmuted' : 'Audio muted')
+    toast.success(isMuted ? t('interview.messages.audioUnmuted') : t('interview.messages.audioMuted'))
   }
 
   const handleVoiceRecord = async () => {
@@ -376,7 +376,7 @@ const InterviewPage = () => {
       try {
         // Check if mediaDevices is supported
         if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-          throw new Error('MediaDevices API not supported in this browser or context')
+          throw new Error(t('interview.messages.mediaDevicesNotSupported'))
         }
 
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
@@ -404,7 +404,7 @@ const InterviewPage = () => {
               toast.success('Speech transcribed! Sending in 2 seconds... (Edit to cancel auto-send)', {
                 duration: 2000,
                 action: {
-                  label: 'Cancel',
+                  label: t('interview.messages.cancel'),
                   onClick: () => {
                     if (autoSendTimerRef.current) {
                       clearTimeout(autoSendTimerRef.current)
@@ -422,7 +422,7 @@ const InterviewPage = () => {
           } catch (error) {
             console.error('Speech to text error:', error)
             setIsTranscribing(false)
-            toast.error('Failed to convert speech to text')
+            toast.error(t('interview.messages.speechToTextError'))
           }
 
           stream.getTracks().forEach(track => track.stop())
@@ -443,19 +443,19 @@ const InterviewPage = () => {
         
         // Provide specific error messages based on the error type
         if (error.name === 'NotAllowedError') {
-          toast.error('Microphone access denied. Please allow microphone permissions in your browser.')
+          toast.error(t('interview.messages.microphoneAccessDenied'))
         } else if (error.name === 'NotFoundError') {
-          toast.error('No microphone found. Please connect a microphone and try again.')
+          toast.error(t('interview.messages.noMicrophoneFound'))
         } else if (error.name === 'NotSupportedError') {
-          toast.error('Audio recording not supported in this browser.')
+          toast.error(t('interview.messages.audioRecordingNotSupported'))
         } else if (error.name === 'NotReadableError') {
-          toast.error('Microphone is already in use by another application.')
+          toast.error(t('interview.messages.microphoneInUse'))
         } else if (error.name === 'SecurityError') {
-          toast.error('Microphone access blocked for security reasons. Please ensure you\'re using HTTPS.')
+          toast.error(t('interview.messages.microphoneAccessBlocked'))
         } else if (error.message.includes('MediaDevices API not supported')) {
-          toast.error('Microphone access not available. Please use a modern browser with microphone support.')
+          toast.error(t('interview.messages.microphoneAccessNotAvailable'))
         } else {
-          toast.error('Failed to access microphone. Please check your browser settings and try again.')
+          toast.error(t('interview.messages.microphoneAccessFailed'))
         }
       }
     }
@@ -525,7 +525,7 @@ const InterviewPage = () => {
     }
 
     if (!currentChatId || messages.length === 0) {
-      toast.error('No conversation to export')
+      toast.error(t('interview.messages.noConversationToExport'))
       return
     }
 
@@ -605,7 +605,7 @@ const InterviewPage = () => {
               <ArrowLeft className="w-4 h-4" />
             </Button>
             <h1 className="text-xl font-semibold text-white-primary">
-              New Interview Setup
+              {t('interview.setup.title')}
             </h1>
           </div>
         </div>
@@ -615,17 +615,17 @@ const InterviewPage = () => {
           <div className="w-full max-w-md space-y-6">
             <div className="text-center">
               <h2 className="text-2xl font-bold text-white-primary mb-2">
-                Interview Setup
+                {t('interview.setup.subtitle')}
               </h2>
               <p className="text-white-secondary">
-                Let's set up your AI interview session
+                {t('interview.setup.description')}
               </p>
             </div>
 
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-white-secondary mb-2">
-                  Job Position *
+                  {t('interview.setup.jobPosition')} *
                 </label>
                 <input
                   type="text"
@@ -638,7 +638,7 @@ const InterviewPage = () => {
 
               <div>
                 <label className="block text-sm font-medium text-white-secondary mb-2">
-                  Company Name *
+                  {t('interview.setup.companyName')} *
                 </label>
                 <input
                   type="text"
@@ -651,7 +651,7 @@ const InterviewPage = () => {
 
               <div>
                 <label className="block text-sm font-medium text-white-secondary mb-2">
-                  Interview Language
+                  {t('interview.setup.interviewLanguage')}
                 </label>
                 <select
                   value={interviewSettings.language}
@@ -665,7 +665,7 @@ const InterviewPage = () => {
 
               <div>
                 <label className="block text-sm font-medium text-white-secondary mb-2">
-                  Difficulty Level
+                  {t('interview.setup.difficultyLevel')}
                 </label>
                 <select
                   value={difficulty}
@@ -684,7 +684,7 @@ const InterviewPage = () => {
               className="w-full py-3"
               disabled={!jobPosition.trim()}
             >
-              Start Interview
+              {t('interview.setup.startButton')}
             </Button>
           </div>
         </div>
@@ -734,10 +734,10 @@ const InterviewPage = () => {
             }`}
             title={
               !currentChatId || messages.length === 0 
-                ? 'No conversation to export' 
+                ? t('interview.messages.noConversationToExport')
                 : isExportingPDF 
-                  ? 'Generating PDF...' 
-                  : 'Download conversation as PDF'
+                  ? t('interviewsList.generatingPdf')
+                  : t('interview.messages.downloadConversationAsPDF')
             }
           >
             {isExportingPDF ? (
@@ -937,7 +937,7 @@ const InterviewPage = () => {
                         ? 'text-blue-400 bg-blue-500/20 cursor-not-allowed'
                         : 'text-gray-400 hover:text-white-primary hover:bg-gray-700'
                     }`}
-                    title={isRecording ? 'Stop Recording' : isTranscribing ? 'Transcribing...' : 'Start Recording'}
+                    title={isRecording ? t('interview.messages.stopRecording') : isTranscribing ? t('interview.messages.transcribing') : t('interview.messages.startRecording')}
                   >
                     {isRecording ? (
                       <MicOff className="w-4 h-4" />
@@ -966,7 +966,7 @@ const InterviewPage = () => {
                         ? 'bg-brand-primary hover:bg-brand-primary/90 text-white'
                         : 'bg-gray-600 text-gray-400 cursor-not-allowed'
                     }`}
-                    title={isRecording ? 'Finish recording first' : isTranscribing ? 'Transcribing...' : 'Send message'}
+                    title={isRecording ? t('interview.messages.finishRecordingFirst') : isTranscribing ? t('interview.messages.transcribing') : t('interview.messages.sendMessage')}
                   >
                     {isLoading ? (
                       <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>

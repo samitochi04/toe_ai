@@ -146,33 +146,32 @@ const SharesPage = () => {
           <div className="text-center py-16">
             <Crown className="w-16 h-16 text-yellow-500 mx-auto mb-6" />
             <h1 className="text-3xl font-bold text-white-primary mb-4">
-              Premium Feature
+              {t('shares.premiumRequired.title')}
             </h1>
             <p className="text-white-secondary text-lg mb-8 max-w-2xl mx-auto">
-              The sharing feature is exclusive to Premium subscribers. Share your interview sessions 
-              and chat conversations with friends, colleagues, and mentors to get valuable feedback.
+              {t('shares.premiumRequired.description')}
             </p>
             
             <div className="bg-light-dark-secondary rounded-xl p-8 max-w-md mx-auto mb-8">
               <h3 className="text-xl font-semibold text-white-primary mb-4">
-                What you can share:
+                {t('shares.premiumRequired.whatYouCanShare')}
               </h3>
               <ul className="space-y-3 text-left">
                 <li className="flex items-center gap-3 text-white-secondary">
                   <MessageCircle className="w-5 h-5 text-brand-primary" />
-                  Normal chat conversations
+                  {t('shares.premiumRequired.features.0')}
                 </li>
                 <li className="flex items-center gap-3 text-white-secondary">
                   <Video className="w-5 h-5 text-brand-primary" />
-                  Interview practice sessions
+                  {t('shares.premiumRequired.features.1')}
                 </li>
                 <li className="flex items-center gap-3 text-white-secondary">
                   <Users className="w-5 h-5 text-brand-primary" />
-                  Share with custom aliases
+                  {t('shares.premiumRequired.features.2')}
                 </li>
                 <li className="flex items-center gap-3 text-white-secondary">
                   <Eye className="w-5 h-5 text-brand-primary" />
-                  View analytics and engagement
+                  {t('shares.premiumRequired.features.3')}
                 </li>
               </ul>
             </div>
@@ -182,7 +181,7 @@ const SharesPage = () => {
               className="px-8 py-3 text-lg"
             >
               <Crown className="w-5 h-5 mr-2" />
-              Upgrade to Premium
+              {t('shares.premiumRequired.upgradeButton')}
             </Button>
           </div>
         </div>
@@ -193,7 +192,7 @@ const SharesPage = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-dark-primary flex items-center justify-center">
-        <div className="text-white-primary">Loading shares...</div>
+        <div className="text-white-primary">{t('common.loading')}</div>
       </div>
     )
   }
@@ -203,11 +202,11 @@ const SharesPage = () => {
       <div className="container mx-auto px-4 py-8 max-w-6xl">
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-3xl font-bold text-white-primary">
-            Shared Chats
+            {t('shares.title')}
           </h1>
           <div className="flex items-center gap-2">
             <Crown className="w-5 h-5 text-yellow-500" />
-            <span className="text-white-secondary">Premium Feature</span>
+            <span className="text-white-secondary">{t('shares.premiumFeature')}</span>
           </div>
         </div>
 
@@ -221,7 +220,7 @@ const SharesPage = () => {
                 : 'border-transparent text-white-secondary hover:text-white-primary'
             }`}
           >
-            My Shares ({shares.length})
+            {t('shares.myShares')} ({shares.length})
           </button>
           <button
             onClick={() => setActiveTab('create-share')}
@@ -231,7 +230,7 @@ const SharesPage = () => {
                 : 'border-transparent text-white-secondary hover:text-white-primary'
             }`}
           >
-            Share New Chat
+            {t('shares.shareNewChat')}
           </button>
         </div>
 
@@ -242,14 +241,14 @@ const SharesPage = () => {
               <div className="text-center py-16">
                 <Share2 className="w-16 h-16 text-gray-600 mx-auto mb-6" />
                 <h3 className="text-xl font-semibold text-white-primary mb-2">
-                  No shared chats yet
+                  {t('shares.noShares')}
                 </h3>
                 <p className="text-white-secondary mb-6">
-                  Start sharing your conversations with friends and colleagues
+                  {t('shares.startSharing')}
                 </p>
                 <Button onClick={() => setActiveTab('create-share')}>
                   <Plus className="w-4 h-4 mr-2" />
-                  Share Your First Chat
+                  {t('shares.shareFirstChat')}
                 </Button>
               </div>
             ) : (
@@ -278,15 +277,15 @@ const SharesPage = () => {
                         <div className="flex items-center gap-6 text-sm text-white-secondary">
                           <div className="flex items-center gap-1">
                             <Calendar className="w-4 h-4" />
-                            <span>Shared {formatDateTime(share.created_at)}</span>
+                            <span>{t('shares.sharedOn')} {formatDateTime(share.created_at)}</span>
                           </div>
                           <div className="flex items-center gap-1">
                             <Eye className="w-4 h-4" />
-                            <span>{share.view_count || 0} views</span>
+                            <span>{share.view_count || 0} {t('shares.views')}</span>
                           </div>
                           {share.expires_at && (
                             <div className="flex items-center gap-1">
-                              <span>Expires {formatDateTime(share.expires_at)}</span>
+                              <span>{t('shares.expires')} {formatDateTime(share.expires_at)}</span>
                             </div>
                           )}
                         </div>
@@ -329,22 +328,22 @@ const SharesPage = () => {
             <div>
               <h2 className="text-xl font-semibold text-white-primary mb-4 flex items-center gap-2">
                 <MessageCircle className="w-5 h-5" />
-                Normal Chats
+                {t('shares.normalChats')}
               </h2>
               
               {normalChats.length === 0 ? (
                 <div className="text-center py-8 bg-light-dark-secondary rounded-xl">
-                  <p className="text-white-secondary">No normal chats to share yet</p>
+                  <p className="text-white-secondary">{t('shares.noNormalChats')}</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {normalChats.map((chat) => (
                     <div key={chat.id} className="bg-light-dark-secondary rounded-xl p-4">
                       <h3 className="font-medium text-white-primary mb-2">
-                        {chat.title || 'Untitled Chat'}
+                        {chat.title || t('chats.untitled')}
                       </h3>
                       <div className="text-sm text-white-secondary mb-3">
-                        {chat.message_count || 0} messages • {formatDateTime(chat.updated_at)}
+                        {chat.message_count || 0} {t('chat.messages')} • {formatDateTime(chat.updated_at)}
                       </div>
                       <Button
                         size="sm"
@@ -352,7 +351,7 @@ const SharesPage = () => {
                         className="w-full"
                       >
                         <Share2 className="w-4 h-4 mr-2" />
-                        Share Chat
+                        {t('shares.shareChat')}
                       </Button>
                     </div>
                   ))}
@@ -364,24 +363,24 @@ const SharesPage = () => {
             <div>
               <h2 className="text-xl font-semibold text-white-primary mb-4 flex items-center gap-2">
                 <Video className="w-5 h-5" />
-                Interview Chats
+                {t('shares.interviewChats')}
               </h2>
               
               {interviewChats.length === 0 ? (
                 <div className="text-center py-8 bg-light-dark-secondary rounded-xl">
-                  <p className="text-white-secondary">No interview chats to share yet</p>
+                  <p className="text-white-secondary">{t('shares.noInterviewChats')}</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {interviewChats.map((chat) => (
                     <div key={chat.id} className="bg-light-dark-secondary rounded-xl p-4">
                       <h3 className="font-medium text-white-primary mb-1">
-                        {chat.title || 'Untitled Interview'}
+                        {chat.title || t('interview.interface.noInterviews')}
                       </h3>
                       {chat.job_position && (
                         <div className="text-sm text-brand-primary mb-2">
                           {chat.job_position}
-                          {chat.company_name && ` at ${chat.company_name}`}
+                          {chat.company_name && ` ${t('shares.at')} ${chat.company_name}`}
                         </div>
                       )}
                       <div className="text-sm text-white-secondary mb-3">
@@ -393,7 +392,7 @@ const SharesPage = () => {
                         className="w-full"
                       >
                         <Share2 className="w-4 h-4 mr-2" />
-                        Share Interview
+                        {t('shares.shareInterview')}
                       </Button>
                     </div>
                   ))}
@@ -407,29 +406,29 @@ const SharesPage = () => {
         <Modal isOpen={showShareModal} onClose={() => setShowShareModal(false)} size="lg">
           <div className="p-6">
             <h3 className="text-xl font-semibold text-white-primary mb-6">
-              Share "{selectedChat?.title}"
+              {t('shares.shareModal.title')} "{selectedChat?.title}"
             </h3>
             
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-white-secondary mb-2">
-                  Share Title
+                  {t('shares.shareModal.chatTitle')}
                 </label>
                 <Input
                   value={shareForm.title}
                   onChange={(e) => setShareForm({ ...shareForm, title: e.target.value })}
-                  placeholder="Give your share a title..."
+                  placeholder={t('shares.shareModal.titlePlaceholder')}
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-white-secondary mb-2">
-                  Description (Optional)
+                  {t('shares.shareModal.description')}
                 </label>
                 <textarea
                   value={shareForm.description}
                   onChange={(e) => setShareForm({ ...shareForm, description: e.target.value })}
-                  placeholder="Add context or notes about this conversation..."
+                  placeholder={t('shares.shareModal.descriptionPlaceholder')}
                   rows={3}
                   className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-xl text-white-primary placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-primary resize-none"
                 />
@@ -437,18 +436,18 @@ const SharesPage = () => {
 
               <div>
                 <label className="block text-sm font-medium text-white-secondary mb-2">
-                  Link Expires In
+                  {t('shares.shareModal.expiresIn')}
                 </label>
                 <select
                   value={shareForm.expires_in_days}
                   onChange={(e) => setShareForm({ ...shareForm, expires_in_days: parseInt(e.target.value) })}
                   className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-xl text-white-primary focus:outline-none focus:ring-2 focus:ring-brand-primary"
                 >
-                  <option value={1}>1 day</option>
-                  <option value={7}>1 week</option>
-                  <option value={30}>1 month</option>
-                  <option value={90}>3 months</option>
-                  <option value={0}>Never</option>
+                  <option value={1}>1 {t('shares.shareModal.day')}</option>
+                  <option value={7}>1 {t('shares.shareModal.week')}</option>
+                  <option value={30}>1 {t('shares.shareModal.month')}</option>
+                  <option value={90}>3 {t('shares.shareModal.months')}</option>
+                  <option value={0}>{t('shares.shareModal.never')}</option>
                 </select>
               </div>
 
@@ -461,7 +460,7 @@ const SharesPage = () => {
                   className="w-4 h-4 text-brand-primary bg-gray-800 border-gray-600 rounded focus:ring-brand-primary"
                 />
                 <label htmlFor="allow_comments" className="text-sm text-white-secondary">
-                  Allow viewers to leave comments (coming soon)
+                  {t('shares.shareModal.allowComments')}
                 </label>
               </div>
             </div>
@@ -472,7 +471,7 @@ const SharesPage = () => {
                 onClick={() => setShowShareModal(false)}
                 className="flex-1"
               >
-                Cancel
+                {t('common.cancel')}
               </Button>
               <Button
                 onClick={handleShareChat}
@@ -480,7 +479,7 @@ const SharesPage = () => {
                 disabled={!shareForm.title}
               >
                 <Share2 className="w-4 h-4 mr-2" />
-                Share Chat
+                {t('shares.shareModal.shareButton')}
               </Button>
             </div>
           </div>
