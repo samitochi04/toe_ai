@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate, useLocation } from 'react-router-dom'
 import useAuthStore from '../../store/authStore'
@@ -30,6 +30,19 @@ const Sidebar = ({ isOpen, onToggle }) => {
     chatting: false,
     interviewChat: false,
   })
+  const [isMobile, setIsMobile] = useState(false)
+
+  // Check if device is mobile
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+    
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
 
   const toggleSection = (section) => {
     setExpandedSections(prev => ({
@@ -56,6 +69,10 @@ const Sidebar = ({ isOpen, onToggle }) => {
     clearCurrentChat()
     // Then navigate to new chat
     navigate('/workspace/chat/new', { replace: true })
+    // Close sidebar on mobile after navigation
+    if (isMobile) {
+      onToggle()
+    }
   }
 
   const handleNewInterview = () => {
@@ -63,6 +80,18 @@ const Sidebar = ({ isOpen, onToggle }) => {
     clearCurrentChat()
     // Navigate to new interview
     navigate('/workspace/interview/new', { replace: true })
+    // Close sidebar on mobile after navigation
+    if (isMobile) {
+      onToggle()
+    }
+  }
+
+  const handleNavigation = (path) => {
+    navigate(path)
+    // Close sidebar on mobile after navigation
+    if (isMobile) {
+      onToggle()
+    }
   }
 
   const MenuItem = ({ 
@@ -110,9 +139,9 @@ const Sidebar = ({ isOpen, onToggle }) => {
     </div>
   )
 
-  const SubMenuItem = ({ icon, label, path, isActive = false }) => (
+  const SubMenuItem = ({ icon, label, path, isActive = false, onClick }) => (
     <button
-      onClick={() => navigate(path)}
+      onClick={onClick || (() => handleNavigation(path))}
       className={`
         w-full flex items-center px-8 py-2 text-left transition-all duration-200
         ${isActive 
@@ -129,10 +158,24 @@ const Sidebar = ({ isOpen, onToggle }) => {
   )
 
   return (
-    <div className={`
-      fixed left-0 top-0 h-full bg-light-dark-secondary border-r border-gray-700 transition-all duration-300 z-50 flex flex-col
-      ${isOpen ? 'w-64' : 'w-16'}
-    `}>
+    <>
+      {/* Mobile Overlay */}
+      {isMobile && isOpen && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 z-40"
+          onClick={onToggle}
+        />
+      )}
+      
+      {/* Sidebar */}
+      <div className={`
+        fixed left-0 top-0 h-full bg-light-dark-secondary border-r border-gray-700 transition-all duration-300 z-50 flex flex-col
+        ${isMobile 
+          ? (isOpen ? 'w-80' : 'w-0') 
+          : (isOpen ? 'w-64' : 'w-16')
+        }
+        ${isMobile && !isOpen ? 'hidden' : ''}
+      `}>
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-gray-700 flex-shrink-0">
         <div className="flex items-center">
@@ -281,7 +324,8 @@ const Sidebar = ({ isOpen, onToggle }) => {
           )}
         </div>
       </nav>
-    </div>
+      </div>
+    </>
   )
 }
 
