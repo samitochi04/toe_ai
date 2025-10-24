@@ -10,7 +10,7 @@ const ProfilePage = () => {
           {t('profile.title')}
         </h1>
         <div className="text-white-secondary">
-          Profile page coming soon...
+          {t('profile.comingSoon')}
         </div>
       </div>
     </div>

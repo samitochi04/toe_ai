@@ -30,7 +30,14 @@
     "privacyPolicy": "Privacy Policy",
     "cookiePolicy": "Cookie Policy",
     "getStarted": "Get Started",
-    "contact": "Contact"
+    "contact": "Contact",
+    "refreshPage": "Refresh Page",
+    "maybeLater": "Maybe Later",
+    "signOut": "Sign Out",
+    "upgradeButton": "Upgrade to Premium",
+    "perMonth": "/month",
+    "yearlyDiscount": "or €50/year (save 17%)",
+    "securePayment": "Cancel anytime • Secure payment • Instant access"
   },
   "landing": {
     "hero": {
@@ -61,6 +68,7 @@
     }
   },
   "auth": {
+    "logo": "TOE AI Logo",
     "signIn": {
       "title": "Sign in",
       "email": "Email",
@@ -191,9 +199,26 @@
     "invalidFileType": "Only images and PDFs are allowed",
     "fileTooLarge": "File size must be less than 10MB",
     "dropFiles": "Drop your files here",
+    "filesSelected": "files selected",
+    "aiAssistant": "AI",
+    "bytes": "Bytes",
+    "kilobytes": "KB",
+    "megabytes": "MB",
+    "gigabytes": "GB",
+    "zeroBytes": "0 Bytes",
     "placeholder": "Type your message...",
     "thinking": "AI is thinking...",
     "history": "Chat History"
+  },
+  "errorBoundary": {
+    "title": "Oops! Something went wrong",
+    "description": "We're sorry, but something unexpected happened. Please try refreshing the page.",
+    "developmentDetails": "Error Details (Development)"
+  },
+  "sidebar": {
+    "logoAlt": "TOE AI",
+    "closeSidebar": "Close sidebar",
+    "openSidebar": "Open sidebar"
   },
   "interview": {
     "title": "Interview",
@@ -221,7 +246,8 @@
     "subscription": "Subscription",
     "billing": "Billing",
     "settings": "Settings",
-    "account": "Account"
+    "account": "Account",
+    "comingSoon": "Profile page coming soon..."
   },
   "premium": {
     "upgrade": "Upgrade",
@@ -311,8 +337,13 @@
     "interviewChatLimitDescription": "You've used all {{limit}} of your monthly interview sessions. Upgrade to Premium for unlimited interview practice.",
     "limitReached": "Limit reached! Upgrade to Premium for unlimited access.",
     "premiumBenefits": "Premium Benefits",
+    "unlimitedChats": "Unlimited normal chats & interview sessions",
+    "voiceInteraction": "Voice-to-voice interaction",
+    "fileUploads": "File uploads & PDF export",
+    "prioritySupport": "Priority support",
     "maybeLater": "Maybe Later",
-    "securePayment": "Cancel anytime • Secure payment • Instant access"
+    "securePayment": "Cancel anytime • Secure payment • Instant access",
+    "used": "used"
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -340,7 +371,89 @@
     "paymentHistory": "Payment History",
     "noPaymentHistory": "No payment history available",
     "confirmCancel": "Are you sure you want to cancel your subscription? It will remain active until the end of the current billing period.",
-    "cancelledMessage": "Your subscription is set to cancel at the end of the current billing period."
+    "cancelledMessage": "Your subscription is set to cancel at the end of the current billing period.",
+    "plans": {
+      "monthly": {
+        "name": "Premium Monthly",
+        "description": "Perfect for regular interview practice"
+      },
+      "yearly": {
+        "name": "Premium Yearly",
+        "description": "Best value - 2 months free!"
+      }
+    },
+    "features": {
+      "free": {
+        "normalChats": "10 normal chats per month",
+        "interviewSessions": "5 interview sessions per month",
+        "basicAI": "Basic AI responses",
+        "textOnly": "Text-only conversations",
+        "limitedUploads": "Limited file uploads",
+        "voiceInteraction": "Voice interaction",
+        "pdfExport": "PDF export",
+        "prioritySupport": "Priority support",
+        "advancedSettings": "Advanced interview settings"
+      },
+      "premium": {
+        "unlimitedChats": "Unlimited normal chats",
+        "unlimitedSessions": "Unlimited interview sessions",
+        "advancedAI": "Advanced AI responses",
+        "voiceToVoice": "Voice-to-voice interaction",
+        "fileSharing": "File uploads & sharing",
+        "pdfConversations": "PDF export of conversations",
+        "prioritySupport": "Priority customer support",
+        "advancedSettings": "Advanced interview settings",
+        "customScenarios": "Custom interview scenarios"
+      }
+    },
+    "ui": {
+      "chooseYourPlan": "Choose Your Plan",
+      "unlimitedPractice": "Unlock unlimited interview practice with our premium features",
+      "currentUsage": "Current Usage",
+      "normalChats": "Normal Chats",
+      "interviewSessions": "Interview Sessions",
+      "refreshing": "Refreshing...",
+      "refreshUsageData": "Refresh Usage Data",
+      "monthly": "Monthly",
+      "yearly": "Yearly",
+      "discount": "-17%",
+      "free": "Free",
+      "premium": "Premium",
+      "perfectForGettingStarted": "Perfect for getting started",
+      "mostPopular": "Most Popular",
+      "savePerYear": "Save €10 per year",
+      "currentPlan": "Current Plan",
+      "manageSubscription": "Manage Subscription",
+      "upgradeToPremium": "Upgrade to Premium",
+      "limitReached": "Limit reached! Upgrade to Premium for unlimited access.",
+      "usage": "Usage",
+      "frequentlyAskedQuestions": "Frequently Asked Questions"
+    },
+    "faq": {
+      "cancelAnytime": {
+        "question": "Can I cancel anytime?",
+        "answer": "Yes! You can cancel your subscription at any time. Your premium features will remain active until the end of your billing period."
+      },
+      "paymentMethods": {
+        "question": "What payment methods do you accept?",
+        "answer": "We accept all major credit cards including Visa, Mastercard, and American Express through our secure Stripe payment processor."
+      },
+      "freeTrial": {
+        "question": "Is there a free trial?",
+        "answer": "Your free account already gives you access to try our platform. Premium users get unlimited access to all features immediately upon upgrade."
+      }
+    },
+    "paymentModal": {
+      "title": "Upgrade to Premium",
+      "discount": "17% discount - Save €{amount}",
+      "proceedToPayment": "Proceed to Payment",
+      "cancel": "Cancel",
+      "securePayment": "Secure payment powered by Stripe. Your card details are never stored on our servers."
+    },
+    "errors": {
+      "loadUsageData": "Failed to load usage data",
+      "paymentFailed": "Payment failed. Please try again."
+    }
   },
   "settings": {
     "title": "Settings",
@@ -479,6 +592,12 @@
     "upgradeAnytime": "You can upgrade to premium anytime to unlock unlimited features.",
     "tryAgain": "Try Again",
     "backToDashboard": "Back to Dashboard"
+  },
+  "oAuth": {
+    "completing": "Completing Google sign-in..."
+  },
+  "chats": {
+    "untitled": "Untitled Chat"
   },
   "interviewsList": {
     "title": "Interview Chats",

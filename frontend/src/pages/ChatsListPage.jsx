@@ -128,7 +128,7 @@ const ChatsListPage = () => {
     >
       <div className="flex items-start justify-between mb-2">
         <h3 className="text-lg font-medium text-white-primary truncate flex-1 mr-2">
-          {chat.title || 'Untitled Chat'}
+          {chat.title || t('chats.untitled')}
         </h3>
         {chat.is_shared && (
           <Share2 className="w-4 h-4 text-blue-400 flex-shrink-0" />

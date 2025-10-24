@@ -25,14 +25,14 @@ const UsageLimitModal = ({
 
   const getTitle = () => {
     return type === 'interview' 
-      ? 'Interview Chat Limit Reached' 
-      : 'Normal Chat Limit Reached'
+      ? t('usageLimit.title') 
+      : t('usageLimit.title')
   }
 
   const getDescription = () => {
     return type === 'interview'
-      ? `You've used all ${limit} of your monthly interview sessions. Upgrade to Premium for unlimited interview practice.`
-      : `You've used all ${limit} of your monthly normal chats. Upgrade to Premium for unlimited conversations.`
+      ? `You've used all ${limit} of your monthly interview sessions. ${t('usageLimit.subtitle')}`
+      : `You've used all ${limit} of your monthly normal chats. ${t('usageLimit.subtitle')}`
   }
 
   const Icon = getIcon()
@@ -55,7 +55,7 @@ const UsageLimitModal = ({
           <div className="flex items-center justify-center space-x-3 mb-3">
             <Icon className="w-6 h-6 text-red-400" />
             <span className="text-lg font-medium text-white-primary">
-              {currentUsage} / {limit} used
+              {t('usageLimit.freeUsage', { current: currentUsage, limit: limit })}
             </span>
           </div>
           <div className="w-full bg-gray-700 rounded-full h-2">
@@ -80,19 +80,19 @@ const UsageLimitModal = ({
           <ul className="text-sm text-gray-300 space-y-2">
             <li className="flex items-center space-x-2">
               <Sparkles className="w-4 h-4 text-yellow-500" />
-              <span>Unlimited normal chats & interview sessions</span>
+              <span>{t('usageLimit.features.unlimitedChats')}</span>
             </li>
             <li className="flex items-center space-x-2">
               <Sparkles className="w-4 h-4 text-yellow-500" />
-              <span>Voice-to-voice interaction</span>
+              <span>{t('usageLimit.features.voiceInteraction')}</span>
             </li>
             <li className="flex items-center space-x-2">
               <Sparkles className="w-4 h-4 text-yellow-500" />
-              <span>File uploads & PDF export</span>
+              <span>{t('usageLimit.features.exportPdf')}</span>
             </li>
             <li className="flex items-center space-x-2">
               <Sparkles className="w-4 h-4 text-yellow-500" />
-              <span>Priority support</span>
+              <span>{t('usageLimit.features.prioritySupport')}</span>
             </li>
           </ul>
         </div>
@@ -100,10 +100,10 @@ const UsageLimitModal = ({
         {/* Pricing */}
         <div className="text-center mb-6">
           <div className="text-3xl font-bold text-white-primary">
-            €5<span className="text-lg text-gray-400">/month</span>
+            {t('usageLimit.pricing.monthly')}<span className="text-lg text-gray-400">/month</span>
           </div>
           <div className="text-sm text-green-400">
-            or €50/year (save 17%)
+            or {t('usageLimit.pricing.yearly')}/year (save 17%)
           </div>
         </div>
 
@@ -114,14 +114,14 @@ const UsageLimitModal = ({
             className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-dark-primary font-bold flex items-center justify-center space-x-2"
           >
             <Crown className="w-5 h-5" />
-            <span>Upgrade to Premium</span>
+            <span>{t('usageLimit.upgrade')}</span>
           </Button>
           <Button
             variant="ghost"
             onClick={onClose}
             className="w-full text-gray-400 hover:text-white-primary"
           >
-            Maybe Later
+            {t('common.maybeLater')}
           </Button>
         </div>
 

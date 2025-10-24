@@ -214,7 +214,7 @@ const MessageBubble = ({ message, isOwnMessage, isTyping = false }) => {
   return (
     <div className="flex mb-4">
       <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mr-3">
-        <span className="text-white text-sm font-medium">AI</span>
+        <span className="text-white text-sm font-medium">{t('chat.aiAssistant')}</span>
       </div>
       <div className="flex-1 max-w-[70%]">
         <div className="bg-light-dark-secondary text-white-primary rounded-2xl rounded-bl-md px-4 py-3">

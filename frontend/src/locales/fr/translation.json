@@ -30,7 +30,14 @@
     "privacyPolicy": "Politique de confidentialité",
     "cookiePolicy": "Politique des cookies",
     "getStarted": "Commencer",
-    "contact": "Contact"
+    "contact": "Contact",
+    "refreshPage": "Actualiser la page",
+    "maybeLater": "Peut-être plus tard",
+    "signOut": "Se déconnecter",
+    "upgradeButton": "Passer à Premium",
+    "perMonth": "/mois",
+    "yearlyDiscount": "ou 50€/an (économie 17%)",
+    "securePayment": "Annulation à tout moment • Paiement sécurisé • Accès instantané"
   },
   "landing": {
     "hero": {
@@ -61,6 +68,7 @@
     }
   },
   "auth": {
+    "logo": "Logo TOE AI",
     "signIn": {
       "title": "Se connecter",
       "email": "Email",
@@ -191,9 +199,26 @@
     "invalidFileType": "Seules les images et les PDF sont autorisés",
     "fileTooLarge": "La taille du fichier doit être inférieure à 10 Mo",
     "dropFiles": "Déposez vos fichiers ici",
+    "filesSelected": "fichiers sélectionnés",
+    "aiAssistant": "IA",
+    "bytes": "Octets",
+    "kilobytes": "Ko",
+    "megabytes": "Mo",
+    "gigabytes": "Go",
+    "zeroBytes": "0 Octets",
     "placeholder": "Tapez votre message...",
     "thinking": "L'IA réfléchit...",
     "history": "Historique des discussions"
+  },
+  "errorBoundary": {
+    "title": "Oups ! Quelque chose s'est mal passé",
+    "description": "Nous sommes désolés, mais quelque chose d'inattendu s'est produit. Veuillez actualiser la page.",
+    "developmentDetails": "Détails de l'erreur (Développement)"
+  },
+  "sidebar": {
+    "logoAlt": "TOE AI",
+    "closeSidebar": "Fermer la barre latérale",
+    "openSidebar": "Ouvrir la barre latérale"
   },
   "interview": {
     "title": "Entretien",
@@ -221,7 +246,8 @@
     "subscription": "Abonnement",
     "billing": "Facturation",
     "settings": "Paramètres",
-    "account": "Compte"
+    "account": "Compte",
+    "comingSoon": "Page de profil bientôt disponible..."
   },
   "premium": {
     "upgrade": "Améliorer"
@@ -263,7 +289,89 @@
     "paymentHistory": "Historique des Paiements",
     "noPaymentHistory": "Aucun historique de paiement disponible",
     "confirmCancel": "Êtes-vous sûr de vouloir annuler votre abonnement? Il restera actif jusqu'à la fin de la période de facturation actuelle.",
-    "cancelledMessage": "Votre abonnement sera annulé à la fin de la période de facturation actuelle."
+    "cancelledMessage": "Votre abonnement sera annulé à la fin de la période de facturation actuelle.",
+    "plans": {
+      "monthly": {
+        "name": "Premium Mensuel",
+        "description": "Parfait pour la pratique régulière d'entretiens"
+      },
+      "yearly": {
+        "name": "Premium Annuel",
+        "description": "Meilleure valeur - 2 mois gratuits !"
+      }
+    },
+    "features": {
+      "free": {
+        "normalChats": "10 chats normaux par mois",
+        "interviewSessions": "5 sessions d'entretien par mois",
+        "basicAI": "Réponses IA de base",
+        "textOnly": "Conversations texte uniquement",
+        "limitedUploads": "Téléchargements de fichiers limités",
+        "voiceInteraction": "Interaction vocale",
+        "pdfExport": "Exportation PDF",
+        "prioritySupport": "Support prioritaire",
+        "advancedSettings": "Paramètres d'entretien avancés"
+      },
+      "premium": {
+        "unlimitedChats": "Chats normaux illimités",
+        "unlimitedSessions": "Sessions d'entretien illimitées",
+        "advancedAI": "Réponses IA avancées",
+        "voiceToVoice": "Interaction vocale bidirectionnelle",
+        "fileSharing": "Téléchargement et partage de fichiers",
+        "pdfConversations": "Exportation PDF des conversations",
+        "prioritySupport": "Support client prioritaire",
+        "advancedSettings": "Paramètres d'entretien avancés",
+        "customScenarios": "Scénarios d'entretien personnalisés"
+      }
+    },
+    "ui": {
+      "chooseYourPlan": "Choisissez votre plan",
+      "unlimitedPractice": "Débloquez une pratique d'entretien illimitée avec nos fonctionnalités premium",
+      "currentUsage": "Utilisation actuelle",
+      "normalChats": "Chats normaux",
+      "interviewSessions": "Sessions d'entretien",
+      "refreshing": "Actualisation...",
+      "refreshUsageData": "Actualiser les données d'utilisation",
+      "monthly": "Mensuel",
+      "yearly": "Annuel",
+      "discount": "-17%",
+      "free": "Gratuit",
+      "premium": "Premium",
+      "perfectForGettingStarted": "Parfait pour commencer",
+      "mostPopular": "Plus populaire",
+      "savePerYear": "Économisez 10€ par an",
+      "currentPlan": "Plan actuel",
+      "manageSubscription": "Gérer l'abonnement",
+      "upgradeToPremium": "Passer au premium",
+      "limitReached": "Limite atteinte ! Passez au Premium pour un accès illimité.",
+      "usage": "Utilisation",
+      "frequentlyAskedQuestions": "Questions fréquemment posées"
+    },
+    "faq": {
+      "cancelAnytime": {
+        "question": "Puis-je annuler à tout moment ?",
+        "answer": "Oui ! Vous pouvez annuler votre abonnement à tout moment. Vos fonctionnalités premium resteront actives jusqu'à la fin de votre période de facturation."
+      },
+      "paymentMethods": {
+        "question": "Quels modes de paiement acceptez-vous ?",
+        "answer": "Nous acceptons toutes les principales cartes de crédit, y compris Visa, Mastercard et American Express via notre processeur de paiement sécurisé Stripe."
+      },
+      "freeTrial": {
+        "question": "Y a-t-il un essai gratuit ?",
+        "answer": "Votre compte gratuit vous donne déjà accès pour essayer notre plateforme. Les utilisateurs Premium obtiennent un accès illimité à toutes les fonctionnalités immédiatement lors de la mise à niveau."
+      }
+    },
+    "paymentModal": {
+      "title": "Passer au Premium",
+      "discount": "Remise de 17% - Économisez {amount}€",
+      "proceedToPayment": "Procéder au paiement",
+      "cancel": "Annuler",
+      "securePayment": "Paiement sécurisé fourni par Stripe. Les détails de votre carte ne sont jamais stockés sur nos serveurs."
+    },
+    "errors": {
+      "loadUsageData": "Échec du chargement des données d'utilisation",
+      "paymentFailed": "Échec du paiement. Veuillez réessayer."
+    }
   },
   "settings": {
     "title": "Paramètres",
@@ -402,6 +510,12 @@
     "upgradeAnytime": "Vous pouvez passer au premium à tout moment pour débloquer des fonctionnalités illimitées.",
     "tryAgain": "Réessayer",
     "backToDashboard": "Retour au tableau de bord"
+  },
+  "oAuth": {
+    "completing": "Finalisation de la connexion Google..."
+  },
+  "chats": {
+    "untitled": "Chat sans titre"
   },
   "interviewsList": {
     "title": "Chats d'entretien",
@@ -1032,6 +1146,33 @@
       "title": "Documents connexes",
       "privacy": "En savoir plus sur la façon dont nous protégeons vos informations personnelles.",
       "terms": "Lisez nos conditions générales complètes d'utilisation de TOE AI."
+    },
+    "errorBoundary": {
+      "title": "Oups ! Quelque chose s'est mal passé",
+      "description": "Une erreur inattendue s'est produite. Nos développeurs ont été informés.",
+      "developmentDetails": "Cette erreur s'est produite dans l'environnement de développement. Vérifiez la console pour plus de détails."
+    },
+    "sidebar": {
+      "logoAlt": "Logo TOE AI",
+      "closeSidebar": "Fermer la barre latérale",
+      "openSidebar": "Ouvrir la barre latérale"
+    },
+    "usageLimit": {
+      "title": "Limite d'utilisation atteinte",
+      "subtitle": "Passez à Premium pour continuer",
+      "features": {
+        "unlimitedChats": "Discussions illimitées",
+        "voiceInteraction": "Interaction vocale avancée",
+        "exportPdf": "Exportation PDF",
+        "prioritySupport": "Support prioritaire",
+        "advancedAnalytics": "Analyses avancées"
+      },
+      "pricing": {
+        "monthly": "9,99€/mois",
+        "yearly": "99,99€/an"
+      },
+      "upgrade": "Passer à Premium",
+      "freeUsage": "Utilisation gratuite : {current}/{limit}"
     },
     "footer": {
       "description": "Entraînement aux entretiens alimenté par l'IA pour vous aider à réussir.",

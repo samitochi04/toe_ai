@@ -29,48 +29,48 @@ const BillingPage = () => {
   const plans = {
     monthly: {
       id: 'premium_monthly',
-      name: 'Premium Monthly',
+      name: t('billing.plans.monthly.name'),
       price: 5,
       currency: '€',
       period: 'month',
       priceId: 'price_premium_monthly',
-      description: 'Perfect for regular interview practice'
+      description: t('billing.plans.monthly.description')
     },
     yearly: {
       id: 'premium_yearly', 
-      name: 'Premium Yearly',
+      name: t('billing.plans.yearly.name'),
       price: 50,
       currency: '€',
       period: 'year',
       originalPrice: 60,
       priceId: 'price_premium_yearly',
       discount: 17,
-      description: 'Best value - 2 months free!'
+      description: t('billing.plans.yearly.description')
     }
   }
 
   const features = {
     free: [
-      { text: '10 normal chats per month', included: true },
-      { text: '5 interview sessions per month', included: true },
-      { text: 'Basic AI responses', included: true },
-      { text: 'Text-only conversations', included: true },
-      { text: 'Limited file uploads', included: false },
-      { text: 'Voice interaction', included: false },
-      { text: 'PDF export', included: false },
-      { text: 'Priority support', included: false },
-      { text: 'Advanced interview settings', included: false }
+      { text: t('billing.features.free.normalChats'), included: true },
+      { text: t('billing.features.free.interviewSessions'), included: true },
+      { text: t('billing.features.free.basicAI'), included: true },
+      { text: t('billing.features.free.textOnly'), included: true },
+      { text: t('billing.features.free.limitedUploads'), included: false },
+      { text: t('billing.features.free.voiceInteraction'), included: false },
+      { text: t('billing.features.free.pdfExport'), included: false },
+      { text: t('billing.features.free.prioritySupport'), included: false },
+      { text: t('billing.features.free.advancedSettings'), included: false }
     ],
     premium: [
-      { text: 'Unlimited normal chats', included: true },
-      { text: 'Unlimited interview sessions', included: true },
-      { text: 'Advanced AI responses', included: true },
-      { text: 'Voice-to-voice interaction', included: true },
-      { text: 'File uploads & sharing', included: true },
-      { text: 'PDF export of conversations', included: true },
-      { text: 'Priority customer support', included: true },
-      { text: 'Advanced interview settings', included: true },
-      { text: 'Custom interview scenarios', included: true }
+      { text: t('billing.features.premium.unlimitedChats'), included: true },
+      { text: t('billing.features.premium.unlimitedSessions'), included: true },
+      { text: t('billing.features.premium.advancedAI'), included: true },
+      { text: t('billing.features.premium.voiceToVoice'), included: true },
+      { text: t('billing.features.premium.fileSharing'), included: true },
+      { text: t('billing.features.premium.pdfConversations'), included: true },
+      { text: t('billing.features.premium.prioritySupport'), included: true },
+      { text: t('billing.features.premium.advancedSettings'), included: true },
+      { text: t('billing.features.premium.customScenarios'), included: true }
     ]
   }
 
@@ -94,7 +94,7 @@ const BillingPage = () => {
       }
     } catch (error) {
       console.error('Error fetching usage:', error)
-      toast.error('Failed to load usage data')
+      toast.error(t('billing.errors.loadUsageData'))
       // Set default values on error
       setUsage({
         normalChats: 0,
@@ -118,7 +118,7 @@ const BillingPage = () => {
       // Pass the selected plan type (monthly or yearly) to the checkout session
       await createCheckoutSession(selectedPlan)
     } catch (error) {
-      toast.error('Payment failed. Please try again.')
+      toast.error(t('billing.errors.paymentFailed'))
       console.error('Payment error:', error)
     } finally {
       setIsLoading(false)
@@ -227,7 +227,7 @@ const BillingPage = () => {
             
             <div className="mb-3">
               <div className="flex justify-between text-sm mb-1">
-                <span className="text-gray-400">Usage</span>
+                <span className="text-gray-400">{t('billing.ui.usage')}</span>
                 <span className="text-white-primary">{Math.round(usagePercentage)}%</span>
               </div>
               <div className="w-full bg-gray-700 rounded-full h-2 overflow-hidden">
@@ -244,7 +244,7 @@ const BillingPage = () => {
 
             {used >= limit && (
               <div className="text-xs text-red-400 bg-red-500/10 rounded-lg p-2">
-                Limit reached! Upgrade to Premium for unlimited access.
+                {t('billing.ui.limitReached')}
               </div>
             )}
           </>
@@ -262,10 +262,10 @@ const BillingPage = () => {
             <Crown className="w-12 h-12 text-yellow-500" />
           </div>
           <h1 className="text-4xl font-bold text-white-primary mb-4">
-            Choose Your Plan
+            {t('billing.ui.chooseYourPlan')}
           </h1>
           <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-            Unlock unlimited interview practice with our premium features
+            {t('billing.ui.unlimitedPractice')}
           </p>
         </div>
 
@@ -273,18 +273,18 @@ const BillingPage = () => {
         {!isPremium && (
           <div className="mb-12">
             <h2 className="text-2xl font-bold text-white-primary mb-6 text-center">
-              Current Usage
+              {t('billing.ui.currentUsage')}
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
               <UsageCard
-                title="Normal Chats"
+                title={t('billing.ui.normalChats')}
                 used={usage.normalChats}
                 limit={usage.normalLimit}
                 icon={Zap}
                 color="blue"
               />
               <UsageCard
-                title="Interview Sessions"
+                title={t('billing.ui.interviewSessions')}
                 used={usage.interviewChats}
                 limit={usage.interviewLimit}
                 icon={Users}
@@ -299,7 +299,7 @@ const BillingPage = () => {
                 disabled={usageLoading}
                 className="text-blue-400 hover:text-blue-300 text-sm underline disabled:opacity-50"
               >
-                {usageLoading ? 'Refreshing...' : 'Refresh Usage Data'}
+                {usageLoading ? t('billing.ui.refreshing') : t('billing.ui.refreshUsageData')}
               </button>
             </div>
           </div>
@@ -316,7 +316,7 @@ const BillingPage = () => {
                   : 'text-gray-400 hover:text-white-primary'
               }`}
             >
-              Monthly
+              {t('billing.ui.monthly')}
             </button>
             <button
               onClick={() => setSelectedPlan('yearly')}
@@ -326,7 +326,7 @@ const BillingPage = () => {
                   : 'text-gray-400 hover:text-white-primary'
               }`}
             >
-              Yearly
+              {t('billing.ui.yearly')}
               <span className="absolute -top-2 -right-2 bg-yellow-500 text-dark-primary text-xs font-bold px-2 py-1 rounded-full">
                 -17%
               </span>
@@ -340,11 +340,11 @@ const BillingPage = () => {
           <div className="bg-light-dark-secondary rounded-2xl p-8 border border-gray-600 relative">
             <div className="text-center mb-8">
               <Shield className="w-8 h-8 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-2xl font-bold text-white-primary mb-2">Free</h3>
+              <h3 className="text-2xl font-bold text-white-primary mb-2">{t('billing.ui.free')}</h3>
               <div className="text-4xl font-bold text-white-primary mb-2">
                 €0<span className="text-lg text-gray-400">/month</span>
               </div>
-              <p className="text-gray-400">Perfect for getting started</p>
+              <p className="text-gray-400">{t('billing.ui.perfectForGettingStarted')}</p>
             </div>
 
             <FeatureList features={features.free} />
@@ -355,7 +355,7 @@ const BillingPage = () => {
                 className="w-full"
                 disabled={!isPremium}
               >
-                {isPremium ? 'Current Plan' : 'Current Plan'}
+                {isPremium ? t('billing.ui.currentPlan') : t('billing.ui.currentPlan')}
               </Button>
             </div>
           </div>
@@ -366,20 +366,20 @@ const BillingPage = () => {
             <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
               <div className="bg-gradient-to-r from-yellow-500 to-orange-500 text-dark-primary px-6 py-2 rounded-full font-bold text-sm flex items-center space-x-2">
                 <Sparkles className="w-4 h-4" />
-                <span>Most Popular</span>
+                <span>{t('billing.ui.mostPopular')}</span>
               </div>
             </div>
 
             <div className="text-center mb-8 mt-4">
               <Crown className="w-8 h-8 text-yellow-500 mx-auto mb-4" />
-              <h3 className="text-2xl font-bold text-white-primary mb-2">Premium</h3>
+              <h3 className="text-2xl font-bold text-white-primary mb-2">{t('billing.ui.premium')}</h3>
               <div className="text-4xl font-bold text-white-primary mb-2">
                 €{plans[selectedPlan].price}
                 <span className="text-lg text-gray-400">/{plans[selectedPlan].period}</span>
               </div>
               {selectedPlan === 'yearly' && (
                 <div className="text-sm text-green-400 mb-2">
-                  Save €{plans.yearly.originalPrice - plans.yearly.price} per year
+                  {t('billing.ui.savePerYear', { amount: plans.yearly.originalPrice - plans.yearly.price })}
                 </div>
               )}
               <p className="text-gray-400">{plans[selectedPlan].description}</p>
@@ -392,7 +392,7 @@ const BillingPage = () => {
                 onClick={() => handleUpgrade(selectedPlan)}
                 className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-dark-primary font-bold"
               >
-                {isPremium ? 'Manage Subscription' : 'Upgrade to Premium'}
+                {isPremium ? t('billing.ui.manageSubscription') : t('billing.ui.upgradeToPremium')}
               </Button>
             </div>
           </div>
@@ -401,31 +401,31 @@ const BillingPage = () => {
         {/* FAQ Section */}
         <div className="max-w-3xl mx-auto">
           <h2 className="text-2xl font-bold text-white-primary text-center mb-8">
-            Frequently Asked Questions
+            {t('billing.ui.frequentlyAskedQuestions')}
           </h2>
           <div className="space-y-6">
             <div className="bg-light-dark-secondary rounded-xl p-6">
               <h3 className="font-semibold text-white-primary mb-2">
-                Can I cancel anytime?
+                {t('billing.faq.cancelAnytime.question')}
               </h3>
               <p className="text-gray-400">
-                Yes! You can cancel your subscription at any time. Your premium features will remain active until the end of your billing period.
+                {t('billing.faq.cancelAnytime.answer')}
               </p>
             </div>
             <div className="bg-light-dark-secondary rounded-xl p-6">
               <h3 className="font-semibold text-white-primary mb-2">
-                What payment methods do you accept?
+                {t('billing.faq.paymentMethods.question')}
               </h3>
               <p className="text-gray-400">
-                We accept all major credit cards including Visa, Mastercard, and American Express through our secure Stripe payment processor.
+                {t('billing.faq.paymentMethods.answer')}
               </p>
             </div>
             <div className="bg-light-dark-secondary rounded-xl p-6">
               <h3 className="font-semibold text-white-primary mb-2">
-                Is there a free trial?
+                {t('billing.faq.freeTrial.question')}
               </h3>
               <p className="text-gray-400">
-                Your free account already gives you access to try our platform. Premium users get unlimited access to all features immediately upon upgrade.
+                {t('billing.faq.freeTrial.answer')}
               </p>
             </div>
           </div>
@@ -437,7 +437,7 @@ const BillingPage = () => {
         <div className="text-center p-6">
           <Crown className="w-12 h-12 text-yellow-500 mx-auto mb-4" />
           <h2 className="text-2xl font-bold text-white-primary mb-4">
-            Upgrade to Premium
+            {t('billing.paymentModal.title')}
           </h2>
           <div className="bg-light-dark-secondary rounded-lg p-4 mb-6">
             <div className="text-3xl font-bold text-white-primary">
@@ -446,7 +446,7 @@ const BillingPage = () => {
             </div>
             {selectedPlan === 'yearly' && (
               <div className="text-green-400 text-sm mt-1">
-                17% discount - Save €{plans.yearly.originalPrice - plans.yearly.price}
+                {t('billing.paymentModal.discount', { amount: plans.yearly.originalPrice - plans.yearly.price })}
               </div>
             )}
             <p className="text-gray-400 mt-2">{plans[selectedPlan].description}</p>
@@ -459,19 +459,19 @@ const BillingPage = () => {
               className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-dark-primary font-bold flex items-center justify-center space-x-2"
             >
               <CreditCard className="w-5 h-5" />
-              <span>Proceed to Payment</span>
+              <span>{t('billing.paymentModal.proceedToPayment')}</span>
             </Button>
             <Button
               variant="secondary"
               onClick={() => setShowPaymentModal(false)}
               className="w-full"
             >
-              Cancel
+              {t('billing.paymentModal.cancel')}
             </Button>
           </div>
           
           <p className="text-xs text-gray-400 mt-4">
-            Secure payment powered by Stripe. Your card details are never stored on our servers.
+            {t('billing.paymentModal.securePayment')}
           </p>
         </div>
       </Modal>

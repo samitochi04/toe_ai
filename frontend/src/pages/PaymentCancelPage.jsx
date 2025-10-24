@@ -18,20 +18,20 @@ const PaymentCancelPage = () => {
           
           <div>
             <h1 className="text-2xl font-bold text-white-primary mb-2">
-              Payment Cancelled
+              {t('paymentCancel.title')}
             </h1>
             <p className="text-gray-400">
-              Your payment was cancelled. No charges have been made to your account.
+              {t('paymentCancel.description')}
             </p>
           </div>
 
           <div className="bg-dark-primary rounded-lg p-4 border border-gray-700">
             <div className="flex items-center justify-center mb-2">
               <Crown className="w-5 h-5 text-yellow-400 mr-2" />
-              <span className="text-white-primary font-medium">Premium Plan</span>
+              <span className="text-white-primary font-medium">{t('paymentCancel.premiumPlan')}</span>
             </div>
             <p className="text-gray-400 text-sm">
-              You can upgrade to premium anytime to unlock unlimited features.
+              {t('paymentCancel.upgradeAnytime')}
             </p>
           </div>
 
@@ -41,7 +41,7 @@ const PaymentCancelPage = () => {
               className="w-full"
             >
               <Crown className="w-4 h-4 mr-2" />
-              Try Again
+              {t('paymentCancel.tryAgain')}
             </Button>
             
             <Button 
@@ -50,7 +50,7 @@ const PaymentCancelPage = () => {
               className="w-full"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Dashboard
+              {t('paymentCancel.backToDashboard')}
             </Button>
           </div>
         </div>

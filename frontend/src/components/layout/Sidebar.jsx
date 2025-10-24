@@ -138,7 +138,7 @@ const Sidebar = ({ isOpen, onToggle }) => {
         <div className="flex items-center">
           <img 
             src="/toe_ai_logo.png" 
-            alt="TOE AI" 
+            alt={t('sidebar.logoAlt')} 
             className="w-8 h-8"
           />
           {isOpen && (
@@ -149,7 +149,7 @@ const Sidebar = ({ isOpen, onToggle }) => {
         <button
           onClick={onToggle}
           className="p-2 rounded-lg hover:bg-gray-700 transition-colors text-white-secondary hover:text-white-primary"
-          title={isOpen ? "Close sidebar" : "Open sidebar"}
+          title={isOpen ? t('sidebar.closeSidebar') : t('sidebar.openSidebar')}
         >
           {isOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
         </button>
@@ -270,7 +270,7 @@ const Sidebar = ({ isOpen, onToggle }) => {
                 <button
                   onClick={handleSignOut}
                   className="text-white-secondary hover:text-white-primary transition-colors p-1"
-                  title="Sign Out"
+                  title={t('common.signOut')}
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013 3v1" />
