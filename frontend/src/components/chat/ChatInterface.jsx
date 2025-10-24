@@ -144,9 +144,9 @@ const ChatInterface = () => {
   }
 
   return (
-    <div className="flex flex-col h-full bg-dark-primary">
+    <div className="flex flex-col h-full bg-dark-primary relative">
       {/* Header */}
-      <div className="flex items-center justify-between p-3 md:p-4 border-b border-light-dark-secondary flex-shrink-0">
+      <div className="flex items-center justify-between p-2 md:p-4 border-b border-light-dark-secondary flex-shrink-0">
         <div className="flex items-center space-x-2 md:space-x-3 min-w-0 flex-1">
           <h1 className="text-lg md:text-xl font-semibold text-white-primary truncate">
             {currentChat?.title || t('chat.newChat')}
@@ -170,7 +170,7 @@ const ChatInterface = () => {
       </div>
 
       {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto p-3 md:p-4 space-y-3 md:space-y-4 min-h-0">
+      <div className="flex-1 overflow-y-auto p-2 md:p-4 space-y-2 md:space-y-4 min-h-0 pb-20">
         {/* Show loading state when switching chats */}
         {isLoading && (
           <div className="flex flex-col items-center justify-center h-full text-center">
@@ -250,12 +250,10 @@ const ChatInterface = () => {
         )}
 
         <div ref={messagesEndRef} />
-        {/* Add padding to prevent content from being hidden behind input */}
-        <div className="h-4"></div>
       </div>
 
-      {/* Input Area */}
-      <div className="border-t border-light-dark-secondary flex-shrink-0">
+      {/* Input Area - Fixed at bottom */}
+      <div className="fixed bottom-0 left-0 right-0 bg-dark-primary border-t border-light-dark-secondary z-10">
         <ChatInput
           value={inputMessage}
           onChange={setInputMessage}

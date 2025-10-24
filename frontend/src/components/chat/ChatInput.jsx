@@ -140,7 +140,7 @@ const ChatInput = ({
     <div className={`relative ${isDragOver ? 'bg-blue-500/10' : ''}`}>
       {renderAttachedFiles()}
       
-      <form onSubmit={handleSubmit} className="p-3 md:p-4">
+      <form onSubmit={handleSubmit} className="p-2 md:p-4">
         <div 
           className={`relative flex items-end space-x-2 md:space-x-3 bg-light-dark-secondary rounded-xl border transition-all duration-200 ${
             isDragOver ? 'border-blue-500 bg-blue-500/5' : 'border-gray-600 hover:border-gray-500'
@@ -150,7 +150,7 @@ const ChatInput = ({
           onDrop={handleDrop}
         >
           {/* File attachment button */}
-          <div className="flex-shrink-0 p-2 md:p-3">
+          <div className="flex-shrink-0 p-1 md:p-3">
             <input
               ref={fileInputRef}
               type="file"
@@ -178,7 +178,7 @@ const ChatInput = ({
           </div>
 
           {/* Text input */}
-          <div className="flex-1 py-2 md:py-3">
+          <div className="flex-1 py-1 md:py-3">
             <textarea
               ref={textareaRef}
               value={value}
@@ -193,7 +193,7 @@ const ChatInput = ({
           </div>
 
           {/* Send button */}
-          <div className="flex-shrink-0 p-2 md:p-3">
+          <div className="flex-shrink-0 p-1 md:p-3">
             <Button
               type="submit"
               variant={value.trim() || attachedFiles.length > 0 ? 'primary' : 'ghost'}
