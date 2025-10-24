@@ -217,18 +217,18 @@ const LandingPage = () => {
               <Link to="/about" className="hover:text-white-primary transition-colors">
                 {t('landing.footer.aboutUs')}
               </Link>
-              <a href="#" className="hover:text-white-primary transition-colors">
+              <Link to="/help-center" className="hover:text-white-primary transition-colors">
                 {t('landing.footer.helpCenter')}
-              </a>
-              <a href="#" className="hover:text-white-primary transition-colors">
+              </Link>
+              <Link to="/terms" className="hover:text-white-primary transition-colors">
                 {t('landing.footer.termOfService')}
-              </a>
-              <a href="#" className="hover:text-white-primary transition-colors">
+              </Link>
+              <Link to="/privacy" className="hover:text-white-primary transition-colors">
                 {t('landing.footer.privacyPolicy')}
-              </a>
-              <a href="#" className="hover:text-white-primary transition-colors">
+              </Link>
+              <Link to="/cookies" className="hover:text-white-primary transition-colors">
                 {t('landing.footer.cookieUse')}
-              </a>
+              </Link>
               <div className="flex items-center space-x-1">
                 <Globe className="w-4 h-4" />
                 <span>{t('landing.footer.english')}</span>

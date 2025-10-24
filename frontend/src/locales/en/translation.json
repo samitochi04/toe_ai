@@ -22,7 +22,15 @@
     "addMore": "Add More",
     "language": "Language",
     "english": "English",
-    "french": "French"
+    "french": "French",
+    "home": "Home",
+    "about": "About",
+    "helpCenter": "Help Center",
+    "termsOfService": "Terms of Service",
+    "privacyPolicy": "Privacy Policy",
+    "cookiePolicy": "Cookie Policy",
+    "getStarted": "Get Started",
+    "contact": "Contact"
   },
   "landing": {
     "hero": {
@@ -696,6 +704,419 @@
         "success": "85% Success Rate",
         "interviews": "50,000+ Practice Sessions"
       }
+    }
+  },
+  "helpCenter": {
+    "meta": {
+      "title": "Help Center - TOE AI",
+      "description": "Find answers to common questions and get help with using TOE AI's interview training platform."
+    },
+    "hero": {
+      "title": "How can we help you?",
+      "description": "Find answers to your questions and get the most out of TOE AI's interview training platform."
+    },
+    "search": {
+      "placeholder": "Search for help...",
+      "noResults": "No results found. Try searching with different keywords or browse our categories."
+    },
+    "categories": {
+      "all": "All Topics",
+      "gettingStarted": "Getting Started",
+      "interviews": "Interviews",
+      "chat": "Chat Features",
+      "account": "Account",
+      "billing": "Billing",
+      "technical": "Technical"
+    },
+    "quickHelp": {
+      "title": "Quick Help",
+      "interview": {
+        "title": "Interview Practice",
+        "description": "Learn how to set up and conduct AI-powered interview sessions.",
+        "action": "View Interview Help"
+      },
+      "account": {
+        "title": "Account Management",
+        "description": "Manage your profile, settings, and account preferences.",
+        "action": "View Account Help"
+      },
+      "billing": {
+        "title": "Billing & Subscriptions",
+        "description": "Information about pricing, payments, and subscription management.",
+        "action": "View Billing Help"
+      }
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "gettingStarted": {
+        "q1": {
+          "question": "How do I create an account?",
+          "answer": "You can create an account by clicking 'Sign Up' and using either your email or Google account. Simply fill in your details and verify your email to get started."
+        },
+        "q2": {
+          "question": "What do I need to get started?",
+          "answer": "You just need a device with internet access and a microphone for voice features. TOE AI works in your web browser - no downloads required."
+        }
+      },
+      "interviews": {
+        "q1": {
+          "question": "How do AI interviews work?",
+          "answer": "Our AI interviewer conducts realistic interview sessions based on your job position and experience level. You can practice with voice or text, and receive detailed feedback on your performance."
+        },
+        "q2": {
+          "question": "Can I practice for specific job roles?",
+          "answer": "Yes! You can customize interview sessions for specific positions, companies, and difficulty levels. Our AI adapts questions to match your target role."
+        },
+        "q3": {
+          "question": "How long do interview sessions last?",
+          "answer": "Interview sessions can range from 15 minutes to 1 hour, depending on your settings. You can pause and resume sessions at any time."
+        }
+      },
+      "chat": {
+        "q1": {
+          "question": "Can I upload documents for reference?",
+          "answer": "Premium users can upload resumes, job descriptions, and other documents to help the AI provide more personalized interview questions and feedback."
+        },
+        "q2": {
+          "question": "How do I share my interview sessions?",
+          "answer": "You can generate shareable links for your interview sessions to show potential employers or get feedback from mentors."
+        }
+      },
+      "account": {
+        "q1": {
+          "question": "How do I change my profile information?",
+          "answer": "Go to Settings > Profile to update your name, email, and other personal information. Changes are saved automatically."
+        },
+        "q2": {
+          "question": "Can I delete my account?",
+          "answer": "Yes, you can delete your account from Settings > Account. This action is permanent and will remove all your data."
+        }
+      },
+      "billing": {
+        "q1": {
+          "question": "What's included in the premium plan?",
+          "answer": "Premium includes unlimited interview sessions, document uploads, detailed analytics, priority support, and advanced AI features."
+        },
+        "q2": {
+          "question": "Can I cancel my subscription anytime?",
+          "answer": "Yes, you can cancel your subscription at any time from the billing page. You'll retain access until the end of your current billing period."
+        }
+      },
+      "technical": {
+        "q1": {
+          "question": "Which browsers are supported?",
+          "answer": "TOE AI works best on Chrome, Firefox, Safari, and Edge. Make sure you're using a recent version for optimal performance."
+        },
+        "q2": {
+          "question": "Why can't I access my microphone?",
+          "answer": "Make sure you've granted microphone permissions to your browser and that you're using HTTPS. Check your browser settings if issues persist."
+        }
+      }
+    },
+    "contact": {
+      "title": "Still need help?",
+      "description": "Can't find what you're looking for? Our support team is here to help.",
+      "email": {
+        "title": "Email Support",
+        "description": "Get detailed help via email. We typically respond within 24 hours."
+      },
+      "hours": {
+        "title": "Support Hours",
+        "description": "We're here to help during business hours.",
+        "time": "Monday - Friday, 9AM - 6PM EST"
+      }
+    },
+    "footer": {
+      "description": "AI-powered interview training to help you succeed.",
+      "product": "Product",
+      "support": "Support",
+      "legal": "Legal",
+      "contact": "Contact Us",
+      "rights": "All rights reserved."
+    }
+  },
+  "terms": {
+    "meta": {
+      "title": "Terms of Service - TOE AI",
+      "description": "Read our terms of service to understand the rules and guidelines for using TOE AI's platform."
+    },
+    "hero": {
+      "title": "Terms of Service",
+      "description": "Please read these terms carefully before using our service."
+    },
+    "lastUpdated": "Last Updated",
+    "lastUpdatedDate": "October 23, 2024",
+    "effectiveDate": "Effective Date",
+    "effectiveDateValue": "October 23, 2024",
+    "tableOfContents": "Table of Contents",
+    "sections": {
+      "acceptance": {
+        "title": "Acceptance of Terms",
+        "content": "By accessing and using TOE AI's services, you accept and agree to be bound by the terms and provision of this agreement. These Terms of Service (\"Terms\") constitute a legally binding agreement between you (\"User\" or \"you\") and TOE AI (\"we,\" \"us,\" or \"our\"). If you do not agree to abide by the above, please do not use this service."
+      },
+      "description": {
+        "title": "Description of Service",
+        "content": "TOE AI provides an AI-powered interview training platform that helps users practice and improve their interview skills through simulated interview sessions, feedback, and analytics. Our service includes both free and premium features, accessible through web browsers and mobile applications."
+      },
+      "accounts": {
+        "title": "User Accounts",
+        "content": "To access certain features of our service, you must register for an account. You are responsible for maintaining the confidentiality of your account credentials and for all activities that occur under your account. You agree to provide accurate, current, and complete information during registration and to update such information as necessary."
+      },
+      "usage": {
+        "title": "Acceptable Use",
+        "content": "You agree to use our service only for lawful purposes and in accordance with these Terms. You may not use our service to: (a) violate any applicable laws or regulations; (b) infringe upon the rights of others; (c) distribute spam, malware, or other harmful content; (d) attempt to gain unauthorized access to our systems; or (e) interfere with the proper functioning of our service."
+      },
+      "content": {
+        "title": "User Content",
+        "content": "You retain ownership of any content you submit to our service, including interview recordings, documents, and personal information. By submitting content, you grant us a non-exclusive, worldwide, royalty-free license to use, modify, and display such content solely for the purpose of providing our service. You are responsible for ensuring that your content does not violate any laws or third-party rights."
+      },
+      "privacy": {
+        "title": "Privacy and Data Protection",
+        "content": "We take your privacy seriously. Our collection, use, and protection of your personal information is governed by our Privacy Policy, which is incorporated into these Terms by reference. By using our service, you consent to the collection and use of your information as described in our Privacy Policy."
+      },
+      "payment": {
+        "title": "Payment Terms",
+        "content": "Certain features of our service require payment of fees. You agree to pay all applicable fees for your use of premium features. All payments are processed securely through third-party payment processors. Subscriptions automatically renew unless cancelled. We reserve the right to change our pricing with 30 days' notice."
+      },
+      "intellectual": {
+        "title": "Intellectual Property",
+        "content": "The TOE AI service, including all content, features, and functionality, is owned by us and is protected by international copyright, trademark, and other intellectual property laws. You may not reproduce, distribute, modify, or create derivative works of our service without our express written permission."
+      },
+      "prohibited": {
+        "title": "Prohibited Activities",
+        "content": "You are prohibited from: (a) reverse engineering or attempting to extract source code; (b) using automated tools to access our service; (c) creating false accounts or impersonating others; (d) sharing account credentials; (e) using our service for commercial purposes without authorization; and (f) violating any applicable laws or regulations."
+      },
+      "termination": {
+        "title": "Termination",
+        "content": "We may terminate or suspend your account and access to our service at any time, with or without cause, and with or without notice. You may also terminate your account at any time by contacting us or using the account deletion feature. Upon termination, your right to use our service will cease immediately."
+      },
+      "disclaimers": {
+        "title": "Disclaimers",
+        "content": "Our service is provided \"as is\" and \"as available\" without warranties of any kind, either express or implied. We do not guarantee that our service will be uninterrupted, error-free, or completely secure. We disclaim all warranties, including implied warranties of merchantability, fitness for a particular purpose, and non-infringement."
+      },
+      "limitation": {
+        "title": "Limitation of Liability",
+        "content": "To the fullest extent permitted by law, TOE AI shall not be liable for any indirect, incidental, special, consequential, or punitive damages, including loss of profits, data, or other intangible losses, resulting from your use of our service. Our total liability shall not exceed the amount paid by you for our service in the 12 months preceding the claim."
+      },
+      "indemnification": {
+        "title": "Indemnification",
+        "content": "You agree to indemnify, defend, and hold harmless TOE AI and its officers, directors, employees, and agents from any claims, liabilities, damages, losses, and expenses arising out of or in any way connected with your use of our service, your violation of these Terms, or your violation of any rights of others."
+      },
+      "governing": {
+        "title": "Governing Law",
+        "content": "These Terms shall be governed by and construed in accordance with the laws of [Jurisdiction], without regard to its conflict of law provisions. Any disputes arising under these Terms shall be subject to the exclusive jurisdiction of the courts in [Jurisdiction]."
+      },
+      "changes": {
+        "title": "Changes to Terms",
+        "content": "We reserve the right to modify these Terms at any time. We will notify users of material changes by posting the updated Terms on our website and updating the \"Last Updated\" date. Your continued use of our service after such changes constitutes acceptance of the new Terms."
+      },
+      "contact": {
+        "title": "Contact Information",
+        "content": "If you have any questions about these Terms, please contact us at legal@toeai.com or through our support channels."
+      }
+    },
+    "contact": {
+      "title": "Questions About These Terms?",
+      "description": "If you have any questions or concerns about our Terms of Service, please don't hesitate to contact our legal team."
+    },
+    "related": {
+      "title": "Related Documents",
+      "privacy": "Learn how we protect your data and respect your privacy.",
+      "cookies": "Understand how we use cookies and similar technologies."
+    },
+    "footer": {
+      "description": "AI-powered interview training to help you succeed.",
+      "product": "Product",
+      "support": "Support",
+      "legal": "Legal",
+      "contact": "Contact Us",
+      "rights": "All rights reserved."
+    }
+  },
+  "privacy": {
+    "meta": {
+      "title": "Privacy Policy - TOE AI",
+      "description": "Learn how TOE AI collects, uses, and protects your personal information."
+    },
+    "hero": {
+      "title": "Privacy Policy",
+      "description": "We're committed to protecting your privacy and being transparent about how we handle your data."
+    },
+    "lastUpdated": "Last Updated",
+    "lastUpdatedDate": "October 23, 2024",
+    "effectiveDate": "Effective Date",
+    "effectiveDateValue": "October 23, 2024",
+    "tableOfContents": "Table of Contents",
+    "keyPoints": {
+      "title": "Key Privacy Points",
+      "point1": "We only collect information necessary to provide our service",
+      "point2": "Your interview data is encrypted and securely stored",
+      "point3": "We never sell your personal information to third parties",
+      "point4": "You can delete your data and account at any time"
+    },
+    "sections": {
+      "overview": {
+        "title": "Privacy Overview",
+        "content": "This Privacy Policy describes how TOE AI (\"we,\" \"us,\" or \"our\") collects, uses, and protects your information when you use our AI-powered interview training platform. We are committed to ensuring your privacy and data security while providing you with an exceptional service experience."
+      },
+      "informationCollected": {
+        "title": "Information We Collect",
+        "content": "We collect information you provide directly (account details, profile information), information collected automatically (usage data, device information, cookies), and information from third parties (social media login data, payment information). This includes personal identifiers, professional information, usage analytics, and technical data necessary for service operation."
+      },
+      "howWeUse": {
+        "title": "How We Use Your Information",
+        "content": "We use your information to: provide and improve our service, personalize your experience, process payments, communicate with you, ensure security, comply with legal obligations, and develop new features. We use AI to analyze your interview performance and provide personalized feedback and recommendations."
+      },
+      "informationSharing": {
+        "title": "Information Sharing and Disclosure",
+        "content": "We do not sell your personal information. We may share information with: service providers who help us operate our platform, law enforcement when required by law, business partners with your consent, and during business transfers. All sharing is done with appropriate safeguards and contractual protections."
+      },
+      "dataSecurity": {
+        "title": "Data Security",
+        "content": "We implement industry-standard security measures including encryption in transit and at rest, regular security audits, access controls and authentication, secure data centers, and incident response procedures. However, no system is 100% secure, and we cannot guarantee absolute security."
+      },
+      "dataRetention": {
+        "title": "Data Retention",
+        "content": "We retain your information for as long as necessary to provide our services and comply with legal obligations. Account information is kept while your account is active. Interview data is retained according to your preferences. Usage analytics are anonymized after 2 years. You can request deletion of your data at any time."
+      },
+      "yourRights": {
+        "title": "Your Privacy Rights",
+        "content": "You have the right to: access your personal information, correct inaccurate data, delete your data, port your data to another service, object to certain processing, withdraw consent, and restrict processing. To exercise these rights, contact us at privacy@toeai.com."
+      },
+      "cookies": {
+        "title": "Cookies and Tracking",
+        "content": "We use cookies and similar technologies to enhance your experience, remember your preferences, analyze usage patterns, and provide personalized content. You can control cookie settings through your browser preferences. See our Cookie Policy for detailed information."
+      },
+      "thirdParty": {
+        "title": "Third-Party Services",
+        "content": "Our service integrates with third-party providers for payments, analytics, and infrastructure. These providers have their own privacy policies and we encourage you to review them. We carefully select partners who maintain high privacy and security standards."
+      },
+      "international": {
+        "title": "International Data Transfers",
+        "content": "Your information may be transferred to and processed in countries other than your own. We ensure appropriate safeguards are in place for international transfers, including standard contractual clauses and adequacy decisions where applicable."
+      },
+      "children": {
+        "title": "Children's Privacy",
+        "content": "Our service is not intended for children under 16. We do not knowingly collect personal information from children under 16. If we become aware that we have collected such information, we will take steps to delete it promptly."
+      },
+      "changes": {
+        "title": "Changes to This Policy",
+        "content": "We may update this Privacy Policy from time to time. We will notify you of material changes by posting the updated policy on our website and sending you an email notification. Your continued use of our service after such changes constitutes acceptance of the updated policy."
+      },
+      "contact": {
+        "title": "Contact Us",
+        "content": "If you have questions about this Privacy Policy or our privacy practices, please contact us at privacy@toeai.com or dpo@toeai.com for data protection matters."
+      }
+    },
+    "contact": {
+      "title": "Privacy Questions?",
+      "description": "If you have any questions about our privacy practices or want to exercise your privacy rights, please contact our privacy team.",
+      "email": "Email",
+      "dpo": "Data Protection Officer"
+    },
+    "related": {
+      "title": "Related Documents",
+      "terms": "Review our terms and conditions for using TOE AI.",
+      "cookies": "Learn more about our cookie usage and preferences."
+    },
+    "footer": {
+      "description": "AI-powered interview training to help you succeed.",
+      "product": "Product",
+      "support": "Support",
+      "legal": "Legal",
+      "contact": "Contact Us",
+      "rights": "All rights reserved."
+    }
+  },
+  "cookies": {
+    "meta": {
+      "title": "Cookie Policy - TOE AI",
+      "description": "Learn about how TOE AI uses cookies and how you can manage your cookie preferences."
+    },
+    "hero": {
+      "title": "Cookie Policy",
+      "description": "This policy explains how we use cookies and similar technologies to enhance your experience."
+    },
+    "lastUpdated": "Last Updated",
+    "lastUpdatedDate": "October 23, 2024",
+    "effectiveDate": "Effective Date",
+    "effectiveDateValue": "October 23, 2024",
+    "tableOfContents": "Table of Contents",
+    "preferences": {
+      "title": "Cookie Preferences",
+      "saved": "Your cookie preferences have been saved!",
+      "allAccepted": "All cookies have been accepted!",
+      "rejected": "Optional cookies have been rejected!",
+      "acceptAll": "Accept All Cookies",
+      "saveSelected": "Save Selected Preferences",
+      "rejectOptional": "Reject Optional Cookies"
+    },
+    "required": "Required",
+    "examples": "Examples",
+    "types": {
+      "necessary": {
+        "title": "Necessary Cookies",
+        "description": "These cookies are essential for the website to function properly and cannot be disabled.",
+        "examples": "Authentication, security, basic functionality"
+      },
+      "analytics": {
+        "title": "Analytics Cookies",
+        "description": "These cookies help us understand how visitors interact with our website.",
+        "examples": "Google Analytics, usage statistics, performance monitoring"
+      },
+      "marketing": {
+        "title": "Marketing Cookies",
+        "description": "These cookies are used to deliver relevant advertisements and track campaign effectiveness.",
+        "examples": "Ad targeting, social media integration, conversion tracking"
+      },
+      "preferences": {
+        "title": "Preference Cookies",
+        "description": "These cookies remember your settings and preferences to enhance your experience.",
+        "examples": "Language selection, theme preferences, dashboard layout"
+      }
+    },
+    "sections": {
+      "whatAreCookies": {
+        "title": "What Are Cookies?",
+        "content": "Cookies are small text files that are placed on your computer or mobile device when you visit a website. They are widely used to make websites work more efficiently and provide information to website owners. Cookies allow websites to remember your preferences and provide personalized experiences."
+      },
+      "howWeUse": {
+        "title": "How We Use Cookies",
+        "content": "We use cookies to: enhance your browsing experience, remember your login status and preferences, analyze website traffic and usage patterns, provide personalized content and recommendations, ensure website security and prevent fraud, and improve our service performance and functionality."
+      },
+      "thirdParty": {
+        "title": "Third-Party Cookies",
+        "content": "Some cookies on our website are set by third-party services we use, such as Google Analytics for website analytics, payment processors for secure transactions, social media platforms for content sharing, and advertising networks for relevant ads. These third parties have their own cookie policies."
+      },
+      "managingCookies": {
+        "title": "Managing Your Cookie Preferences",
+        "content": "You can control and manage cookies in several ways: use our cookie preference center above, adjust your browser settings to block or delete cookies, opt out of third-party analytics and advertising cookies, or contact us for assistance with cookie management. Note that disabling certain cookies may affect website functionality."
+      },
+      "cookieRetention": {
+        "title": "Cookie Retention",
+        "content": "Different cookies have different retention periods: session cookies are deleted when you close your browser, persistent cookies remain for a set period (typically 30 days to 2 years), and preference cookies are kept until you change them or delete them manually."
+      },
+      "updates": {
+        "title": "Updates to This Policy",
+        "content": "We may update this Cookie Policy from time to time to reflect changes in our practices or for legal, operational, or regulatory reasons. We will notify you of any material changes by posting the updated policy on our website."
+      }
+    },
+    "contact": {
+      "title": "Cookie Questions?",
+      "description": "If you have questions about our use of cookies or need help managing your preferences, please contact our privacy team."
+    },
+    "related": {
+      "title": "Related Documents",
+      "privacy": "Learn more about how we protect your personal information.",
+      "terms": "Read our complete terms and conditions for using TOE AI."
+    },
+    "footer": {
+      "description": "AI-powered interview training to help you succeed.",
+      "product": "Product",
+      "support": "Support",
+      "legal": "Legal",
+      "contact": "Contact Us",
+      "rights": "All rights reserved."
     }
   }
 }

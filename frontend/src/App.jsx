@@ -8,6 +8,10 @@ import { useTranslation } from 'react-i18next'
 // Pages
 import LandingPage from './pages/LandingPage'
 import AboutPage from './pages/AboutPage'
+import HelpCenterPage from './pages/HelpCenterPage'
+import TermsOfServicePage from './pages/TermsOfServicePage'
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage'
+import CookieUsePage from './pages/CookieUsePage'
 import DashboardPage from './pages/DashboardPage'
 import ChatPage from './pages/ChatPage'
 import ChatsListPage from './pages/ChatsListPage'
@@ -87,6 +91,10 @@ function App() {
             } 
           />
           <Route path="/about" element={<AboutPage />} />
+          <Route path="/help-center" element={<HelpCenterPage />} />
+          <Route path="/terms" element={<TermsOfServicePage />} />
+          <Route path="/privacy" element={<PrivacyPolicyPage />} />
+          <Route path="/cookies" element={<CookieUsePage />} />
           <Route path="/shared/:shareToken" element={<SharedChatPage />} />
           <Route path="/auth/callback/google" element={<OAuthCallbackPage />} />
           <Route path="/auth/callback" element={<OAuthCallbackPage />} />

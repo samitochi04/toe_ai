@@ -22,7 +22,15 @@
     "addMore": "Ajouter Plus",
     "language": "Langue",
     "english": "Anglais",
-    "french": "Français"
+    "french": "Français",
+    "home": "Accueil",
+    "about": "À propos",
+    "helpCenter": "Centre d'aide",
+    "termsOfService": "Conditions d'utilisation",
+    "privacyPolicy": "Politique de confidentialité",
+    "cookiePolicy": "Politique des cookies",
+    "getStarted": "Commencer",
+    "contact": "Contact"
   },
   "landing": {
     "hero": {
@@ -619,6 +627,419 @@
         "success": "85% de taux de réussite",
         "interviews": "50 000+ sessions de pratique"
       }
+    }
+  },
+  "helpCenter": {
+    "meta": {
+      "title": "Centre d'aide - TOE AI",
+      "description": "Trouvez des réponses aux questions courantes et obtenez de l'aide pour utiliser la plateforme d'entraînement aux entretiens de TOE AI."
+    },
+    "hero": {
+      "title": "Comment pouvons-nous vous aider ?",
+      "description": "Trouvez des réponses à vos questions et tirez le meilleur parti de la plateforme d'entraînement aux entretiens de TOE AI."
+    },
+    "search": {
+      "placeholder": "Rechercher de l'aide...",
+      "noResults": "Aucun résultat trouvé. Essayez de rechercher avec des mots-clés différents ou parcourez nos catégories."
+    },
+    "categories": {
+      "all": "Tous les sujets",
+      "gettingStarted": "Premiers pas",
+      "interviews": "Entretiens",
+      "chat": "Fonctionnalités de chat",
+      "account": "Compte",
+      "billing": "Facturation",
+      "technical": "Technique"
+    },
+    "quickHelp": {
+      "title": "Aide rapide",
+      "interview": {
+        "title": "Pratique d'entretien",
+        "description": "Apprenez à configurer et mener des sessions d'entretien alimentées par l'IA.",
+        "action": "Voir l'aide aux entretiens"
+      },
+      "account": {
+        "title": "Gestion de compte",
+        "description": "Gérez votre profil, vos paramètres et vos préférences de compte.",
+        "action": "Voir l'aide au compte"
+      },
+      "billing": {
+        "title": "Facturation et abonnements",
+        "description": "Informations sur les tarifs, les paiements et la gestion des abonnements.",
+        "action": "Voir l'aide à la facturation"
+      }
+    },
+    "faq": {
+      "title": "Questions fréquemment posées",
+      "gettingStarted": {
+        "q1": {
+          "question": "Comment créer un compte ?",
+          "answer": "Vous pouvez créer un compte en cliquant sur 'S'inscrire' et en utilisant votre email ou votre compte Google. Il suffit de remplir vos informations et de vérifier votre email pour commencer."
+        },
+        "q2": {
+          "question": "De quoi ai-je besoin pour commencer ?",
+          "answer": "Vous avez juste besoin d'un appareil avec accès Internet et d'un microphone pour les fonctionnalités vocales. TOE AI fonctionne dans votre navigateur web - aucun téléchargement requis."
+        }
+      },
+      "interviews": {
+        "q1": {
+          "question": "Comment fonctionnent les entretiens IA ?",
+          "answer": "Notre intervieweur IA mène des sessions d'entretien réalistes basées sur votre poste et votre niveau d'expérience. Vous pouvez pratiquer avec la voix ou le texte, et recevoir des commentaires détaillés sur votre performance."
+        },
+        "q2": {
+          "question": "Puis-je pratiquer pour des rôles spécifiques ?",
+          "answer": "Oui ! Vous pouvez personnaliser les sessions d'entretien pour des postes, entreprises et niveaux de difficulté spécifiques. Notre IA adapte les questions à votre rôle cible."
+        },
+        "q3": {
+          "question": "Combien de temps durent les sessions d'entretien ?",
+          "answer": "Les sessions d'entretien peuvent durer de 15 minutes à 1 heure, selon vos paramètres. Vous pouvez mettre en pause et reprendre les sessions à tout moment."
+        }
+      },
+      "chat": {
+        "q1": {
+          "question": "Puis-je télécharger des documents pour référence ?",
+          "answer": "Les utilisateurs premium peuvent télécharger des CV, descriptions de poste et autres documents pour aider l'IA à fournir des questions d'entretien et des commentaires plus personnalisés."
+        },
+        "q2": {
+          "question": "Comment partager mes sessions d'entretien ?",
+          "answer": "Vous pouvez générer des liens partageables pour vos sessions d'entretien pour les montrer aux employeurs potentiels ou obtenir des commentaires de mentors."
+        }
+      },
+      "account": {
+        "q1": {
+          "question": "Comment modifier les informations de mon profil ?",
+          "answer": "Allez dans Paramètres > Profil pour mettre à jour votre nom, email et autres informations personnelles. Les modifications sont enregistrées automatiquement."
+        },
+        "q2": {
+          "question": "Puis-je supprimer mon compte ?",
+          "answer": "Oui, vous pouvez supprimer votre compte depuis Paramètres > Compte. Cette action est permanente et supprimera toutes vos données."
+        }
+      },
+      "billing": {
+        "q1": {
+          "question": "Qu'est-ce qui est inclus dans le plan premium ?",
+          "answer": "Premium inclut des sessions d'entretien illimitées, téléchargement de documents, analyses détaillées, support prioritaire et fonctionnalités IA avancées."
+        },
+        "q2": {
+          "question": "Puis-je annuler mon abonnement à tout moment ?",
+          "answer": "Oui, vous pouvez annuler votre abonnement à tout moment depuis la page de facturation. Vous conserverez l'accès jusqu'à la fin de votre période de facturation actuelle."
+        }
+      },
+      "technical": {
+        "q1": {
+          "question": "Quels navigateurs sont supportés ?",
+          "answer": "TOE AI fonctionne mieux sur Chrome, Firefox, Safari et Edge. Assurez-vous d'utiliser une version récente pour des performances optimales."
+        },
+        "q2": {
+          "question": "Pourquoi ne puis-je pas accéder à mon microphone ?",
+          "answer": "Assurez-vous d'avoir accordé les permissions microphone à votre navigateur et d'utiliser HTTPS. Vérifiez les paramètres de votre navigateur si les problèmes persistent."
+        }
+      }
+    },
+    "contact": {
+      "title": "Besoin d'aide supplémentaire ?",
+      "description": "Vous ne trouvez pas ce que vous cherchez ? Notre équipe de support est là pour vous aider.",
+      "email": {
+        "title": "Support par email",
+        "description": "Obtenez de l'aide détaillée par email. Nous répondons généralement dans les 24 heures."
+      },
+      "hours": {
+        "title": "Heures de support",
+        "description": "Nous sommes là pour vous aider pendant les heures ouvrables.",
+        "time": "Lundi - Vendredi, 9h - 18h EST"
+      }
+    },
+    "footer": {
+      "description": "Entraînement aux entretiens alimenté par l'IA pour vous aider à réussir.",
+      "product": "Produit",
+      "support": "Support",
+      "legal": "Légal",
+      "contact": "Nous contacter",
+      "rights": "Tous droits réservés."
+    }
+  },
+  "terms": {
+    "meta": {
+      "title": "Conditions d'utilisation - TOE AI",
+      "description": "Lisez nos conditions d'utilisation pour comprendre les règles et directives d'utilisation de la plateforme TOE AI."
+    },
+    "hero": {
+      "title": "Conditions d'utilisation",
+      "description": "Veuillez lire attentivement ces conditions avant d'utiliser notre service."
+    },
+    "lastUpdated": "Dernière mise à jour",
+    "lastUpdatedDate": "23 octobre 2024",
+    "effectiveDate": "Date d'entrée en vigueur",
+    "effectiveDateValue": "23 octobre 2024",
+    "tableOfContents": "Table des matières",
+    "sections": {
+      "acceptance": {
+        "title": "Acceptation des conditions",
+        "content": "En accédant et en utilisant les services de TOE AI, vous acceptez et convenez d'être lié par les termes et dispositions de cet accord. Ces Conditions d'utilisation (\"Conditions\") constituent un accord légalement contraignant entre vous (\"Utilisateur\" ou \"vous\") et TOE AI (\"nous\", \"notre\"). Si vous n'acceptez pas de respecter ce qui précède, veuillez ne pas utiliser ce service."
+      },
+      "description": {
+        "title": "Description du service",
+        "content": "TOE AI fournit une plateforme d'entraînement aux entretiens alimentée par l'IA qui aide les utilisateurs à pratiquer et améliorer leurs compétences d'entretien grâce à des sessions d'entretien simulées, des commentaires et des analyses. Notre service comprend des fonctionnalités gratuites et premium, accessibles via des navigateurs web et des applications mobiles."
+      },
+      "accounts": {
+        "title": "Comptes utilisateur",
+        "content": "Pour accéder à certaines fonctionnalités de notre service, vous devez vous inscrire pour un compte. Vous êtes responsable du maintien de la confidentialité de vos identifiants de compte et de toutes les activités qui se produisent sous votre compte. Vous acceptez de fournir des informations exactes, actuelles et complètes lors de l'inscription et de mettre à jour ces informations selon les besoins."
+      },
+      "usage": {
+        "title": "Utilisation acceptable",
+        "content": "Vous acceptez d'utiliser notre service uniquement à des fins légales et conformément à ces Conditions. Vous ne pouvez pas utiliser notre service pour : (a) violer des lois ou réglementations applicables ; (b) porter atteinte aux droits d'autrui ; (c) distribuer du spam, des logiciels malveillants ou d'autres contenus nuisibles ; (d) tenter d'obtenir un accès non autorisé à nos systèmes ; ou (e) interférer avec le bon fonctionnement de notre service."
+      },
+      "content": {
+        "title": "Contenu utilisateur",
+        "content": "Vous conservez la propriété de tout contenu que vous soumettez à notre service, y compris les enregistrements d'entretiens, documents et informations personnelles. En soumettant du contenu, vous nous accordez une licence non exclusive, mondiale et libre de droits pour utiliser, modifier et afficher ce contenu uniquement dans le but de fournir notre service. Vous êtes responsable de vous assurer que votre contenu ne viole aucune loi ou droit de tiers."
+      },
+      "privacy": {
+        "title": "Confidentialité et protection des données",
+        "content": "Nous prenons votre confidentialité au sérieux. Notre collecte, utilisation et protection de vos informations personnelles sont régies par notre Politique de confidentialité, qui est incorporée dans ces Conditions par référence. En utilisant notre service, vous consentez à la collecte et à l'utilisation de vos informations comme décrit dans notre Politique de confidentialité."
+      },
+      "payment": {
+        "title": "Conditions de paiement",
+        "content": "Certaines fonctionnalités de notre service nécessitent le paiement de frais. Vous acceptez de payer tous les frais applicables pour votre utilisation des fonctionnalités premium. Tous les paiements sont traités de manière sécurisée via des processeurs de paiement tiers. Les abonnements se renouvellent automatiquement sauf annulation. Nous nous réservons le droit de modifier nos tarifs avec un préavis de 30 jours."
+      },
+      "intellectual": {
+        "title": "Propriété intellectuelle",
+        "content": "Le service TOE AI, y compris tout le contenu, les fonctionnalités et la fonctionnalité, nous appartient et est protégé par les lois internationales sur le droit d'auteur, les marques de commerce et autres propriétés intellectuelles. Vous ne pouvez pas reproduire, distribuer, modifier ou créer des œuvres dérivées de notre service sans notre permission écrite expresse."
+      },
+      "prohibited": {
+        "title": "Activités interdites",
+        "content": "Il vous est interdit de : (a) faire de l'ingénierie inverse ou tenter d'extraire le code source ; (b) utiliser des outils automatisés pour accéder à notre service ; (c) créer de faux comptes ou usurper l'identité d'autres personnes ; (d) partager les identifiants de compte ; (e) utiliser notre service à des fins commerciales sans autorisation ; et (f) violer toute loi ou réglementation applicable."
+      },
+      "termination": {
+        "title": "Résiliation",
+        "content": "Nous pouvons résilier ou suspendre votre compte et l'accès à notre service à tout moment, avec ou sans cause, et avec ou sans préavis. Vous pouvez également résilier votre compte à tout moment en nous contactant ou en utilisant la fonction de suppression de compte. Lors de la résiliation, votre droit d'utiliser notre service cessera immédiatement."
+      },
+      "disclaimers": {
+        "title": "Avis de non-responsabilité",
+        "content": "Notre service est fourni \"tel quel\" et \"tel que disponible\" sans garanties d'aucune sorte, expresses ou implicites. Nous ne garantissons pas que notre service sera ininterrompu, sans erreur ou complètement sécurisé. Nous déclinons toutes les garanties, y compris les garanties implicites de qualité marchande, d'adéquation à un usage particulier et de non-contrefaçon."
+      },
+      "limitation": {
+        "title": "Limitation de responsabilité",
+        "content": "Dans toute la mesure permise par la loi, TOE AI ne sera pas responsable des dommages indirects, accessoires, spéciaux, consécutifs ou punitifs, y compris la perte de profits, de données ou d'autres pertes intangibles, résultant de votre utilisation de notre service. Notre responsabilité totale ne dépassera pas le montant payé par vous pour notre service dans les 12 mois précédant la réclamation."
+      },
+      "indemnification": {
+        "title": "Indemnisation",
+        "content": "Vous acceptez d'indemniser, de défendre et de dégager de toute responsabilité TOE AI et ses dirigeants, administrateurs, employés et agents de toute réclamation, responsabilité, dommage, perte et dépense découlant de ou liée de quelque manière que ce soit à votre utilisation de notre service, votre violation de ces Conditions, ou votre violation de tout droit d'autrui."
+      },
+      "governing": {
+        "title": "Droit applicable",
+        "content": "Ces Conditions seront régies et interprétées conformément aux lois de [Juridiction], sans égard à ses dispositions de conflit de lois. Tout litige découlant de ces Conditions sera soumis à la juridiction exclusive des tribunaux de [Juridiction]."
+      },
+      "changes": {
+        "title": "Modifications des conditions",
+        "content": "Nous nous réservons le droit de modifier ces Conditions à tout moment. Nous informerons les utilisateurs des changements importants en publiant les Conditions mises à jour sur notre site web et en mettant à jour la date \"Dernière mise à jour\". Votre utilisation continue de notre service après de tels changements constitue l'acceptation des nouvelles Conditions."
+      },
+      "contact": {
+        "title": "Informations de contact",
+        "content": "Si vous avez des questions sur ces Conditions, veuillez nous contacter à legal@toeai.com ou via nos canaux de support."
+      }
+    },
+    "contact": {
+      "title": "Questions sur ces conditions ?",
+      "description": "Si vous avez des questions ou des préoccupations concernant nos Conditions d'utilisation, n'hésitez pas à contacter notre équipe juridique."
+    },
+    "related": {
+      "title": "Documents connexes",
+      "privacy": "Découvrez comment nous protégeons vos données et respectons votre confidentialité.",
+      "cookies": "Comprenez comment nous utilisons les cookies et technologies similaires."
+    },
+    "footer": {
+      "description": "Entraînement aux entretiens alimenté par l'IA pour vous aider à réussir.",
+      "product": "Produit",
+      "support": "Support",
+      "legal": "Légal",
+      "contact": "Nous contacter",
+      "rights": "Tous droits réservés."
+    }
+  },
+  "privacy": {
+    "meta": {
+      "title": "Politique de confidentialité - TOE AI",
+      "description": "Découvrez comment TOE AI collecte, utilise et protège vos informations personnelles."
+    },
+    "hero": {
+      "title": "Politique de confidentialité",
+      "description": "Nous nous engageons à protéger votre confidentialité et à être transparents sur la façon dont nous traitons vos données."
+    },
+    "lastUpdated": "Dernière mise à jour",
+    "lastUpdatedDate": "23 octobre 2024",
+    "effectiveDate": "Date d'entrée en vigueur",
+    "effectiveDateValue": "23 octobre 2024",
+    "tableOfContents": "Table des matières",
+    "keyPoints": {
+      "title": "Points clés de confidentialité",
+      "point1": "Nous collectons uniquement les informations nécessaires pour fournir notre service",
+      "point2": "Vos données d'entretien sont chiffrées et stockées en toute sécurité",
+      "point3": "Nous ne vendons jamais vos informations personnelles à des tiers",
+      "point4": "Vous pouvez supprimer vos données et votre compte à tout moment"
+    },
+    "sections": {
+      "overview": {
+        "title": "Aperçu de la confidentialité",
+        "content": "Cette Politique de confidentialité décrit comment TOE AI (\"nous\", \"notre\") collecte, utilise et protège vos informations lorsque vous utilisez notre plateforme d'entraînement aux entretiens alimentée par l'IA. Nous nous engageons à assurer votre confidentialité et la sécurité de vos données tout en vous fournissant une expérience de service exceptionnelle."
+      },
+      "informationCollected": {
+        "title": "Informations que nous collectons",
+        "content": "Nous collectons les informations que vous fournissez directement (détails du compte, informations de profil), les informations collectées automatiquement (données d'utilisation, informations sur l'appareil, cookies), et les informations de tiers (données de connexion aux réseaux sociaux, informations de paiement). Cela inclut les identifiants personnels, les informations professionnelles, les analyses d'utilisation et les données techniques nécessaires au fonctionnement du service."
+      },
+      "howWeUse": {
+        "title": "Comment nous utilisons vos informations",
+        "content": "Nous utilisons vos informations pour : fournir et améliorer notre service, personnaliser votre expérience, traiter les paiements, communiquer avec vous, assurer la sécurité, respecter les obligations légales et développer de nouvelles fonctionnalités. Nous utilisons l'IA pour analyser vos performances d'entretien et fournir des commentaires et recommandations personnalisés."
+      },
+      "informationSharing": {
+        "title": "Partage et divulgation d'informations",
+        "content": "Nous ne vendons pas vos informations personnelles. Nous pouvons partager des informations avec : des fournisseurs de services qui nous aident à exploiter notre plateforme, les forces de l'ordre lorsque requis par la loi, des partenaires commerciaux avec votre consentement, et lors de transferts d'entreprise. Tout partage se fait avec des garanties appropriées et des protections contractuelles."
+      },
+      "dataSecurity": {
+        "title": "Sécurité des données",
+        "content": "Nous mettons en œuvre des mesures de sécurité standard de l'industrie, notamment le chiffrement en transit et au repos, des audits de sécurité réguliers, des contrôles d'accès et d'authentification, des centres de données sécurisés et des procédures de réponse aux incidents. Cependant, aucun système n'est sécurisé à 100% et nous ne pouvons garantir une sécurité absolue."
+      },
+      "dataRetention": {
+        "title": "Conservation des données",
+        "content": "Nous conservons vos informations aussi longtemps que nécessaire pour fournir nos services et respecter les obligations légales. Les informations de compte sont conservées tant que votre compte est actif. Les données d'entretien sont conservées selon vos préférences. Les analyses d'utilisation sont anonymisées après 2 ans. Vous pouvez demander la suppression de vos données à tout moment."
+      },
+      "yourRights": {
+        "title": "Vos droits de confidentialité",
+        "content": "Vous avez le droit de : accéder à vos informations personnelles, corriger les données inexactes, supprimer vos données, porter vos données vers un autre service, vous opposer à certains traitements, retirer votre consentement et restreindre le traitement. Pour exercer ces droits, contactez-nous à privacy@toeai.com."
+      },
+      "cookies": {
+        "title": "Cookies et suivi",
+        "content": "Nous utilisons des cookies et technologies similaires pour améliorer votre expérience, mémoriser vos préférences, analyser les modèles d'utilisation et fournir un contenu personnalisé. Vous pouvez contrôler les paramètres des cookies via les préférences de votre navigateur. Consultez notre Politique des cookies pour des informations détaillées."
+      },
+      "thirdParty": {
+        "title": "Services tiers",
+        "content": "Notre service s'intègre avec des fournisseurs tiers pour les paiements, l'analyse et l'infrastructure. Ces fournisseurs ont leurs propres politiques de confidentialité et nous vous encourageons à les examiner. Nous sélectionnons soigneusement des partenaires qui maintiennent des normes élevées de confidentialité et de sécurité."
+      },
+      "international": {
+        "title": "Transferts internationaux de données",
+        "content": "Vos informations peuvent être transférées et traitées dans des pays autres que le vôtre. Nous nous assurons que des garanties appropriées sont en place pour les transferts internationaux, y compris des clauses contractuelles types et des décisions d'adéquation le cas échéant."
+      },
+      "children": {
+        "title": "Confidentialité des enfants",
+        "content": "Notre service n'est pas destiné aux enfants de moins de 16 ans. Nous ne collectons pas sciemment d'informations personnelles d'enfants de moins de 16 ans. Si nous découvrons que nous avons collecté de telles informations, nous prendrons des mesures pour les supprimer rapidement."
+      },
+      "changes": {
+        "title": "Modifications de cette politique",
+        "content": "Nous pouvons mettre à jour cette Politique de confidentialité de temps à autre. Nous vous informerons des changements importants en publiant la politique mise à jour sur notre site web et en vous envoyant une notification par email. Votre utilisation continue de notre service après de tels changements constitue l'acceptation de la politique mise à jour."
+      },
+      "contact": {
+        "title": "Nous contacter",
+        "content": "Si vous avez des questions sur cette Politique de confidentialité ou nos pratiques de confidentialité, veuillez nous contacter à privacy@toeai.com ou dpo@toeai.com pour les questions de protection des données."
+      }
+    },
+    "contact": {
+      "title": "Questions sur la confidentialité ?",
+      "description": "Si vous avez des questions sur nos pratiques de confidentialité ou souhaitez exercer vos droits de confidentialité, veuillez contacter notre équipe de confidentialité.",
+      "email": "Email",
+      "dpo": "Délégué à la protection des données"
+    },
+    "related": {
+      "title": "Documents connexes",
+      "terms": "Consultez nos conditions générales d'utilisation de TOE AI.",
+      "cookies": "En savoir plus sur notre utilisation des cookies et vos préférences."
+    },
+    "footer": {
+      "description": "Entraînement aux entretiens alimenté par l'IA pour vous aider à réussir.",
+      "product": "Produit",
+      "support": "Support",
+      "legal": "Légal",
+      "contact": "Nous contacter",
+      "rights": "Tous droits réservés."
+    }
+  },
+  "cookies": {
+    "meta": {
+      "title": "Politique des cookies - TOE AI",
+      "description": "Découvrez comment TOE AI utilise les cookies et comment vous pouvez gérer vos préférences de cookies."
+    },
+    "hero": {
+      "title": "Politique des cookies",
+      "description": "Cette politique explique comment nous utilisons les cookies et technologies similaires pour améliorer votre expérience."
+    },
+    "lastUpdated": "Dernière mise à jour",
+    "lastUpdatedDate": "23 octobre 2024",
+    "effectiveDate": "Date d'entrée en vigueur",
+    "effectiveDateValue": "23 octobre 2024",
+    "tableOfContents": "Table des matières",
+    "preferences": {
+      "title": "Préférences des cookies",
+      "saved": "Vos préférences de cookies ont été enregistrées !",
+      "allAccepted": "Tous les cookies ont été acceptés !",
+      "rejected": "Les cookies optionnels ont été rejetés !",
+      "acceptAll": "Accepter tous les cookies",
+      "saveSelected": "Enregistrer les préférences sélectionnées",
+      "rejectOptional": "Rejeter les cookies optionnels"
+    },
+    "required": "Requis",
+    "examples": "Exemples",
+    "types": {
+      "necessary": {
+        "title": "Cookies nécessaires",
+        "description": "Ces cookies sont essentiels au bon fonctionnement du site web et ne peuvent pas être désactivés.",
+        "examples": "Authentification, sécurité, fonctionnalité de base"
+      },
+      "analytics": {
+        "title": "Cookies d'analyse",
+        "description": "Ces cookies nous aident à comprendre comment les visiteurs interagissent avec notre site web.",
+        "examples": "Google Analytics, statistiques d'utilisation, surveillance des performances"
+      },
+      "marketing": {
+        "title": "Cookies marketing",
+        "description": "Ces cookies sont utilisés pour diffuser des publicités pertinentes et suivre l'efficacité des campagnes.",
+        "examples": "Ciblage publicitaire, intégration des réseaux sociaux, suivi des conversions"
+      },
+      "preferences": {
+        "title": "Cookies de préférences",
+        "description": "Ces cookies mémorisent vos paramètres et préférences pour améliorer votre expérience.",
+        "examples": "Sélection de langue, préférences de thème, disposition du tableau de bord"
+      }
+    },
+    "sections": {
+      "whatAreCookies": {
+        "title": "Que sont les cookies ?",
+        "content": "Les cookies sont de petits fichiers texte placés sur votre ordinateur ou appareil mobile lorsque vous visitez un site web. Ils sont largement utilisés pour faire fonctionner les sites web plus efficacement et fournir des informations aux propriétaires de sites. Les cookies permettent aux sites web de mémoriser vos préférences et de fournir des expériences personnalisées."
+      },
+      "howWeUse": {
+        "title": "Comment nous utilisons les cookies",
+        "content": "Nous utilisons les cookies pour : améliorer votre expérience de navigation, mémoriser votre statut de connexion et vos préférences, analyser le trafic et les modèles d'utilisation du site web, fournir du contenu et des recommandations personnalisés, assurer la sécurité du site et prévenir la fraude, et améliorer les performances et la fonctionnalité de notre service."
+      },
+      "thirdParty": {
+        "title": "Cookies tiers",
+        "content": "Certains cookies sur notre site web sont définis par des services tiers que nous utilisons, tels que Google Analytics pour l'analyse web, les processeurs de paiement pour les transactions sécurisées, les plateformes de réseaux sociaux pour le partage de contenu, et les réseaux publicitaires pour les annonces pertinentes. Ces tiers ont leurs propres politiques de cookies."
+      },
+      "managingCookies": {
+        "title": "Gestion de vos préférences de cookies",
+        "content": "Vous pouvez contrôler et gérer les cookies de plusieurs façons : utiliser notre centre de préférences de cookies ci-dessus, ajuster les paramètres de votre navigateur pour bloquer ou supprimer les cookies, vous désinscrire des cookies d'analyse et de publicité tiers, ou nous contacter pour obtenir de l'aide sur la gestion des cookies. Notez que la désactivation de certains cookies peut affecter la fonctionnalité du site."
+      },
+      "cookieRetention": {
+        "title": "Conservation des cookies",
+        "content": "Différents cookies ont des périodes de conservation différentes : les cookies de session sont supprimés lorsque vous fermez votre navigateur, les cookies persistants restent pendant une période définie (généralement 30 jours à 2 ans), et les cookies de préférence sont conservés jusqu'à ce que vous les changiez ou les supprimiez manuellement."
+      },
+      "updates": {
+        "title": "Mises à jour de cette politique",
+        "content": "Nous pouvons mettre à jour cette Politique des cookies de temps à autre pour refléter les changements dans nos pratiques ou pour des raisons légales, opérationnelles ou réglementaires. Nous vous informerons de tout changement important en publiant la politique mise à jour sur notre site web."
+      }
+    },
+    "contact": {
+      "title": "Questions sur les cookies ?",
+      "description": "Si vous avez des questions sur notre utilisation des cookies ou avez besoin d'aide pour gérer vos préférences, veuillez contacter notre équipe de confidentialité."
+    },
+    "related": {
+      "title": "Documents connexes",
+      "privacy": "En savoir plus sur la façon dont nous protégeons vos informations personnelles.",
+      "terms": "Lisez nos conditions générales complètes d'utilisation de TOE AI."
+    },
+    "footer": {
+      "description": "Entraînement aux entretiens alimenté par l'IA pour vous aider à réussir.",
+      "product": "Produit",
+      "support": "Support",
+      "legal": "Légal",
+      "contact": "Nous contacter",
+      "rights": "Tous droits réservés."
     }
   }
 }

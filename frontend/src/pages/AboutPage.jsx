@@ -13,7 +13,9 @@ import {
   Globe,
   Zap,
   Shield,
-  HeadphonesIcon
+  HeadphonesIcon,
+  Menu,
+  X
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import LanguageSelector from '../components/navigation/LanguageSelector'
@@ -26,6 +28,7 @@ const AboutPage = () => {
   const [newsletterStatus, setNewsletterStatus] = useState('')
   const [contactStatus, setContactStatus] = useState('')
   const [loading, setLoading] = useState({ newsletter: false, contact: false })
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   const siteUrl = 'http://vwkcwwc4o4gwgs0c08scookk.168.231.82.151.sslip.io'
 
@@ -122,24 +125,54 @@ const AboutPage = () => {
     <div className="min-h-screen bg-dark-primary">
         {/* Header */}
         <header className="border-b border-gray-800">
-          <div className="container mx-auto px-4 py-6 flex justify-between items-center">
-            <Link to="/" className="flex items-center space-x-2">
-              <img 
-                src="/toe_ai_logo.png" 
-                alt="TOE AI Logo" 
-                className="w-10 h-10 object-contain"
-              />
-              <span className="text-xl font-bold text-white-primary">TOE AI</span>
-            </Link>
-            <div className="flex items-center space-x-4">
-              <LanguageSelector />
-              <Link
-                to={siteUrl}
-                className="bg-blue-2nd text-white-primary px-6 py-2 rounded-full hover:bg-blue transition-colors duration-200"
-              >
-                {t('about.cta.button')}
+          <div className="container mx-auto px-4 py-6">
+            <div className="flex justify-between items-center">
+              <Link to="/" className="flex items-center space-x-2">
+                <img 
+                  src="/toe_ai_logo.png" 
+                  alt="TOE AI Logo" 
+                  className="w-10 h-10 object-contain"
+                />
+                <span className="text-xl font-bold text-white-primary">TOE AI</span>
               </Link>
+              
+              {/* Desktop Navigation */}
+              <div className="hidden md:flex items-center space-x-4">
+                <LanguageSelector />
+                <Link
+                  to={siteUrl}
+                  className="bg-blue-2nd text-white-primary px-6 py-2 rounded-full hover:bg-blue transition-colors duration-200"
+                >
+                  {t('about.cta.button')}
+                </Link>
+              </div>
+
+              {/* Mobile Menu Button */}
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="md:hidden text-white-primary hover:text-blue-2nd transition-colors"
+              >
+                {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              </button>
             </div>
+
+            {/* Mobile Navigation */}
+            {mobileMenuOpen && (
+              <div className="md:hidden mt-4 pb-4 border-t border-gray-800 pt-4">
+                <div className="flex flex-col space-y-4">
+                  <div className="flex justify-center">
+                    <LanguageSelector />
+                  </div>
+                  <Link
+                    to={siteUrl}
+                    className="bg-blue-2nd text-white-primary px-6 py-3 rounded-full hover:bg-blue transition-colors duration-200 text-center"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    {t('about.cta.button')}
+                  </Link>
+                </div>
+              </div>
+            )}
           </div>
         </header>
 
@@ -543,18 +576,18 @@ const AboutPage = () => {
               <Link to="/about" className="hover:text-white-primary transition-colors">
                 {t('landing.footer.aboutUs')}
               </Link>
-              <a href="#" className="hover:text-white-primary transition-colors">
+              <Link to="/help-center" className="hover:text-white-primary transition-colors">
                 {t('landing.footer.helpCenter')}
-              </a>
-              <a href="#" className="hover:text-white-primary transition-colors">
+              </Link>
+              <Link to="/terms" className="hover:text-white-primary transition-colors">
                 {t('landing.footer.termOfService')}
-              </a>
-              <a href="#" className="hover:text-white-primary transition-colors">
+              </Link>
+              <Link to="/privacy" className="hover:text-white-primary transition-colors">
                 {t('landing.footer.privacyPolicy')}
-              </a>
-              <a href="#" className="hover:text-white-primary transition-colors">
+              </Link>
+              <Link to="/cookies" className="hover:text-white-primary transition-colors">
                 {t('landing.footer.cookieUse')}
-              </a>
+              </Link>
               <div className="flex items-center space-x-1">
                 <Globe className="w-4 h-4" />
                 <span>{t('landing.footer.english')}</span>
