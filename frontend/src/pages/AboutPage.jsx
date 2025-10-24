@@ -30,7 +30,7 @@ const AboutPage = () => {
   const [loading, setLoading] = useState({ newsletter: false, contact: false })
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
-  const siteUrl = 'http://vwkcwwc4o4gwgs0c08scookk.168.231.82.151.sslip.io'
+  const siteUrl = 'https://toe.diversis.site'
 
   // Set document title and meta description for SEO
   useEffect(() => {
