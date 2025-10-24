@@ -21,6 +21,10 @@ class Settings(BaseSettings):
     HOST: str = "0.0.0.0"
     PORT: int = 8000
     
+    # SSL Configuration for Production
+    SSL_CERT_PATH: Optional[str] = None
+    SSL_KEY_PATH: Optional[str] = None
+    
     # Security
     SECRET_KEY: str = "your-super-secret-key-change-in-production"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
@@ -28,6 +32,17 @@ class Settings(BaseSettings):
     
     # CORS
     ALLOWED_ORIGINS: str = "*"
+    
+    # Production CORS (Update with your actual domains)
+    @property
+    def production_cors_origins(self) -> List[str]:
+        """Get production CORS origins"""
+        if self.ENVIRONMENT == "production":
+            return [
+                "https://toe.diversis.site",
+                "https://www.toe.diversis.site"
+            ]
+        return self.cors_origins
     
     @property
     def cors_origins(self) -> List[str]:
