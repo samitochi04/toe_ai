@@ -40,7 +40,8 @@ class Settings(BaseSettings):
         if self.ENVIRONMENT == "production":
             return [
                 "https://toe.diversis.site",
-                "https://www.toe.diversis.site"
+                "https://www.toe.diversis.site",
+                "https://back.diversis.site"  # Add backend domain for internal requests
             ]
         return self.cors_origins
     

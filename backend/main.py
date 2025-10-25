@@ -73,12 +73,15 @@ async def add_cors_headers(request, call_next):
     # Get allowed origins
     allowed_origins = settings.production_cors_origins if settings.ENVIRONMENT == "production" else settings.cors_origins
     
-    # Add CORS headers
-    if "*" in allowed_origins:
+    # Add CORS headers - be more permissive for production
+    origin = request.headers.get("origin")
+    if origin and (origin in allowed_origins or "*" in allowed_origins):
+        response.headers["Access-Control-Allow-Origin"] = origin
+    elif "*" in allowed_origins:
         response.headers["Access-Control-Allow-Origin"] = "*"
     else:
-        origin = request.headers.get("origin")
-        if origin in allowed_origins:
+        # Fallback: allow common domains
+        if origin and ("diversis.site" in origin or "localhost" in origin):
             response.headers["Access-Control-Allow-Origin"] = origin
     
     response.headers["Access-Control-Allow-Credentials"] = "true"
