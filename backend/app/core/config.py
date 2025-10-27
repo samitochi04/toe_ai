@@ -75,6 +75,19 @@ class Settings(BaseSettings):
         """Get Stripe environment (test/live)"""
         return "live" if self.is_stripe_live_mode else "test"
     
+    @property
+    def cors_origins(self) -> List[str]:
+        """Parse ALLOWED_ORIGINS into a list"""
+        if not self.ALLOWED_ORIGINS or self.ALLOWED_ORIGINS == "*":
+            return ["https://toe.diversis.site"]  # Default fallback
+        origins = [
+            origin.strip()
+            for origin in self.ALLOWED_ORIGINS.split(",")
+            if origin.strip()
+        ]
+        # Fallback to default if empty
+        return origins if origins else ["https://toe.diversis.site"]
+    
     # File Storage
     UPLOAD_DIR: str = "static/uploads"
     MAX_FILE_SIZE: int = 10 * 1024 * 1024  # 10MB
