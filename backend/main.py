@@ -81,7 +81,7 @@ async def add_cors_headers(request, call_next):
         response.headers["Access-Control-Allow-Origin"] = "*"
     else:
         # Fallback: allow common domains
-        if origin and ("diversis.site" in origin or "localhost" in origin):
+        if origin and ("toe.diversis.site" in origin or "localhost" in origin):
             response.headers["Access-Control-Allow-Origin"] = origin
     
     response.headers["Access-Control-Allow-Credentials"] = "true"
