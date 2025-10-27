@@ -13,7 +13,6 @@ from contextlib import asynccontextmanager
 from app.core.config import settings
 from app.core.database import init_db
 from app.api.main import api_router
-from app.core.cors_middleware import AllowAllCORSMiddleware  # Import the custom CORS middleware
 
 
 @asynccontextmanager
@@ -60,37 +59,6 @@ app.add_middleware(
     max_age=600,  # Cache preflight results for 10 minutes
 )
 
-# Add the custom CORS middleware for development mode only
-if settings.ENVIRONMENT == "development":
-    app.add_middleware(AllowAllCORSMiddleware)
-
-# Add comprehensive CORS middleware for production
-@app.middleware("http")
-async def add_cors_headers(request, call_next):
-    """Add CORS headers to all responses"""
-    response = await call_next(request)
-    
-    # Get allowed origins
-    allowed_origins = settings.production_cors_origins if settings.ENVIRONMENT == "production" else settings.cors_origins
-    
-    # Add CORS headers - be more permissive for production
-    origin = request.headers.get("origin")
-    if origin and (origin in allowed_origins or "*" in allowed_origins):
-        response.headers["Access-Control-Allow-Origin"] = origin
-    elif "*" in allowed_origins:
-        response.headers["Access-Control-Allow-Origin"] = "*"
-    else:
-        # Fallback: allow common domains
-        if origin and ("toe.diversis.site" in origin or "localhost" in origin):
-            response.headers["Access-Control-Allow-Origin"] = origin
-    
-    response.headers["Access-Control-Allow-Credentials"] = "true"
-    response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, PATCH, OPTIONS"
-    response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-Requested-With, Accept, Origin"
-    response.headers["Access-Control-Expose-Headers"] = "Content-Type, Authorization"
-    response.headers["Access-Control-Max-Age"] = "600"
-    
-    return response
 
 # Serve static files (for audio files, profile pictures, etc.)
 if not os.path.exists("static"):
@@ -109,16 +77,6 @@ if os.path.exists(static_audio_dir):
     print(f"🔧 Audio files in directory: {len(audio_files)} files")
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
-
-# Add middleware for CORS on static files
-@app.middleware("http")
-async def add_cors_header(request, call_next):
-    response = await call_next(request)
-    if request.url.path.startswith("/static"):
-        response.headers["Access-Control-Allow-Origin"] = "*"
-        response.headers["Access-Control-Allow-Methods"] = "GET, OPTIONS"
-        response.headers["Access-Control-Allow-Headers"] = "*"
-    return response
 
 
 # Include API router
