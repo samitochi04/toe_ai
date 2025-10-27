@@ -30,26 +30,8 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
     
-    # CORS
+    # CORS - Allow all origins
     ALLOWED_ORIGINS: str = "*"
-    
-    # Production CORS (Update with your actual domains)
-    @property
-    def production_cors_origins(self) -> List[str]:
-        """Get production CORS origins"""
-        if self.ENVIRONMENT == "production":
-            return [
-                "https://toe.diversis.site",
-                "https://www.toe.diversis.site",
-            ]
-        return self.cors_origins
-    
-    @property
-    def cors_origins(self) -> List[str]:
-        """Parse ALLOWED_ORIGINS into a list"""
-        if self.ALLOWED_ORIGINS == "*":
-            return ["*"]
-        return [origin.strip() for origin in self.ALLOWED_ORIGINS.split(",") if origin.strip()]
     
     # Supabase
     SUPABASE_URL: str = ""
@@ -118,7 +100,7 @@ class Settings(BaseSettings):
     # Google OAuth
     GOOGLE_CLIENT_ID: str = ""
     GOOGLE_CLIENT_SECRET: str = ""
-    GOOGLE_REDIRECT_URI: str = "http://localhost:3000/auth/callback/google"
+    GOOGLE_REDIRECT_URI: str = "https://toe.diversis.site/auth/callback/google"
     
     # Logging
     LOG_LEVEL: str = "INFO"

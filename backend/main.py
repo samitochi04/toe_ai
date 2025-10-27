@@ -48,10 +48,10 @@ app = FastAPI(
 # Security
 security = HTTPBearer()
 
-# CORS Middleware
+# CORS Middleware - Allow all origins
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.production_cors_origins if settings.ENVIRONMENT == "production" else settings.cors_origins,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allow_headers=["*"],
