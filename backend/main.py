@@ -48,12 +48,30 @@ app = FastAPI(
 # Security
 security = HTTPBearer()
 
-# CORS Middleware - Allow all origins
+# -----------------------------------------------------
+# ✅ CORS Configuration (Production-safe + Env-based)
+# -----------------------------------------------------
+from fastapi.middleware.cors import CORSMiddleware
+
+# Get allowed origins from environment variable
+allowed_origins = [
+    origin.strip()
+    for origin in os.getenv("ALLOWED_ORIGINS", "").split(",")
+    if origin.strip()
+]
+
+# Fallback (for safety)
+if not allowed_origins:
+    allowed_origins = ["https://toe.diversis.site"]
+
+print(f"🔧 Allowed origins for CORS: {allowed_origins}")
+
+# Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=allowed_origins,
     allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allow_methods=["*"],
     allow_headers=["*"],
     expose_headers=["*"],
     max_age=600,  # Cache preflight results for 10 minutes
