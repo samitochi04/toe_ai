@@ -2,8 +2,9 @@ version: '3.8'
 
 services:
   backend:
-    build: ./backend
-    dockerfile: Dockerfile.prod
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.prod
     expose:
       - "8000"
     environment:
@@ -51,7 +52,9 @@ services:
       retries: 3
 
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
     expose:
       - "80"
     depends_on:
