@@ -17,14 +17,12 @@ const MessageBubble = ({ message, isOwnMessage, isTyping = false }) => {
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
     } catch (error) {
-      console.error('Failed to copy message:', error)
+      // console.error('Failed to copy message:', error)
     }
   }
 
   const handleFeedback = (type) => {
     setFeedback(type)
-    // Here you could send feedback to the API
-    console.log('Feedback:', type, 'for message:', message.id)
   }
 
   const renderContent = () => {

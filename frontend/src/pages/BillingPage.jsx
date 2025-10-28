@@ -93,7 +93,7 @@ const BillingPage = () => {
         })
       }
     } catch (error) {
-      console.error('Error fetching usage:', error)
+      // console.error('Error fetching usage:', error)
       toast.error(t('billing.errors.loadUsageData'))
       // Set default values on error
       setUsage({
@@ -119,7 +119,7 @@ const BillingPage = () => {
       await createCheckoutSession(selectedPlan)
     } catch (error) {
       toast.error(t('billing.errors.paymentFailed'))
-      console.error('Payment error:', error)
+      // console.error('Payment error:', error)
     } finally {
       setIsLoading(false)
     }

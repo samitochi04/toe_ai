@@ -6,7 +6,6 @@ export const paymentApi = {
     const response = await api.post('/payments/create-checkout-session', {
       plan_type: planType
     })
-    console.log('Payment API response:', response.data) // Debug log
     return response.data
   },
 

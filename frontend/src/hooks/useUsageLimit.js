@@ -18,13 +18,6 @@ export const useUsageLimit = () => {
 
   const isPremium = user?.subscription?.status === 'active'
   
-  // Debug log to check subscription status
-  console.log('User subscription debug:', {
-    user: user?.email,
-    hasSubscription: !!user?.subscription,
-    subscriptionStatus: user?.subscription?.status,
-    isPremium
-  })
 
   useEffect(() => {
     if (user) {
@@ -46,7 +39,7 @@ export const useUsageLimit = () => {
         })
       }
     } catch (error) {
-      console.error('Error fetching usage:', error)
+      // console.error('Error fetching usage:', error)
       // Set default values on error (high limits for development)
       setUsage({
         normalChats: 0,

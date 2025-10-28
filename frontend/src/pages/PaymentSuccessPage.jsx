@@ -25,10 +25,9 @@ const PaymentSuccessPage = () => {
       ])
         .then(([sessionResponse, profileResponse]) => {
           setSessionData(sessionResponse)
-          console.log('User profile refreshed after payment:', profileResponse)
         })
         .catch(error => {
-          console.error('Error verifying session:', error)
+          // console.error('Error verifying session:', error)
         })
         .finally(() => {
           setIsLoading(false)

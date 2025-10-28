@@ -27,7 +27,7 @@ class StorageManager {
       localStorage.removeItem(test)
       return true
     } catch (e) {
-      console.warn('localStorage is not available:', e)
+      // console.warn('localStorage is not available:', e)
       return false
     }
   }
@@ -40,7 +40,7 @@ class StorageManager {
       localStorage.setItem(key, serializedValue)
       return true
     } catch (error) {
-      console.error('Error setting localStorage item:', error)
+      // console.error('Error setting localStorage item:', error)
       return false
     }
   }
@@ -53,7 +53,7 @@ class StorageManager {
       if (item === null) return defaultValue
       return JSON.parse(item)
     } catch (error) {
-      console.error('Error getting localStorage item:', error)
+      // console.error('Error getting localStorage item:', error)
       return defaultValue
     }
   }
@@ -65,7 +65,7 @@ class StorageManager {
       localStorage.removeItem(key)
       return true
     } catch (error) {
-      console.error('Error removing localStorage item:', error)
+      // console.error('Error removing localStorage item:', error)
       return false
     }
   }
@@ -77,7 +77,7 @@ class StorageManager {
       localStorage.clear()
       return true
     } catch (error) {
-      console.error('Error clearing localStorage:', error)
+      // console.error('Error clearing localStorage:', error)
       return false
     }
   }
@@ -157,7 +157,6 @@ class StorageManager {
   }
 
   getLastPath() {
-    console.log(`Getting last path from storage ######################## ${this.getItem('toe_ai_last_path', null)}`)
     return this.getItem('toe_ai_last_path', null)
   }
 
@@ -228,7 +227,7 @@ class StorageManager {
         items
       }
     } catch (error) {
-      console.error('Error getting storage info:', error)
+      // console.error('Error getting storage info:', error)
       return { available: false, used: 0, total: 0 }
     }
   }

@@ -96,7 +96,7 @@ export const chatService = {
         try {
           chat = await chatService.getChat(chatId, chatType)
         } catch (error) {
-          console.warn('Chat not found, creating new chat:', error)
+          // console.warn('Chat not found, creating new chat:', error)
           const words = content.trim() ? content.trim().split(/\s+/) : []
           const titleWords = words.slice(0, 10)
           let title = titleWords.join(' ')
@@ -141,7 +141,7 @@ export const chatService = {
             id: file.id
           }))
         } catch (uploadError) {
-          console.error('File upload failed:', uploadError)
+          // console.error('File upload failed:', uploadError)
           throw new Error('Failed to upload files. Please try again.')
         }
       }
@@ -167,11 +167,6 @@ export const chatService = {
         requestBody.company_name = chat.company_name
         requestBody.difficulty = chat.interview_settings?.difficulty || 'medium'
       }
-      
-      console.log('Sending request to AI:', {
-        ...requestBody,
-        files: requestBody.files.length > 0 ? `${requestBody.files.length} files` : 'no files'
-      })
       
       const aiResponse = await api.post(aiEndpoint, requestBody)
       
@@ -239,7 +234,7 @@ export const chatService = {
       }
       
     } catch (error) {
-      console.error('Error sending message:', error)
+      // console.error('Error sending message:', error)
       throw error
     }
   },
@@ -385,7 +380,7 @@ export const chatService = {
       const response = await api.get(`/chats/interview/${chatId}`)
       return response
     } catch (error) {
-      console.error('Error fetching interview chat:', error)
+      // console.error('Error fetching interview chat:', error)
       throw error
     }
   },
@@ -407,7 +402,7 @@ export const chatService = {
 
       return response.data
     } catch (error) {
-      console.error('Error exporting chat to PDF:', error)
+      // console.error('Error exporting chat to PDF:', error)
       throw error
     }
   },

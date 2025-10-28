@@ -81,7 +81,7 @@ const DashboardPage = () => {
             
             setRecentShares(recentSharesData)
           } catch (error) {
-            console.error('Error loading shares:', error)
+            // console.error('Error loading shares:', error)
             // Don't fail the entire load if shares fail
             setRecentShares([])
           }
@@ -97,7 +97,7 @@ const DashboardPage = () => {
         })
         
       } catch (error) {
-        console.error('Error loading dashboard data:', error)
+        // console.error('Error loading dashboard data:', error)
         // Fallback to empty data on error
         setRecentChats([])
         setRecentInterviews([])
@@ -167,10 +167,9 @@ const DashboardPage = () => {
       setShowMenu(false)
       try {
         // Implement PDF export functionality
-        console.log('Exporting PDF for:', chat.id)
         // This would call an API endpoint to generate and download PDF
       } catch (error) {
-        console.error('Error exporting PDF:', error)
+        // console.error('Error exporting PDF:', error)
       }
     }
 
@@ -263,7 +262,7 @@ const DashboardPage = () => {
         // Refresh the dashboard data
         window.location.reload()
       } catch (error) {
-        console.error('Error deleting chat:', error)
+        // console.error('Error deleting chat:', error)
       }
     }
 

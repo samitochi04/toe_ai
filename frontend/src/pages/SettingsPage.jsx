@@ -26,10 +26,9 @@ import Modal from '../components/common/Modal'
 
 // Initialize Stripe with your publishable key from environment
 const STRIPE_KEY = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY
-console.log('Stripe Key loaded:', STRIPE_KEY ? `${STRIPE_KEY.substring(0, 20)}...` : 'NOT FOUND')
 
 if (!STRIPE_KEY) {
-  console.error('VITE_STRIPE_PUBLISHABLE_KEY is not set in environment variables!')
+  // console.error('VITE_STRIPE_PUBLISHABLE_KEY is not set in environment variables!')
 }
 
 const stripePromise = loadStripe(STRIPE_KEY)
@@ -111,7 +110,7 @@ const AddCardForm = ({ onSuccess, onCancel, t, isPremium }) => {
       onSuccess(paymentMethod)
       
     } catch (error) {
-      console.error('Error adding payment method:', error)
+      // console.error('Error adding payment method:', error)
       setErrorMessage(error.response?.data?.detail || 'Failed to add payment method')
       setIsProcessing(false)
     }
@@ -247,7 +246,7 @@ const SettingsPage = () => {
           })
         }
       } catch (error) {
-        console.error('Error loading subscription:', error)
+        // console.error('Error loading subscription:', error)
         // Set default free subscription
         setSubscription({
           tier: 'Free',
@@ -263,13 +262,13 @@ const SettingsPage = () => {
           const payments = await profileService.getPaymentMethods()
           setPaymentMethods(payments || [])
         } catch (error) {
-          console.error('Error loading payment methods:', error)
+          // console.error('Error loading payment methods:', error)
           setPaymentMethods([])
         }
       }
 
     } catch (error) {
-      console.error('Error loading user data:', error)
+      // console.error('Error loading user data:', error)
     } finally {
       setSubscriptionLoading(false)
     }

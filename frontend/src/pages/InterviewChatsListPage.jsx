@@ -69,7 +69,7 @@ const InterviewChatsListPage = () => {
         has_prev: response.data.has_prev
       }))
     } catch (error) {
-      console.error('Error loading interview chats:', error)
+      // console.error('Error loading interview chats:', error)
       toast.error(t('interviewsList.loadError'))
     } finally {
       setIsLoading(false)
@@ -99,7 +99,7 @@ const InterviewChatsListPage = () => {
       setShowDeleteModal(false)
       setSelectedChat(null)
     } catch (error) {
-      console.error('Error deleting chat:', error)
+      // console.error('Error deleting chat:', error)
       toast.error(t('interviewsList.deleteErrorMessage'))
     }
   }
@@ -143,7 +143,7 @@ const InterviewChatsListPage = () => {
         toast.success(t('interviewsList.pdfDownloadedSuccess'), { id: `pdf-export-${chat.id}` })
       }
     } catch (error) {
-      console.error('Error exporting PDF:', error)
+      // console.error('Error exporting PDF:', error)
       
       if (error.response?.status === 404) {
         toast.error(t('interviewsList.pdfNotFoundError'), { id: `pdf-export-${chat.id}` })

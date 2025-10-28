@@ -25,7 +25,6 @@ const useAuthStore = create((set, get) => ({
         // Fetch latest user profile
         await get().refreshUserProfile()
       } catch (error) {
-        console.log('Token verification failed, attempting refresh...')
         const refreshToken = storage.getRefreshToken()
         if (refreshToken) {
           try {
@@ -205,7 +204,7 @@ const useAuthStore = create((set, get) => ({
       await authService.logout()
     } catch (error) {
       // Even if logout fails on server, we still clear local data
-      console.error('Logout error:', error)
+      // console.error('Logout error:', error)
     } finally {
       // Clear local storage
       storage.clearAllData()
@@ -276,7 +275,7 @@ const useAuthStore = create((set, get) => ({
         return profileData
       }
     } catch (error) {
-      console.error('Failed to refresh user profile:', error)
+      // console.error('Failed to refresh user profile:', error)
     }
     return null
   },

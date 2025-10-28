@@ -39,7 +39,7 @@ const ChatsListPage = () => {
       try {
         await fetchChats()
       } catch (error) {
-        console.error('Error loading chats:', error)
+        // console.error('Error loading chats:', error)
         toast.error('Failed to load chats')
       } finally {
         setLoading(false)
@@ -56,7 +56,7 @@ const ChatsListPage = () => {
   const handleChatClick = (chatId) => {
     // Validate chatId before navigating
     if (!chatId || chatId === 'undefined' || chatId === 'null') {
-      console.error('Invalid chatId, cannot navigate')
+      // console.error('Invalid chatId, cannot navigate')
       toast.error('Invalid chat selected')
       return
     }
@@ -64,7 +64,7 @@ const ChatsListPage = () => {
     // Validate UUID format
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
     if (!uuidRegex.test(chatId)) {
-      console.error('Invalid chatId format, cannot navigate')
+      // console.error('Invalid chatId format, cannot navigate')
       toast.error('Invalid chat format')
       return
     }
@@ -80,7 +80,7 @@ const ChatsListPage = () => {
       setShowDeleteModal(false)
       setSelectedChat(null)
     } catch (error) {
-      console.error('Error deleting chat:', error)
+      // console.error('Error deleting chat:', error)
     }
   }
 
@@ -93,7 +93,7 @@ const ChatsListPage = () => {
       setSelectedChat(null)
       setNewTitle('')
     } catch (error) {
-      console.error('Error renaming chat:', error)
+      // console.error('Error renaming chat:', error)
     }
   }
 
@@ -111,11 +111,9 @@ const ChatsListPage = () => {
         break
       case 'share':
         // Implement share functionality
-        console.log('Share chat:', chat.id)
         break
       case 'export':
         // Implement export functionality
-        console.log('Export chat:', chat.id)
         break
     }
   }

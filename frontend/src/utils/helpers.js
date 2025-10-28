@@ -40,7 +40,7 @@ export const formatDateTime = (dateInput) => {
 
     return date.toLocaleString()
   } catch (error) {
-    console.error('Error formatting date:', error, 'Input:', dateInput)
+    // console.error('Error formatting date:', error, 'Input:', dateInput)
     return new Date().toLocaleString()
   }
 }
@@ -69,7 +69,7 @@ export const formatDate = (dateInput) => {
 
     return date.toLocaleDateString()
   } catch (error) {
-    console.error('Error formatting date:', error)
+    // console.error('Error formatting date:', error)
     return new Date().toLocaleDateString()
   }
 }
@@ -98,7 +98,7 @@ export const formatTime = (dateInput) => {
 
     return date.toLocaleTimeString()
   } catch (error) {
-    console.error('Error formatting time:', error)
+    // console.error('Error formatting time:', error)
     return new Date().toLocaleTimeString()
   }
 }
@@ -141,7 +141,7 @@ export const getRelativeTime = (dateInput) => {
       return `${days} day${days !== 1 ? 's' : ''} ago`
     }
   } catch (error) {
-    console.error('Error getting relative time:', error)
+    // console.error('Error getting relative time:', error)
     return 'Just now'
   }
 }

@@ -20,10 +20,9 @@ const SharedChatPage = () => {
     try {
       setIsLoading(true)
       const data = await shareService.getSharedChatByToken(shareToken)
-      console.log('Loaded shared chat data:', data) // Debug log
       setSharedChat(data.chat)
     } catch (error) {
-      console.error('Error loading shared chat:', error)
+      // console.error('Error loading shared chat:', error)
       setError('This shared chat could not be found or has expired.')
     } finally {
       setIsLoading(false)

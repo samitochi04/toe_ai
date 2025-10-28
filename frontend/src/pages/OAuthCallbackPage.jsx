@@ -15,13 +15,13 @@ const OAuthCallbackPage = () => {
         // Redirect to dashboard on successful authentication
         navigate('/dashboard')
       } catch (error) {
-        console.error('OAuth callback error:', error)
+        // console.error('OAuth callback error:', error)
         
         // Handle specific SSL/certificate errors
         if (error.message?.includes('ERR_CERT_AUTHORITY_INVALID') || 
             error.message?.includes('ERR_NETWORK') ||
             error.code === 'ERR_NETWORK') {
-          console.error('SSL Certificate Error: Backend SSL certificate is invalid')
+          // console.error('SSL Certificate Error: Backend SSL certificate is invalid')
           navigate('/?error=ssl_certificate_invalid')
         } else {
           // Redirect to landing page with error

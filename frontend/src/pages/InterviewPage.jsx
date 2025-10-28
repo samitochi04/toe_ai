@@ -83,10 +83,8 @@ const InterviewPage = () => {
       if (chatId && chatId !== 'new') {
         try {
           setIsLoadingChat(true)
-          console.log('Loading interview chat:', chatId)
           
           const response = await chatService.getChat(chatId, 'interview')
-          console.log('Chat loaded:', response)
           
           if (response) {
             setJobPosition(response.job_position || '')
@@ -111,7 +109,7 @@ const InterviewPage = () => {
             setIsSetupComplete(true)
           }
         } catch (error) {
-          console.error('Error loading interview chat:', error)
+          // console.error('Error loading interview chat:', error)
           toast.error(t('interview.messages.loadError'))
           // Don't redirect on error, just show setup
           setIsSetupComplete(false)
@@ -283,7 +281,7 @@ const InterviewPage = () => {
             playAudio(aiMsg.audio_url)
           }
         }    } catch (error) {
-      console.error('Error sending message:', error)
+      // console.error('Error sending message:', error)
       toast.error(t('interview.messages.sendError'))
     } finally {
       setIsLoading(false)
@@ -324,7 +322,7 @@ const InterviewPage = () => {
       
       await audio.play()
     } catch (error) {
-      console.error('Audio play failed:', error)
+      // console.error('Audio play failed:', error)
       setIsVideoTransitioning(true)
       setTimeout(() => {
         setIsAISpeaking(false)
@@ -420,7 +418,7 @@ const InterviewPage = () => {
               }, 2000)
             }
           } catch (error) {
-            console.error('Speech to text error:', error)
+            // console.error('Speech to text error:', error)
             setIsTranscribing(false)
             toast.error(t('interview.messages.speechToTextError'))
           }
@@ -439,7 +437,7 @@ const InterviewPage = () => {
         
         toast.success('Recording started... Click again to stop')
       } catch (error) {
-        console.error('Error accessing microphone:', error)
+        // console.error('Error accessing microphone:', error)
         
         // Provide specific error messages based on the error type
         if (error.name === 'NotAllowedError') {
@@ -561,7 +559,7 @@ const InterviewPage = () => {
       }
       
     } catch (error) {
-      console.error('Error exporting PDF:', error)
+      // console.error('Error exporting PDF:', error)
       
       // More specific error messages
       if (error.response?.status === 404) {

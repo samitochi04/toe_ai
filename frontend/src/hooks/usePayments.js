@@ -13,20 +13,18 @@ export const usePayments = () => {
     setIsLoading(true)
     try {
       const response = await paymentApi.createCheckoutSession(planType)
-      console.log('Checkout session response:', response) // Debug log
       
       // The response structure should be: response.checkout_url (not response.data.checkout_url)
       if (response?.checkout_url) {
-        console.log('Redirecting to:', response.checkout_url)
         // Redirect to Stripe checkout
         window.location.href = response.checkout_url
       } else {
-        console.error('No checkout_url in response:', response)
+        // console.error('No checkout_url in response:', response)
         toast.error('Failed to get checkout URL')
       }
       return response
     } catch (error) {
-      console.error('Error creating checkout session:', error)
+      // console.error('Error creating checkout session:', error)
       toast.error(error.response?.data?.detail || 'Failed to create checkout session')
       throw error
     } finally {
@@ -41,7 +39,7 @@ export const usePayments = () => {
       setSubscriptionStatus(response.data)
       return response.data
     } catch (error) {
-      console.error('Error getting subscription status:', error)
+      // console.error('Error getting subscription status:', error)
       // Don't show error toast for subscription status as it might not exist for free users
       return null
     } finally {
@@ -57,7 +55,7 @@ export const usePayments = () => {
       await getSubscriptionStatus() // Refresh status
       return response.data
     } catch (error) {
-      console.error('Error cancelling subscription:', error)
+      // console.error('Error cancelling subscription:', error)
       toast.error(error.response?.data?.detail || 'Failed to cancel subscription')
       throw error
     } finally {
@@ -73,7 +71,7 @@ export const usePayments = () => {
       await getSubscriptionStatus() // Refresh status
       return response.data
     } catch (error) {
-      console.error('Error reactivating subscription:', error)
+      // console.error('Error reactivating subscription:', error)
       toast.error(error.response?.data?.detail || 'Failed to reactivate subscription')
       throw error
     } finally {
@@ -88,7 +86,7 @@ export const usePayments = () => {
       setPaymentHistory(response.data?.payments || [])
       return response.data
     } catch (error) {
-      console.error('Error getting payment history:', error)
+      // console.error('Error getting payment history:', error)
       toast.error(error.response?.data?.detail || 'Failed to get payment history')
       throw error
     } finally {
@@ -105,7 +103,7 @@ export const usePayments = () => {
       }
       return response.data
     } catch (error) {
-      console.error('Error creating billing portal session:', error)
+      // console.error('Error creating billing portal session:', error)
       toast.error(error.response?.data?.detail || 'Failed to access billing portal')
       throw error
     } finally {

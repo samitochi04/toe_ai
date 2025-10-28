@@ -36,7 +36,7 @@ const useChatStore = create(
             isLoading: false 
           })
         } catch (error) {
-          console.error('Error fetching chats:', error)
+          // console.error('Error fetching chats:', error)
           set({ 
             chats: [],
             filteredChats: [],
@@ -61,7 +61,7 @@ const useChatStore = create(
           
           return newChat
         } catch (error) {
-          console.error('Error creating chat:', error)
+          // console.error('Error creating chat:', error)
           set({ 
             error: error.message || 'Failed to create chat',
             isLoading: false 
@@ -101,7 +101,7 @@ const useChatStore = create(
             isLoading: false
           })
         } catch (error) {
-          console.error('Error loading chat:', error)
+          // console.error('Error loading chat:', error)
           set({ 
             error: error.message || 'Failed to load chat',
             isLoading: false 
@@ -196,7 +196,7 @@ const useChatStore = create(
 
           return response
         } catch (error) {
-          console.error('Error sending message:', error)
+          // console.error('Error sending message:', error)
           
           // Remove temp message on error
           set((state) => ({
@@ -233,7 +233,7 @@ const useChatStore = create(
           
           return updatedChat
         } catch (error) {
-          console.error('Error updating chat:', error)
+          // console.error('Error updating chat:', error)
           set({ error: error.message || 'Failed to update chat' })
           throw error
         }
@@ -251,7 +251,7 @@ const useChatStore = create(
             messages: state.currentChat?.id === chatId ? [] : state.messages
           }))
         } catch (error) {
-          console.error('Error deleting chat:', error)
+          // console.error('Error deleting chat:', error)
           set({ error: error.message || 'Failed to delete chat' })
           throw error
         }
@@ -295,7 +295,7 @@ const useChatStore = create(
             messages: state.messages.filter(msg => msg.id !== messageId)
           }))
         } catch (error) {
-          console.error('Error deleting message:', error)
+          // console.error('Error deleting message:', error)
           set({ error: error.message || 'Failed to delete message' })
           throw error
         }
@@ -309,7 +309,7 @@ const useChatStore = create(
           set({ isLoading: false })
           return uploadedFiles
         } catch (error) {
-          console.error('Error uploading files:', error)
+          // console.error('Error uploading files:', error)
           set({ 
             error: error.message || 'Failed to upload files',
             isLoading: false 

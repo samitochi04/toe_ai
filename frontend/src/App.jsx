@@ -64,10 +64,6 @@ function App() {
     }
   }, [isLoading, isAuthenticated])
 
-  console.log('Auth:', { isAuthenticated, isLoading })
-  console.log('Current path:', window.location.pathname)
-  console.log('Last path from storage:', storage.getLastPath())
-
   if (isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-dark-primary">

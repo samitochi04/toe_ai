@@ -68,7 +68,7 @@ const SharesPage = () => {
         setInterviewChats(interviewChatsData.chats || [])
       }
     } catch (error) {
-      console.error('Error loading shares data:', error)
+      // console.error('Error loading shares data:', error)
     } finally {
       setIsLoading(false)
     }
@@ -104,7 +104,7 @@ const SharesPage = () => {
       
       toast.success('Chat shared successfully!')
     } catch (error) {
-      console.error('Error sharing chat:', error)
+      // console.error('Error sharing chat:', error)
       toast.error('Failed to share chat')
     }
   }
@@ -123,7 +123,7 @@ const SharesPage = () => {
       setShares(shares.filter(share => share.id !== shareId))
       toast.success('Shared chat deleted successfully!')
     } catch (error) {
-      console.error('Error deleting share:', error)
+      // console.error('Error deleting share:', error)
       toast.error('Failed to delete shared chat')
     }
   }

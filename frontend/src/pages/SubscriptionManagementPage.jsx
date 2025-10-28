@@ -65,7 +65,7 @@ export default function SubscriptionManagementPage() {
         const methods = await profileService.getPaymentMethods()
         setPaymentMethods(methods || [])
       } catch (error) {
-        console.error('Error loading payment methods:', error)
+        // console.error('Error loading payment methods:', error)
         setPaymentMethods([])
       }
 
@@ -75,12 +75,12 @@ export default function SubscriptionManagementPage() {
         // API returns { payments: [], subscription: {} }
         setBillingHistory(history.payments || [])
       } catch (error) {
-        console.error('Error loading billing history:', error)
+        // console.error('Error loading billing history:', error)
         setBillingHistory([])
       }
 
     } catch (error) {
-      console.error('Error loading subscription:', error)
+      // console.error('Error loading subscription:', error)
       toast.error('Failed to load subscription data')
       navigate('/workspace/settings')
     } finally {
@@ -101,7 +101,7 @@ export default function SubscriptionManagementPage() {
       // Reload subscription data
       await loadSubscriptionData()
     } catch (error) {
-      console.error('Error cancelling subscription:', error)
+      // console.error('Error cancelling subscription:', error)
       toast.error(error.response?.data?.detail || 'Failed to cancel subscription')
     } finally {
       setCancelling(false)
@@ -113,7 +113,7 @@ export default function SubscriptionManagementPage() {
       // TODO: Implement invoice download when Stripe invoice URL is available
       toast.info('Invoice download will be available soon')
     } catch (error) {
-      console.error('Error downloading invoice:', error)
+      // console.error('Error downloading invoice:', error)
       toast.error('Failed to download invoice')
     }
   }
@@ -133,7 +133,7 @@ export default function SubscriptionManagementPage() {
         window.location.href = response.url
       }
     } catch (error) {
-      console.error('Error opening billing portal:', error)
+      // console.error('Error opening billing portal:', error)
       toast.error('Failed to open billing portal')
     }
   }

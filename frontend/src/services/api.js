@@ -59,7 +59,7 @@ api.interceptors.response.use(
           return api(originalRequest)
         }
       } catch (refreshError) {
-        console.error('Token refresh failed:', refreshError)
+        // console.error('Token refresh failed:', refreshError)
         // Refresh failed, clear tokens and redirect to login
         storage.clearTokens()
         // Don't redirect here, let the auth store handle it
@@ -69,9 +69,9 @@ api.interceptors.response.use(
 
     // Handle other errors
     if (error.response?.status === 403) {
-      console.error('Access forbidden:', error.response.data)
+      // console.error('Access forbidden:', error.response.data)
     } else if (error.response?.status >= 500) {
-      console.error('Server error:', error.response.data)
+      // console.error('Server error:', error.response.data)
     }
 
     return Promise.reject(error)

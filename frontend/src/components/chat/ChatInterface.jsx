@@ -45,7 +45,6 @@ const ChatInterface = () => {
   const [attachedFiles, setAttachedFiles] = useState([])
 
   useEffect(() => {
-    console.log('ChatInterface: chatId from params:', chatId) // Debug log
     
     // Always clear state first to prevent showing old content
     clearCurrentChat()
@@ -56,7 +55,7 @@ const ChatInterface = () => {
     } else if (chatId && chatId !== 'new') {
       // Validate chatId before attempting to load
       if (chatId === 'undefined' || chatId === 'null') {
-        console.error('Invalid chatId detected, redirecting to new chat')
+        // console.error('Invalid chatId detected, redirecting to new chat')
         navigate('/workspace/chat/new', { replace: true })
         return
       }
@@ -64,7 +63,7 @@ const ChatInterface = () => {
       // Validate UUID format
       const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
       if (!uuidRegex.test(chatId)) {
-        console.error('Invalid chatId format, redirecting to new chat')
+        // console.error('Invalid chatId format, redirecting to new chat')
         navigate('/workspace/chat/new', { replace: true })
         return
       }
@@ -126,7 +125,7 @@ const ChatInterface = () => {
       setInputMessage('')
       setAttachedFiles([])
     } catch (error) {
-      console.error('Error sending message:', error)
+      // console.error('Error sending message:', error)
       // Error is handled in the store and useEffect above
     }
   }
