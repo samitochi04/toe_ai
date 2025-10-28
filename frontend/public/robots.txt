@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+
+# Disallow private/authenticated app areas
+Disallow: /workspace/
+Disallow: /billing
+Disallow: /payment/
+
+Sitemap: https://toe.diversis.site/sitemap.xml
+
+
