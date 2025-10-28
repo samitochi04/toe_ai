@@ -1,69 +1,70 @@
 version: '3.8'
 
 services:
-  # Backend API
   backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile.prod
-    restart: unless-stopped
+    build: ./backend
+    dockerfile: Dockerfile.prod
+    expose:
+      - "8000"
     environment:
-      # App Configuration
-      ENVIRONMENT: "production"
-      DEBUG: "False"
-      HOST: "0.0.0.0"
-      PORT: "8000"
-      
-      # Security
-      SECRET_KEY: ${SECRET_KEY}
-      ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES:-30}
-      REFRESH_TOKEN_EXPIRE_DAYS: ${REFRESH_TOKEN_EXPIRE_DAYS:-7}
-      
-      # CORS
-      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS}
-      
-      # Supabase Configuration
-      SUPABASE_URL: ${SUPABASE_URL}
-      SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY}
-      SUPABASE_SERVICE_KEY: ${SUPABASE_SERVICE_KEY}
-      
-      # OpenAI Configuration
-      OPENAI_API_KEY: ${OPENAI_API_KEY}
-      OPENAI_MODEL: ${OPENAI_MODEL:-gpt-3.5-turbo}
-      OPENAI_MAX_TOKENS: ${OPENAI_MAX_TOKENS:-2000}
-      OPENAI_TEMPERATURE: ${OPENAI_TEMPERATURE:-0.7}
-      
-      # Whisper Configuration
-      WHISPER_MODEL: ${WHISPER_MODEL:-whisper-1}
-      
-      # Stripe Configuration
-      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
-      STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY}
-      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
-      STRIPE_PREMIUM_PRICE_ID: ${STRIPE_PREMIUM_PRICE_ID}
-      
-      # Backend URL for static file generation
-      BACKEND_URL: ${BACKEND_URL}
-      
-      # Usage Limits
-      FREE_NORMAL_CHAT_LIMIT: ${FREE_NORMAL_CHAT_LIMIT:-10}
-      FREE_INTERVIEW_CHAT_LIMIT: ${FREE_INTERVIEW_CHAT_LIMIT:-5}
-      PREMIUM_NORMAL_CHAT_LIMIT: ${PREMIUM_NORMAL_CHAT_LIMIT:-999999}
-      PREMIUM_INTERVIEW_CHAT_LIMIT: ${PREMIUM_INTERVIEW_CHAT_LIMIT:-999999}
+      - PYTHONPATH=/app
+      # These will be set by Coolify from environment variables
+      - ENVIRONMENT
+      - SECRET_KEY
+      - DEBUG
+      - SUPABASE_URL
+      - SUPABASE_ANON_KEY
+      - SUPABASE_SERVICE_KEY
+      - DATABASE_URL
+      - OPENAI_API_KEY
+      - OPENAI_MODEL
+      - OPENAI_MAX_TOKENS
+      - OPENAI_TEMPERATURE
+      - WHISPER_MODEL
+      - TTS_MODEL
+      - TTS_VOICE
+      - STRIPE_SECRET_KEY
+      - STRIPE_PUBLISHABLE_KEY
+      - STRIPE_WEBHOOK_SECRET
+      - STRIPE_PRICE_ID_PREMIUM
+      - STRIPE_PRICE_ID_PREMIUM_YEARLY
+      - ALLOWED_ORIGINS
+      - BACKEND_URL
+      - GOOGLE_CLIENT_ID
+      - GOOGLE_CLIENT_SECRET
+      - GOOGLE_REDIRECT_URI
+      - SMTP_HOST
+      - SMTP_PORT
+      - SMTP_USERNAME
+      - SMTP_PASSWORD
+      - SMTP_USE_TLS
+      - FROM_EMAIL
+      - LOG_LEVEL
     volumes:
-      - backend_uploads:/app/static/uploads
-
-  # Frontend
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-      args:
-        VITE_API_URL: ${VITE_API_URL}
-        VITE_API_BASE_URL: ${VITE_API_BASE_URL}
+      - ./backend/static/uploads:/app/static/uploads
+      - ./backend/data:/app/data
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  frontend:
+    build: ./frontend
+    expose:
+      - "80"
     depends_on:
       - backend
+    restart: unless-stopped
+    environment:
+      # These will be set by Coolify from environment variables
+      - VITE_API_BASE_URL
+      - VITE_SUPABASE_URL
+      - VITE_SUPABASE_ANON_KEY
+      - VITE_GOOGLE_CLIENT_ID
+      - VITE_STRIPE_PUBLISHABLE_KEY
 
-volumes:
-  backend_uploads:
+networks:
+  default:
+    driver: bridge
