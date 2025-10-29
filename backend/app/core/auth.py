@@ -309,7 +309,7 @@ class AuthManager:
                         "email": email,
                         "full_name": name,
                         "alias": alias,
-                        "avatar_url": google_user.get("picture"),
+                        "profile_picture_url": google_user.get("picture"),
                         "created_at": now,
                         "updated_at": now
                     }
@@ -453,7 +453,7 @@ class AuthManager:
         auth_user_id: str, 
         email: str, 
         full_name: str = None, 
-        avatar_url: str = None
+        profile_picture_url: str = None
     ) -> Optional[Dict[str, Any]]:
         """Create user profile from OAuth data"""
         try:
@@ -493,7 +493,7 @@ class AuthManager:
                 "email": email,
                 "full_name": full_name or email.split('@')[0],
                 "alias": alias,
-                "avatar_url": avatar_url,
+                "profile_picture_url": profile_picture_url,
                 "created_at": now,
                 "updated_at": now
             }

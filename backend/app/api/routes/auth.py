@@ -156,7 +156,7 @@ async def oauth_callback(session_data: OAuthCallbackRequest):
                 auth_user_id=auth_user_id,
                 email=email,
                 full_name=full_name,
-                avatar_url=user_data.get("user_metadata", {}).get("avatar_url")
+                profile_picture_url=user_data.get("user_metadata", {}).get("profile_picture_url")
             )
             if not result:
                 raise HTTPException(
