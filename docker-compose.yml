@@ -41,6 +41,13 @@ services:
       - SMTP_USE_TLS
       - FROM_EMAIL
       - LOG_LEVEL
+      - ACCESS_TOKEN_EXPIRE_MINUTES
+      - FREE_INTERVIEW_CHAT_LIMIT
+      - FREE_NORMAL_CHAT_LIMIT
+      - PREMIUM_INTERVIEW_CHAT_LIMIT
+      - PREMIUM_NORMAL_CHAT_LIMIT
+      - REDIS_URL
+      - REFRESH_TOKEN_EXPIRE_DAYS
     volumes:
       - ./backend/static/uploads:/app/static/uploads
       - ./backend/data:/app/data
@@ -63,6 +70,7 @@ services:
     environment:
       # These will be set by Coolify from environment variables
       - VITE_API_BASE_URL
+      - VITE_API_URL
       - VITE_SUPABASE_URL
       - VITE_SUPABASE_ANON_KEY
       - VITE_GOOGLE_CLIENT_ID
