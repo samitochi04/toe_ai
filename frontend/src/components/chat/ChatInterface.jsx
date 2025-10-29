@@ -169,7 +169,7 @@ const ChatInterface = () => {
       </div>
 
       {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto p-2 md:p-4 space-y-2 md:space-y-4 min-h-0 pb-20">
+      <div className="flex-1 overflow-y-auto p-2 md:p-4 space-y-2 md:space-y-4 min-h-0">
         {/* Show loading state when switching chats */}
         {isLoading && (
           <div className="flex flex-col items-center justify-center h-full text-center">
@@ -251,8 +251,8 @@ const ChatInterface = () => {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input Area - Fixed at bottom */}
-      <div className="fixed bottom-0 left-0 right-0 bg-dark-primary border-t border-light-dark-secondary z-10">
+      {/* Input Area - contained within layout (not fixed) */}
+      <div className="bg-dark-primary border-t border-light-dark-secondary z-10">
         <ChatInput
           value={inputMessage}
           onChange={setInputMessage}

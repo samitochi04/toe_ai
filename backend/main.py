@@ -64,6 +64,19 @@ allowed_origins = [
 if not allowed_origins:
     allowed_origins = ["https://toe.diversis.site"]
 
+# In development, also allow local front-end dev servers
+if settings.ENVIRONMENT == "development":
+    dev_origins = [
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+    ]
+    # De-duplicate while preserving order
+    for o in dev_origins:
+        if o not in allowed_origins:
+            allowed_origins.append(o)
+
 print(f"🔧 Allowed origins for CORS: {allowed_origins}")
 
 # Add CORS middleware
