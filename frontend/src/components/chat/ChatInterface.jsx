@@ -55,7 +55,7 @@ const ChatInterface = () => {
     } else if (chatId && chatId !== 'new') {
       // Validate chatId before attempting to load
       if (chatId === 'undefined' || chatId === 'null') {
-        // console.error('Invalid chatId detected, redirecting to new chat')
+        console.error('Invalid chatId detected, redirecting to new chat')
         navigate('/workspace/chat/new', { replace: true })
         return
       }
@@ -63,7 +63,7 @@ const ChatInterface = () => {
       // Validate UUID format
       const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
       if (!uuidRegex.test(chatId)) {
-        // console.error('Invalid chatId format, redirecting to new chat')
+        console.error('Invalid chatId format, redirecting to new chat')
         navigate('/workspace/chat/new', { replace: true })
         return
       }
@@ -125,7 +125,7 @@ const ChatInterface = () => {
       setInputMessage('')
       setAttachedFiles([])
     } catch (error) {
-      // console.error('Error sending message:', error)
+      console.error('Error sending message:', error)
       // Error is handled in the store and useEffect above
     }
   }
@@ -143,15 +143,15 @@ const ChatInterface = () => {
   }
 
   return (
-    <div className="flex flex-col h-full bg-dark-primary relative">
+    <div className="flex flex-col h-full bg-dark-primary">
       {/* Header */}
-      <div className="flex items-center justify-between p-2 md:p-4 border-b border-light-dark-secondary flex-shrink-0">
-        <div className="flex items-center space-x-2 md:space-x-3 min-w-0 flex-1">
-          <h1 className="text-lg md:text-xl font-semibold text-white-primary truncate">
+      <div className="flex items-center justify-between p-4 border-b border-light-dark-secondary">
+        <div className="flex items-center space-x-3">
+          <h1 className="text-xl font-semibold text-white-primary">
             {currentChat?.title || t('chat.newChat')}
           </h1>
           {currentChat && (
-            <span className="text-xs md:text-sm text-gray-400 flex-shrink-0">
+            <span className="text-sm text-gray-400">
               {messages.length} {t('chat.messages')}
             </span>
           )}
@@ -159,8 +159,8 @@ const ChatInterface = () => {
         
         {/* Usage info and premium upgrade button for non-premium users */}
         {!isPremium && (
-          <div className="flex items-center space-x-2 md:space-x-4 flex-shrink-0">
-            <div className="text-xs md:text-sm text-gray-400 hidden sm:block">
+          <div className="flex items-center space-x-4">
+            <div className="text-sm text-gray-400">
               {usage.normalChats}/{usage.normalLimit} chats used
             </div>
             <PremiumUpgradeButton />
@@ -169,7 +169,7 @@ const ChatInterface = () => {
       </div>
 
       {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto p-2 md:p-4 space-y-2 md:space-y-4 min-h-0">
+      <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {/* Show loading state when switching chats */}
         {isLoading && (
           <div className="flex flex-col items-center justify-center h-full text-center">
@@ -251,8 +251,8 @@ const ChatInterface = () => {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input Area - contained within layout (not fixed) */}
-      <div className="bg-dark-primary border-t border-light-dark-secondary z-10">
+      {/* Input Area */}
+      <div className="border-t border-light-dark-secondary">
         <ChatInput
           value={inputMessage}
           onChange={setInputMessage}
