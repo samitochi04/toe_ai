@@ -24,7 +24,7 @@ import { formatDateTime } from '../utils/helpers'
 
 // Import static assets
 import staticInterviewImage from '../assets/images/static_image_interview.jpg'
-import interviewVideo from '../assets/video/toe_ai_video.mp4'
+import interviewVideo from '../assets/video/toe_ai_video_sara.mp4'
 
 const InterviewPage = () => {
   const { t } = useTranslation()
