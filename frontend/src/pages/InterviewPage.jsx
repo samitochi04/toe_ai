@@ -538,9 +538,7 @@ const InterviewPage = () => {
       })
 
       // Create a download URL for the PDF
-      // Remove /api/v1 from base URL for static files
-      const baseUrl = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api/v1').replace('/api/v1', '')
-      const pdfUrl = `${baseUrl}${pdfData.pdf_url}`
+      const pdfUrl = `${pdfData.pdf_url}`
       
       // Open PDF in a new tab for viewing and downloading
       const newWindow = window.open(pdfUrl, '_blank')

@@ -184,11 +184,11 @@ const DashboardPage = () => {
         <div className="flex justify-between items-start">
           <div className="flex-1 min-w-0">
             <h4 className="font-medium text-white-primary mb-1 text-sm md:text-base truncate">{chat.title}</h4>
-            <div className="flex flex-col sm:flex-row sm:items-center text-xs md:text-sm text-white-secondary space-y-1 sm:space-y-0 sm:space-x-4">
+              <div className="flex flex-col sm:flex-row sm:items-center text-xs md:text-sm text-white-secondary space-y-1 sm:space-y-0 sm:space-x-4">
               <span>{chat.date}</span>
-              {type === 'chat' && chat.messages && <span>{chat.messages} messages</span>}
+              {type === 'chat' && chat.messages > 0 && <span>{chat.messages} messages</span>}
               {type === 'interview' && chat.jobPosition && <span className="truncate">{chat.jobPosition}</span>}
-              {type === 'share' && chat.views && <span>{chat.views} views</span>}
+              {type === 'share' && chat.views > 0 && <span>{chat.views} views</span>}
             </div>
           </div>
           
