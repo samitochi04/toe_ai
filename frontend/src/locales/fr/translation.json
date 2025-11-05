@@ -512,7 +512,8 @@
       "addSuccess": "Méthode de paiement ajoutée avec succès !",
       "addError": "Échec de l'ajout de la méthode de paiement",
       "removeError": "Échec de la suppression de la méthode de paiement",
-      "premiumRequired": "Abonnement premium requis pour ajouter des méthodes de paiement"
+      "premiumRequired": "Abonnement premium requis pour ajouter des méthodes de paiement",
+      "cardInformation": "Informations de la carte"
     }
   },
   "subscriptionManagement": {

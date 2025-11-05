@@ -594,7 +594,8 @@
       "addSuccess": "Payment method added successfully!",
       "addError": "Failed to add payment method",
       "removeError": "Failed to remove payment method",
-      "premiumRequired": "Premium subscription required to add payment methods"
+      "premiumRequired": "Premium subscription required to add payment methods",
+      "cardInformation": "Card Information"
     }
   },
   "subscriptionManagement": {
