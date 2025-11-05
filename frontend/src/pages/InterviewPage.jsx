@@ -538,7 +538,8 @@ const InterviewPage = () => {
       })
 
       // Create a download URL for the PDF
-      const pdfUrl = `${pdfData.pdf_url}`
+      const pdfUrl = pdfData.pdf_url
+      console.log(`This is the pdf url: ${pdfUrl}`)
       
       // Open PDF in a new tab for viewing and downloading
       const newWindow = window.open(pdfUrl, '_blank')
