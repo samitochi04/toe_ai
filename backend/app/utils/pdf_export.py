@@ -258,8 +258,8 @@ def export_chat_to_pdf(chat_data: dict, user_data: dict, chat_type: str, include
         file_size = os.path.getsize(filepath)
         
         # Generate URL and expiry
-        backend_url = os.getenv('BACKEND_URL', 'http://localhost:8000')
-        pdf_url = f"{backend_url}/static/uploads/pdfs/{filename}"
+        # backend_url = os.getenv('BACKEND_URL', 'http://localhost:8000')
+        pdf_url = f"/static/uploads/pdfs/{filename}"
         expires_at = datetime.utcnow().isoformat()  # Could add actual expiry logic
         
         return {

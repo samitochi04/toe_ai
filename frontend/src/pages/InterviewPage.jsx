@@ -538,7 +538,7 @@ const InterviewPage = () => {
       })
 
       // Create a download URL for the PDF
-      const pdfUrl = pdfData.pdf_url
+      const pdfUrl = `${import.meta.env.VITE_API_URL}${pdfData.pdf_url}`
       
       // Open PDF in a new tab for viewing and downloading
       const newWindow = window.open(pdfUrl, '_blank')
